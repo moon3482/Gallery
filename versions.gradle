@@ -1,0 +1,20 @@
+
+def androidx = [:]
+androidx.coreVersion = '1.10.0'
+androidx.appcompatVersion = '1.6.1'
+androidx.constraintlayoutVersion = '2.1.4'
+
+def google = [:]
+google.materialVersion = '1.8.0'
+
+def testing = [:]
+testing.junitVersion = '4.13.2'
+testing.androidjunitVersion = '1.1.5'
+testing.espressoCoreVersion = '3.5.1'
+
+ext.androidx = androidx
+ext.google = google
+ext.testing = testing
+ext.retrofitVersion = '2.9.0'
+ext.glideVersion = '4.15.1'
+ext.moshiVersion = '1.14.0'
