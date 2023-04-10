@@ -18,3 +18,4 @@ ext.testing = testing
 ext.retrofitVersion = '2.9.0'
 ext.glideVersion = '4.15.1'
 ext.moshiVersion = '1.14.0'
+ext.okHttpLogingInterceptorVersion = '4.10.0'
