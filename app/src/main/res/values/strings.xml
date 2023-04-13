@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Gallery</string>
+    <string name="image_author">작가</string>
+    <string name="width_size">가로 사이즈</string>
+    <string name="height_size">세로 사이즈</string>
+    <string name="url_link">URL링크</string>
 </resources>

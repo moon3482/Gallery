@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.exception.ResponseException
-import com.charlie.gallery.model.ImageData
 import com.charlie.gallery.model.ImageDataDto
 import com.charlie.gallery.network.RetrofitClient
 import retrofit2.Call
@@ -50,7 +49,17 @@ class ListFragment : Fragment() {
     }
 
     private fun initRecyclerview() {
-        listAdapter = ListAdapter()
+        listAdapter = ListAdapter { imageDataDto ->
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(
+                    R.id.fragment_container,
+                    DetailFragment().apply {
+                        arguments = Bundle().apply {
+                            putParcelable("imageDataDto", imageDataDto)
+                        }
+                    }
+                ).addToBackStack("detail").commit()
+        }
         gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding.gridListRecyclerview.apply {
             adapter = listAdapter
@@ -58,15 +67,14 @@ class ListFragment : Fragment() {
         }
         binding.gridListRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (gridLayoutManager.findLastVisibleItemPosition() != listAdapter.itemCount - 1)
-                    return
+                if (gridLayoutManager.findLastVisibleItemPosition() > listAdapter.itemCount - 10) {
+                    page++
+                    getImageList(page) { result ->
+                        result.onSuccess { imageList ->
+                            listAdapter.addList(imageList)
+                        }.onFailure {
 
-                page++
-                getImageList(page) { result ->
-                    result.onSuccess { imageList ->
-                        listAdapter.addList(imageList)
-                    }.onFailure {
-
+                        }
                     }
                 }
             }
@@ -76,9 +84,9 @@ class ListFragment : Fragment() {
     private fun getImageList(
         page: Int = 0,
         limit: Int = 30,
-        callback: (Result<List<ImageData>>) -> Unit
+        callback: (Result<List<ImageDataDto>>) -> Unit
     ) {
-        RetrofitClient.galleryApi.getImageList(
+        RetrofitClient.galleryApi.requestImageList(
             page = page,
             limit = limit,
         ).enqueue(object : Callback<List<ImageDataDto>> {
@@ -90,7 +98,7 @@ class ListFragment : Fragment() {
                     return
 
                 response.body()?.let { imageList ->
-                    callback(Result.success(imageList.map(ImageDataDto::toImage)))
+                    callback(Result.success(imageList))
                 } ?: callback(Result.failure(ResponseException("Response Body is Null")))
             }
 
