@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-data class ImageDataDto(
+data class ImageData(
     @Json(name = "id")
     val id: Int,
     @Json(name = "author")
