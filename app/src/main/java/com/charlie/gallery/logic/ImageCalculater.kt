@@ -3,7 +3,7 @@ package com.charlie.gallery.logic
 import com.charlie.gallery.model.Size
 import kotlin.math.roundToInt
 
-object Calculator {
+object ImageCalculator {
 
     enum class Longer {
         WIDTH, HEIGHT

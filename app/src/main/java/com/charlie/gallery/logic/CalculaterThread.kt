@@ -8,7 +8,7 @@ class CalculatorThread(
     private val callback: (Size) -> Unit
 ) : Thread(Runnable {
     callback(
-        Calculator.getCompareRatio(
+        ImageCalculator.getCompareRatio(
             width = origin.width,
             height = origin.height,
             targetWidth = target.width,
