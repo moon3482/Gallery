@@ -4,4 +4,9 @@
     <string name="width_size">가로 사이즈</string>
     <string name="height_size">세로 사이즈</string>
     <string name="url_link">URL링크</string>
+    <string name="previous_button">이전 버튼</string>
+    <string name="next_button">다음 버튼</string>
+    <string name="previous_image">이전 이미지</string>
+    <string name="current_image">현재 이미지</string>
+    <string name="next_image">다음 이미지</string>
 </resources>
