@@ -1,8 +1,9 @@
-
 def androidx = [:]
 androidx.coreVersion = '1.10.0'
 androidx.appcompatVersion = '1.6.1'
 androidx.constraintlayoutVersion = '2.1.4'
+androidx.activityVersion = '1.7.1'
+androidx.fragmentVersion = '1.5.7'
 
 def google = [:]
 google.materialVersion = '1.8.0'
@@ -18,4 +19,5 @@ ext.testing = testing
 ext.retrofitVersion = '2.9.0'
 ext.glideVersion = '4.15.1'
 ext.moshiVersion = '1.14.0'
+ext.okhttpVersion = '4.11.0'
 ext.okHttpLogingInterceptorVersion = '4.10.0'
