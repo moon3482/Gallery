@@ -3,8 +3,8 @@ package com.charlie.gallery.network
 import com.charlie.gallery.model.ImageData
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
-import retrofit2.http.Url
 
 interface GalleryApi {
 
@@ -15,4 +15,9 @@ interface GalleryApi {
         @Query("limit")
         limit: Int = 30,
     ): Call<List<ImageData>>
+
+    @GET("/id/{id}/info")
+    fun requestImage(
+        @Path("id") id: Int
+    ): Call<ImageData>
 }
