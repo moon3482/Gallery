@@ -1,13 +1,8 @@
 package com.charlie.gallery
 
-import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.TextPaint
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -15,128 +10,140 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.charlie.gallery.databinding.FragmentDetailBinding
-import com.charlie.gallery.model.DetailImageSet
-import com.charlie.gallery.model.DetailScreen
 import com.charlie.gallery.model.ImageData
+import com.charlie.gallery.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class DetailFragment(
-    private val onClickButton: (DetailFragment, DetailScreen) -> Unit,
-) : Fragment() {
-    private val binding by lazy { FragmentDetailBinding.inflate(layoutInflater) }
-    private var imageData: ImageData? = null
-    private var detailImageSet: DetailImageSet? = null
-    private var currentIndex: Int = 0
+class DetailFragment : Fragment() {
+    private var _binding: FragmentDetailBinding? = null
+    private val binding get() = checkNotNull(_binding)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        loadData(savedInstanceState)
-        setImage(imageData)
-        setImageSet(detailImageSet)
-        setOnClickListener()
-
+        _binding = FragmentDetailBinding.inflate(layoutInflater)
         return binding.root
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(BundleKey.IMAGE_DATA, imageData)
-        outState.putParcelable(BundleKey.DETAIL_IMAGE_SET, detailImageSet)
-        outState.putInt(BundleKey.IMAGE_INDEX, currentIndex)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        arguments?.let { bundle ->
+            bundle.getInt(BundleKey.PREVIOUS_IMAGE_INDEX, -1).let {
+                RetrofitClient
+                    .galleryApi
+                    .requestImage(it)
+                    .enqueue(object : Callback<ImageData> {
+                        override fun onResponse(
+                            call: Call<ImageData>,
+                            response: Response<ImageData>
+                        ) {
+                            if (!response.isSuccessful)
+                                return
+                            response.body()?.let { imageData ->
+                                Glide.with(this@DetailFragment)
+                                    .load(imageData.downloadUrl)
+                                    .into(binding.previousImageView)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<ImageData>, t: Throwable) = Unit
+                    })
+            }
+            bundle.getInt(BundleKey.CURRENT_IMAGE_INDEX).let {
+                RetrofitClient
+                    .galleryApi
+                    .requestImage(it)
+                    .enqueue(object : Callback<ImageData> {
+                        override fun onResponse(
+                            call: Call<ImageData>,
+                            response: Response<ImageData>
+                        ) {
+                            if (!response.isSuccessful)
+                                return
+                            response.body()?.let { imageData ->
+                                setImage(imageData)
+                                Glide.with(this@DetailFragment)
+                                    .load(imageData.downloadUrl)
+                                    .error(R.drawable.close)
+                                    .into(binding.currentImageView)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<ImageData>, t: Throwable) = Unit
+                    })
+            }
+            bundle.getInt(BundleKey.NEXT_IMAGE_INDEX, -1).let {
+                RetrofitClient
+                    .galleryApi
+                    .requestImage(it)
+                    .enqueue(object : Callback<ImageData> {
+                        override fun onResponse(
+                            call: Call<ImageData>,
+                            response: Response<ImageData>
+                        ) {
+                            if (!response.isSuccessful)
+                                return
+                            response.body()?.let { imageData ->
+                                Glide
+                                    .with(this@DetailFragment)
+                                    .load(imageData.downloadUrl)
+                                    .error(R.drawable.close)
+                                    .into(binding.nextImageView)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<ImageData>, t: Throwable) = Unit
+                    })
+            }
+
+        }
     }
 
-    private fun loadData(savedInstanceState: Bundle?) {
-        arguments?.let {
-            imageData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(BundleKey.IMAGE_DATA, ImageData::class.java)
-            } else {
-                it.getParcelable(BundleKey.IMAGE_DATA)
-            }
-            detailImageSet = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(BundleKey.DETAIL_IMAGE_SET, DetailImageSet::class.java)
-            } else {
-                it.getParcelable(BundleKey.DETAIL_IMAGE_SET)
-            }
-            currentIndex = it.getInt(BundleKey.IMAGE_INDEX)
-        }
-
-        savedInstanceState?.let {
-            imageData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(BundleKey.IMAGE_DATA, ImageData::class.java)
-            } else {
-                it.getParcelable(BundleKey.IMAGE_DATA)
-            }
-            detailImageSet = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(BundleKey.DETAIL_IMAGE_SET, DetailImageSet::class.java)
-            } else {
-                it.getParcelable(BundleKey.DETAIL_IMAGE_SET)
-            }
-            currentIndex = it.getInt(BundleKey.IMAGE_INDEX)
-        }
-    }
-
-    fun setImage(imageData: ImageData?, result: ((ImageData?) -> Unit)? = null) {
-        this.imageData = imageData
-        result?.invoke(imageData)
+    fun setImage(imageData: ImageData) {
         Glide.with(this)
-            .load(imageData?.downloadUrl)
-            .thumbnail(
-                Glide.with(this)
-                    .load(R.drawable.loading)
-            )
+            .load(imageData.downloadUrl)
+            .placeholder(R.drawable.loading)
             .error(R.drawable.close)
-            .timeout(1000)
             .into(binding.detailImageView)
-        binding.authorNameTextview.text = imageData?.author
-        binding.widthSizeTextview.text = imageData?.width.toString()
-        binding.heightSizeTextview.text = imageData?.height.toString()
-        binding.urlLinkTextview.text = imageData?.url?.let {
+
+        binding.authorNameTextview.text = imageData.author
+        binding.widthSizeTextview.text = imageData.width.toString()
+        binding.heightSizeTextview.text = imageData.height.toString()
+        binding.urlLinkTextview.text = imageData.url.let {
             SpannableString(it).apply {
-                setSpan(UnderlineSpan(),0,it.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(
+                    UnderlineSpan(),
+                    0,
+                    it.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
             }
         }
     }
 
-    fun setImageSet(detailImageSet: DetailImageSet?) {
-        Glide.with(this)
-            .load(detailImageSet?.previousImageData?.downloadUrl)
-            .sizeMultiplier(0.3f)
-            .into(binding.previousImageView)
-        Glide.with(this)
-            .load(detailImageSet?.currentImageData?.downloadUrl)
-            .sizeMultiplier(0.3f)
-            .into(binding.currentImageView)
-        Glide.with(this)
-            .load(detailImageSet?.nextImageData?.downloadUrl)
-            .sizeMultiplier(0.3f)
-            .into(binding.nextImageView)
-    }
-
-    private fun setOnClickListener() {
-        binding.urlLinkTextview.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                val uri = Uri.parse(imageData?.url)
-                data = uri
-            }
-            requireActivity().startActivity(intent)
-        }
-        binding.nextFloatingButton.setOnClickListener {
-            imageData?.let {
-                onClickButton.invoke(this, DetailScreen.OnClickNext(it))
+    companion object {
+        fun newInstance(
+            previousId: Int?,
+            currentId: Int,
+            nextId: Int?,
+        ): DetailFragment {
+            val args = Bundle().apply {
+                previousId?.let {
+                    putInt(BundleKey.PREVIOUS_IMAGE_INDEX, it)
+                }
+                putInt(BundleKey.CURRENT_IMAGE_INDEX, currentId)
+                nextId?.let {
+                    putInt(BundleKey.NEXT_IMAGE_INDEX, it)
+                }
             }
 
-        }
-        binding.previousFloatingButton.setOnClickListener {
-            imageData?.let {
-                if (currentIndex > 0)
-                    onClickButton.invoke(this, DetailScreen.OnClickPrevious(it))
-            }
+            val fragment = DetailFragment()
+            fragment.arguments = args
+            return fragment
         }
     }
 
-    fun setIndex(index: Int) {
-        this.currentIndex = index
-    }
 }
