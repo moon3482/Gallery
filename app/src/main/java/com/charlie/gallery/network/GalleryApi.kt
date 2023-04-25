@@ -11,9 +11,9 @@ interface GalleryApi {
     @GET("/v2/list")
     fun requestImageList(
         @Query("page")
-        page: Int = 0,
+        page: Int,
         @Query("limit")
-        limit: Int = 30,
+        limit: Int,
     ): Call<List<ImageData>>
 
     @GET("/id/{id}/info")
