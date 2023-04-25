@@ -59,7 +59,7 @@ class ListFragment : Fragment() {
     }
 
     private fun getImageList(
-        page: Int = 0,
+        page: Int = 1,
         limit: Int = 30
     ) {
         RetrofitClient.galleryApi.requestImageList(
