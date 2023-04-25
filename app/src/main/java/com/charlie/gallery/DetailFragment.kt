@@ -18,20 +18,30 @@ import retrofit2.Response
 
 class DetailFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
-    private val binding get() = checkNotNull(_binding)
+    private val binding
+        get() = checkNotNull(_binding) {
+            "DetailFragment binding is Null"
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDetailBinding.inflate(layoutInflater)
+        _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
+    }
+
+    private fun initView() {
         arguments?.let { bundle ->
             bundle.getInt(BundleKey.PREVIOUS_IMAGE_INDEX, -1).let {
+                if (it == -1)
+                    return
+
                 RetrofitClient
                     .galleryApi
                     .requestImage(it)
@@ -76,6 +86,9 @@ class DetailFragment : Fragment() {
                     })
             }
             bundle.getInt(BundleKey.NEXT_IMAGE_INDEX, -1).let {
+                if (it == -1)
+                    return
+
                 RetrofitClient
                     .galleryApi
                     .requestImage(it)
@@ -98,11 +111,10 @@ class DetailFragment : Fragment() {
                         override fun onFailure(call: Call<ImageData>, t: Throwable) = Unit
                     })
             }
-
         }
     }
 
-    fun setImage(imageData: ImageData) {
+    private fun setImage(imageData: ImageData) {
         Glide.with(this)
             .load(imageData.downloadUrl)
             .placeholder(R.drawable.loading)
@@ -122,6 +134,11 @@ class DetailFragment : Fragment() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     companion object {

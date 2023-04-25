@@ -19,7 +19,7 @@ class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
-            "_binding iS Null"
+            "ListFragment binding iS Null"
         }
 
     override fun onCreateView(
@@ -27,7 +27,7 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentListBinding.inflate(layoutInflater)
+        _binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -37,28 +37,24 @@ class ListFragment : Fragment() {
         getImageList()
     }
 
-    override fun onDetach() {
-        _binding = null
-        super.onDetach()
-    }
-
     private fun initView() {
-
-        binding.gridListRecyclerview.apply {
-            adapter = ListAdapter { previousId, currentId, nextId ->
-                parentFragmentManager.commit {
-                    add(
-                        R.id.fragment_container,
-                        DetailFragment.newInstance(
-                            previousId = previousId,
-                            currentId = currentId,
-                            nextId = nextId
+        with(binding) {
+            gridListRecyclerview.apply {
+                adapter = ListAdapter { previousId, currentId, nextId ->
+                    parentFragmentManager.commit {
+                        add(
+                            R.id.fragment_container,
+                            DetailFragment.newInstance(
+                                previousId = previousId,
+                                currentId = currentId,
+                                nextId = nextId
+                            )
                         )
-                    )
-                    addToBackStack(null)
+                        addToBackStack(null)
+                    }
                 }
+                layoutManager = GridLayoutManager(requireContext(), 2)
             }
-            layoutManager = GridLayoutManager(requireContext(), 2)
         }
     }
 
@@ -79,11 +75,18 @@ class ListFragment : Fragment() {
 
                 response.body()?.let { imageList ->
                     (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(imageList)
+                } ?: run {
+                    (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(emptyList())
                 }
             }
 
             override fun onFailure(call: Call<List<ImageData>>, t: Throwable) = Unit
         })
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     companion object {
