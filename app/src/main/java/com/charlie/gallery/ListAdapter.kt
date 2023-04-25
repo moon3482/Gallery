@@ -9,10 +9,10 @@ import com.charlie.gallery.databinding.ItemGridImageBinding
 import com.charlie.gallery.model.ImageData
 
 class ListAdapter(
+    private val imageDataList: MutableList<ImageData> = mutableListOf(),
     private val onClickViewHolder: (Int?, Int, Int?) -> Unit
 ) : RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
 
-    private val imageDataList = mutableListOf<ImageData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val view = ItemGridImageBinding.inflate(
