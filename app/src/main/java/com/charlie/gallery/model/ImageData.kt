@@ -1,11 +1,10 @@
 package com.charlie.gallery.model
 
-import android.os.Parcelable
 import com.squareup.moshi.Json
-import kotlinx.parcelize.Parcelize
+import com.squareup.moshi.JsonClass
 
 
-@Parcelize
+@JsonClass(generateAdapter = true)
 data class ImageData(
     @Json(name = "id")
     val id: Int,
@@ -19,4 +18,4 @@ data class ImageData(
     val url: String,
     @Json(name = "download_url")
     val downloadUrl: String,
-) : Parcelable
+)
