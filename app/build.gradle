@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'kotlin-parcelize'
 }
 
 android {
@@ -21,21 +20,23 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
-    buildFeatures {
-        viewBinding true
+    viewBinding {
+        enable true
     }
+
 }
 
 dependencies {
@@ -49,7 +50,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     implementation "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpLogingInterceptorVersion"
+    implementation "androidx.activity:activity-ktx:$androidx.activityVersion"
+    implementation "androidx.fragment:fragment-ktx:$androidx.fragmentVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    debugImplementation "com.squareup.okhttp3:logging-interceptor:$okHttpLogingInterceptorVersion"
     testImplementation "junit:junit:$testing.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$testing.androidjunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$testing.espressoCoreVersion"

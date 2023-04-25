@@ -5,12 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.charlie.gallery.databinding.FragmentListBinding
-import com.charlie.gallery.exception.ResponseException
-import com.charlie.gallery.model.DetailImageSet
-import com.charlie.gallery.model.DetailScreen
 import com.charlie.gallery.model.ImageData
 import com.charlie.gallery.network.RetrofitClient
 import retrofit2.Call
@@ -19,103 +16,51 @@ import retrofit2.Response
 
 class ListFragment : Fragment() {
 
-    private val binding by lazy { FragmentListBinding.inflate(layoutInflater) }
-    private lateinit var listAdapter: ListAdapter
-    private lateinit var gridLayoutManager: GridLayoutManager
-    private var page = 1
-    private lateinit var detailFragmentCallback: (DetailFragment, DetailScreen) -> Unit
-    private lateinit var listAdapterCallback: (Int, ImageData) -> Unit
-    private lateinit var detailFragment: DetailFragment
+    private var _binding: FragmentListBinding? = null
+    private val binding
+        get() = checkNotNull(_binding) {
+            "ListFragment binding iS Null"
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        initCallBack()
-        initView()
-        getImageList(page) { result ->
-            result.onSuccess {
-                listAdapter.initList(it)
-            }
-        }
+        _binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onDetach() {
-        listAdapter.clearList()
-        super.onDetach()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
+        getImageList()
     }
 
     private fun initView() {
-        detailFragment = DetailFragment(detailFragmentCallback)
-        listAdapter = ListAdapter(listAdapterCallback)
-        gridLayoutManager = GridLayoutManager(requireContext(), 2)
-        binding.gridListRecyclerview.apply {
-            adapter = listAdapter
-            layoutManager = gridLayoutManager
-        }
-        binding.gridListRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (gridLayoutManager.findLastVisibleItemPosition() > listAdapter.itemCount - 10) {
-                    page++
-                    getImageList(page) { result ->
-                        result.onSuccess { imageList ->
-                            listAdapter.addList(imageList)
-                        }
+        with(binding) {
+            gridListRecyclerview.apply {
+                adapter = ListAdapter { previousId, currentId, nextId ->
+                    parentFragmentManager.commit {
+                        add(
+                            R.id.fragment_container,
+                            DetailFragment.newInstance(
+                                previousId = previousId,
+                                currentId = currentId,
+                                nextId = nextId
+                            )
+                        )
+                        addToBackStack(null)
                     }
                 }
+                layoutManager = GridLayoutManager(requireContext(), 2)
             }
-        })
-    }
-
-    private fun initCallBack() {
-        listAdapterCallback = { index, imageData ->
-            requireActivity().supportFragmentManager.beginTransaction()
-                .add(
-                    R.id.fragment_container,
-                    detailFragment.apply {
-                        val detailImageSet = listAdapter.getCurrentImageSet(imageData)
-                        arguments = createBundle(
-                            index = index,
-                            imageData = imageData,
-                            detailImageSet = detailImageSet
-                        )
-                    },
-                ).addToBackStack(null).commit()
-        }
-
-        detailFragmentCallback = { detailFragment, detailScreen ->
-            val withCurrentIndexImageData = listAdapter.getDetailImageData(detailScreen)
-
-            detailFragment.setIndex(withCurrentIndexImageData.index)
-
-            if (gridLayoutManager.findLastCompletelyVisibleItemPosition() != withCurrentIndexImageData.index)
-                binding.gridListRecyclerview.scrollToPosition(withCurrentIndexImageData.index)
-
-            detailFragment.setImage(withCurrentIndexImageData.imageData) { imageData ->
-                val imageSet = listAdapter.getCurrentImageSet(imageData)
-                detailFragment.setImageSet(imageSet)
-            }
-        }
-    }
-
-    private fun createBundle(
-        index: Int,
-        imageData: ImageData,
-        detailImageSet: DetailImageSet,
-    ): Bundle {
-        return Bundle().apply {
-            putInt(BundleKey.IMAGE_INDEX, index)
-            putParcelable(BundleKey.DETAIL_IMAGE_SET, detailImageSet)
-            putParcelable(BundleKey.IMAGE_DATA, imageData)
         }
     }
 
     private fun getImageList(
-        page: Int = 0,
-        limit: Int = 30,
-        callback: (Result<List<ImageData>>) -> Unit
+        page: Int = 1,
+        limit: Int = 30
     ) {
         RetrofitClient.galleryApi.requestImageList(
             page = page,
@@ -129,14 +74,28 @@ class ListFragment : Fragment() {
                     return
 
                 response.body()?.let { imageList ->
-                    callback(Result.success(imageList))
-                } ?: callback(Result.failure(ResponseException("Response Body is Null")))
+                    (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(imageList)
+                } ?: run {
+                    (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(emptyList())
+                }
             }
 
-            override fun onFailure(call: Call<List<ImageData>>, t: Throwable) {
-                callback(Result.failure(t))
-            }
+            override fun onFailure(call: Call<List<ImageData>>, t: Throwable) = Unit
         })
+    }
 
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
+
+    companion object {
+        fun newInstance(): ListFragment {
+            val args = Bundle()
+
+            val fragment = ListFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
