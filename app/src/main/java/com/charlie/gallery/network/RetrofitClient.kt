@@ -10,22 +10,27 @@ import retrofit2.create
 
 object RetrofitClient {
 
-    private val BASE_URL = "https://picsum.photos"
-    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-    private var retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(
-            OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    setLevel(
-                        HttpLoggingInterceptor.Level.BODY
-                    )
-                })
-                .build()
-        )
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
+    private const val BASE_URL: String = "https://picsum.photos"
+    private val kotlinJsonAdapterFactory: KotlinJsonAdapterFactory = KotlinJsonAdapterFactory()
+    private val moshi: Moshi = Moshi
+        .Builder()
+        .add(kotlinJsonAdapterFactory)
         .build()
-
+    private val moshiConverterFactory: MoshiConverterFactory = MoshiConverterFactory.create(moshi)
+    private val loggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
+        .apply {
+            setLevel(HttpLoggingInterceptor.Level.BODY)
+        }
+    private val okHttpClient: OkHttpClient = OkHttpClient
+        .Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+    private var retrofit: Retrofit = Retrofit
+        .Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(moshiConverterFactory)
+        .build()
 
     val galleryApi: GalleryApi = retrofit.create()
 }
