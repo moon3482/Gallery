@@ -25,7 +25,7 @@ object RetrofitClient {
         .Builder()
         .addInterceptor(loggingInterceptor)
         .build()
-    private var retrofit: Retrofit = Retrofit
+    private val retrofit: Retrofit = Retrofit
         .Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
