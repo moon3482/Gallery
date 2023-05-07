@@ -1,7 +1,5 @@
 package com.charlie.gallery.ui.fragment.detail
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -15,22 +13,19 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
-import com.charlie.gallery.model.ImageData
+import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.network.RetrofitClient
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.await
 
 class DetailFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding: FragmentDetailBinding
         get() = checkNotNull(_binding) {
-            "DetailFragment is Null"
+            "_binding is Null"
         }
-    private var currentId: Int = 0
-    private val imageRequestExceptionHandler: CoroutineExceptionHandler =
-        CoroutineExceptionHandler { _, _ -> }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,91 +40,117 @@ class DetailFragment : Fragment() {
         initView()
     }
 
-    private fun initView() = with(binding) {
-        fun requestImageData(
-            id: Int,
-            onSuccess: (ImageData) -> Unit,
-        ) {
-            lifecycleScope.launch(Dispatchers.IO + imageRequestExceptionHandler) {
-                val imageData = RetrofitClient.galleryApi.requestImage(id)
-                withContext(Dispatchers.Main) {
-                    onSuccess(imageData)
-                }
-            }
+    private fun initView() {
+        arguments?.let { bundle ->
+            val currentId = getCurrentId(bundle)
+            setScreen(currentId)
         }
+    }
 
+    private fun setScreen(id: Int) {
         fun setImage(
-            imageData: ImageData,
+            imageDetailData: ImageDetailData,
             imageView: ImageView,
         ) {
-            Glide.with(imageView)
-                .load(imageData.downloadUrl)
-                .placeholder(R.drawable.loading)
+            Glide.with(this)
+                .load(imageDetailData.downloadUrl)
                 .error(R.drawable.close)
                 .into(imageView)
         }
 
-        fun setInfo(imageData: ImageData) {
-            authorNameTextview.text = imageData.author
-            widthSizeTextview.text = imageData.width.toString()
-            heightSizeTextview.text = imageData.height.toString()
-            urlLinkTextview.text = imageData.url.let {
-                SpannableString(it).apply {
-                    setSpan(
-                        UnderlineSpan(),
-                        0,
-                        it.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
+        fun clearView(imageView: ImageView) {
+            Glide
+                .with(this@DetailFragment)
+                .clear(imageView)
+        }
+
+        with(binding) {
+            clearView(currentImageView)
+            clearView(previousImageView)
+            clearView(nextImageView)
+            requestImageData(id) {
+                setDetail(it)
+                setImage(it, currentImageView)
             }
+
+            requestImageData(id - 1) {
+                setImage(it, previousImageView)
+            }
+            requestImageData(id + 1) {
+                setImage(it, nextImageView)
+            }
+        }
+    }
+
+    private fun requestImageData(
+        id: Int,
+        onSuccess: (ImageDetailData) -> Unit,
+    ) {
+        if (id < 0 || id > 29)
+            return
+
+        lifecycleScope.launch {
+            val imageData = runCatching {
+                RetrofitClient
+                    .galleryApi
+                    .requestImage(id)
+                    .await()
+            }
+            imageData
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
+                        onSuccess(it)
+                    }
+                }
+        }
+    }
+
+    private fun setDetail(
+        imageDetailData: ImageDetailData,
+    ) {
+        with(binding) {
+            Glide.with(this@DetailFragment)
+                .load(imageDetailData.downloadUrl)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.close)
+                .into(detailImageView)
+
+            authorNameTextview.text = imageDetailData.author
+            widthSizeTextview.text = imageDetailData.width.toString()
+            heightSizeTextview.text = imageDetailData.height.toString()
+            urlLinkTextview.text = imageDetailData.url.toHyperLinkSpannable()
             urlLinkTextview.setOnClickListener {
                 startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(imageData.url),
+                    android.content.Intent(
+                        android.content.Intent.ACTION_VIEW,
+                        android.net.Uri.parse(imageDetailData.url),
                     )
                 )
             }
-        }
 
-        fun setPreview(currentId: Int) {
-            this@DetailFragment.currentId = currentId
-            requestImageData(currentId) {
-                setImage(
-                    it,
-                    currentImageView,
-                )
-                setImage(
-                    it,
-                    detailImageView
-                )
-                setInfo(it)
+            previousFloatingButton.setOnClickListener {
+                if (imageDetailData.id < 1)
+                    return@setOnClickListener
+                setScreen(imageDetailData.id - 1)
             }
-            requestImageData(currentId - 1) {
-                setImage(
-                    it,
-                    previousImageView,
-                )
-            }
-            requestImageData(currentId + 1) {
-                setImage(
-                    it,
-                    nextImageView,
-                )
+            nextFloatingButton.setOnClickListener {
+                if (imageDetailData.id > 28)
+                    return@setOnClickListener
+                setScreen(imageDetailData.id + 1)
             }
         }
+    }
 
-        previousFloatingButton.setOnClickListener {
-            setPreview(currentId - 1)
-        }
-        nextFloatingButton.setOnClickListener {
-            setPreview(currentId + 1)
-        }
-
-        arguments?.let { bundle ->
-            val currentId = getCurrentId(bundle)
-            setPreview(currentId)
+    private fun String?.toHyperLinkSpannable(): SpannableString {
+        return SpannableString(
+            this.orEmpty()
+        ).apply {
+            setSpan(
+                UnderlineSpan(),
+                0,
+                this.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
     }
 
@@ -150,7 +171,7 @@ class DetailFragment : Fragment() {
             }
         }
 
-        private fun arguments(
+        fun arguments(
             currentId: Int,
         ): Bundle {
             return Bundle().apply {
