@@ -69,6 +69,7 @@ class ListFragment : Fragment() {
             }
             imageList.onSuccess {
                 withContext(Dispatchers.Main) {
+                    binding.progressBar.visibility = View.GONE
                     (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(it)
                 }
             }
