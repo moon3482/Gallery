@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 
 @JsonClass(generateAdapter = true)
-data class ImageData(
+data class ImageDetailData(
     @Json(name = "id")
     val id: Int,
     @Json(name = "author")
