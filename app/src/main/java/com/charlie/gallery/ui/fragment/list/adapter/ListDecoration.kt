@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list
+package com.charlie.gallery.ui.fragment.list.adapter
 
 import android.graphics.Rect
 import android.view.View
@@ -42,7 +42,7 @@ class ListDecoration(
 
         when {
             position < spanCount -> outRect.bottom = height / 2
-            
+
             (itemCount - spanCount) <= position -> outRect.top = height / 2
 
             else -> {

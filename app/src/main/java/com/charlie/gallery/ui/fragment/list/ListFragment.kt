@@ -12,6 +12,8 @@ import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.network.RetrofitClient
 import com.charlie.gallery.ui.fragment.detail.DetailFragment
+import com.charlie.gallery.ui.fragment.list.adapter.ListAdapter
+import com.charlie.gallery.ui.fragment.list.adapter.ListDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

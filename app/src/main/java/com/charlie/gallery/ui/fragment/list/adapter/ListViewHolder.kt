@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list
+package com.charlie.gallery.ui.fragment.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
