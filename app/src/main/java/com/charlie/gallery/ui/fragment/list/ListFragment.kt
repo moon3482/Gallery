@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.network.RetrofitClient
@@ -15,6 +15,7 @@ import com.charlie.gallery.ui.fragment.detail.DetailFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.await
 
 class ListFragment : Fragment() {
 
@@ -44,31 +45,30 @@ class ListFragment : Fragment() {
         binding.gridListRecyclerview.apply {
             adapter = ListAdapter { currentId ->
                 parentFragmentManager.commit {
-                    add(
+                    add<DetailFragment>(
                         R.id.fragment_container,
-                        DetailFragment.newInstance(
-                            currentId = currentId,
-                        )
+                        args = DetailFragment.arguments(currentId)
                     )
                     addToBackStack(null)
                 }
             }
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            addItemDecoration(ListDecoration())
+            addItemDecoration(ListDecoration(10, 8))
         }
     }
 
-    private fun getImageList(
-        page: Int = 0,
-        limit: Int = 30,
-    ) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val imageList = RetrofitClient
-                .galleryApi
-                .requestImageList()
-            withContext(Dispatchers.Main) {
-                (binding.gridListRecyclerview.adapter as? ListAdapter)
-                    ?.initList(imageList)
+    private fun getImageList() {
+
+        lifecycleScope.launch {
+            val imageList = runCatching {
+                RetrofitClient
+                    .galleryApi
+                    .requestImageList()
+                    .await()
+            }
+            imageList.onSuccess {
+                withContext(Dispatchers.Main) {
+                    (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(it)
+                }
             }
         }
     }
