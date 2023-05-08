@@ -10,4 +10,8 @@
     <string name="current_image">현재 이미지</string>
     <string name="next_image">다음 이미지</string>
     <string name="image_item">이미지 아이템</string>
+    <string name="image_information">Image Information</string>
+    <string name="previous_floating_button">이전버튼</string>
+    <string name="next_floating_button">다음 버튼</string>
+    <string name="detail_image">디테일 이미지</string>
 </resources>

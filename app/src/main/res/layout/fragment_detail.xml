@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:clickable="true"
+    android:focusable="true"
     tools:context=".ui.fragment.detail.DetailFragment">
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/begin_guide_line"
@@ -53,7 +55,7 @@
         android:layout_width="0dp"
         android:layout_height="300dp"
         android:layout_marginTop="20dp"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/detail_image"
         app:layout_constraintEnd_toEndOf="@id/end_guide_line"
         app:layout_constraintStart_toStartOf="@id/begin_guide_line"
         app:layout_constraintTop_toBottomOf="@id/detail_toolbar"
@@ -64,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Image Information"
+        android:text="@string/image_information"
         android:textColor="@color/black"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -77,6 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         app:layout_constraintEnd_toEndOf="@id/end_guide_line"
         app:layout_constraintStart_toStartOf="@id/begin_guide_line"
         app:layout_constraintTop_toBottomOf="@id/image_information_textView">
@@ -159,7 +162,8 @@
         app:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
         app:layout_constraintStart_toStartOf="@id/begin_guide_line"
-        app:maxImageSize="40dp" />
+        app:maxImageSize="40dp"
+        android:contentDescription="@string/previous_floating_button" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/next_floating_button"
@@ -171,7 +175,8 @@
         app:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
         app:layout_constraintEnd_toEndOf="@id/end_guide_line"
-        app:maxImageSize="40dp" />
+        app:maxImageSize="40dp"
+        android:contentDescription="@string/next_floating_button" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -210,5 +215,15 @@
             android:padding="5dp"
             tools:src="@tools:sample/avatars" />
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/detailProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
