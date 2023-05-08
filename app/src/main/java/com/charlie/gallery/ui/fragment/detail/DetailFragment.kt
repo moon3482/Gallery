@@ -9,29 +9,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
 import com.charlie.gallery.model.ImageDetailData
-import com.charlie.gallery.network.RetrofitClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.await
+import com.charlie.gallery.model.ImageItemData
 
-class DetailFragment : Fragment() {
+class DetailFragment : Fragment(), DetailContract.View {
     private var _binding: FragmentDetailBinding? = null
     private val binding: FragmentDetailBinding
         get() = checkNotNull(_binding) {
             "_binding is Null"
         }
 
+    private lateinit var presenter: DetailPresenter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailBinding.inflate(layoutInflater)
+        presenter = DetailPresenter(view = this, model = DetailModel())
         return binding.root
     }
 
@@ -43,71 +40,31 @@ class DetailFragment : Fragment() {
     private fun initView() {
         arguments?.let { bundle ->
             val currentId = getCurrentId(bundle)
-            setScreen(currentId)
-        }
-    }
-
-    private fun setScreen(id: Int) {
-        fun setImage(
-            imageDetailData: ImageDetailData,
-            imageView: ImageView,
-        ) {
-            Glide.with(this)
-                .load(imageDetailData.downloadUrl)
-                .error(R.drawable.close)
-                .into(imageView)
-        }
-
-        fun clearView(imageView: ImageView) {
-            Glide
-                .with(this@DetailFragment)
-                .clear(imageView)
-        }
-
-        with(binding) {
-            clearView(currentImageView)
-            clearView(previousImageView)
-            clearView(nextImageView)
-            requestImageData(id) {
-                setDetail(it)
-                setImage(it, currentImageView)
+            presenter.start(id = currentId)
+            binding.previousFloatingButton.setOnClickListener {
+                presenter.onClickPrevious()
             }
-
-            requestImageData(id - 1) {
-                setImage(it, previousImageView)
-            }
-            requestImageData(id + 1) {
-                setImage(it, nextImageView)
+            binding.nextFloatingButton.setOnClickListener {
+                presenter.onClickNext()
             }
         }
     }
 
-    private fun requestImageData(
-        id: Int,
-        onSuccess: (ImageDetailData) -> Unit,
-    ) {
-        if (id < 0 || id > 29)
-            return
-
-        lifecycleScope.launch {
-            val imageData = runCatching {
-                RetrofitClient
-                    .galleryApi
-                    .requestImage(id)
-                    .await()
-            }
-            imageData
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        onSuccess(it)
-                    }
-                }
-        }
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
-    private fun setDetail(
-        imageDetailData: ImageDetailData,
-    ) {
+    //region DetailContract.View
+    override fun showLoading() {
+        binding.detailProgressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideLoading() {
+        binding.detailProgressBar.visibility = View.GONE
+    }
+
+    override fun showDetail(imageDetailData: ImageDetailData) {
         with(binding) {
             Glide.with(this@DetailFragment)
                 .load(imageDetailData.downloadUrl)
@@ -127,20 +84,49 @@ class DetailFragment : Fragment() {
                     )
                 )
             }
-
-            previousFloatingButton.setOnClickListener {
-                if (imageDetailData.id < 1)
-                    return@setOnClickListener
-                setScreen(imageDetailData.id - 1)
-            }
-            nextFloatingButton.setOnClickListener {
-                if (imageDetailData.id > 28)
-                    return@setOnClickListener
-                setScreen(imageDetailData.id + 1)
-            }
         }
     }
 
+    override fun showCurrentPreview(imageItemData: ImageItemData) {
+        setImage(
+            imageItemData = imageItemData,
+            imageView = binding.currentImageView,
+        )
+    }
+
+    override fun showPreviousPreview(imageItemData: ImageItemData) {
+        setImage(
+            imageItemData = imageItemData,
+            imageView = binding.previousImageView,
+        )
+    }
+
+    override fun clearPreviousPreview() {
+        binding.previousImageView.setImageBitmap(null)
+    }
+
+    override fun showNextPreview(imageItemData: ImageItemData) {
+        setImage(
+            imageItemData = imageItemData,
+            imageView = binding.nextImageView,
+        )
+    }
+
+    override fun clearNextPreview() {
+        binding.nextImageView.setImageBitmap(null)
+    }
+
+    private fun setImage(
+        imageItemData: ImageItemData?,
+        imageView: ImageView,
+    ) {
+        Glide.with(this)
+            .load(imageItemData?.downloadUrl)
+            .error(R.drawable.close)
+            .into(imageView)
+    }
+
+    //endregion
     private fun String?.toHyperLinkSpannable(): SpannableString {
         return SpannableString(
             this.orEmpty()
@@ -152,11 +138,6 @@ class DetailFragment : Fragment() {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-    }
-
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
     }
 
     companion object {
