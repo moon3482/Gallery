@@ -18,7 +18,12 @@ interface GalleryApi {
     ): Call<List<ImageItemData>>
 
     @GET("/id/{id}/info")
-    fun requestImage(
+    fun requestImageDetail(
         @Path("id") id: Int,
     ): Call<ImageDetailData>
+
+    @GET("/id/{id}/info")
+    fun requestImageItem(
+        @Path("id") id: Int,
+    ): Call<ImageItemData>
 }
