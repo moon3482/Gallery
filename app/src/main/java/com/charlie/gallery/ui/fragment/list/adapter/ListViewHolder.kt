@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list
+package com.charlie.gallery.ui.fragment.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,26 +7,25 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.ItemGridImageBinding
-import com.charlie.gallery.model.ImageData
+import com.charlie.gallery.model.ImageItemData
 
 class ListViewHolder(
     private val binding: ItemGridImageBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
-        imageData: ImageData,
-        currentImageId: Int,
+        imageItemData: ImageItemData,
         onClickViewHolder: (Int) -> Unit,
     ) {
         with(binding) {
             Glide.with(this.root)
-                .load(imageData.downloadUrl)
+                .load(imageItemData.downloadUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.close)
                 .into(imageviewItem)
 
             imageviewItem.setOnClickListener {
-                onClickViewHolder(currentImageId)
+                onClickViewHolder(imageItemData.id)
             }
         }
 

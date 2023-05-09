@@ -5,71 +5,47 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
-import com.charlie.gallery.network.RetrofitClient
+import com.charlie.gallery.model.ImageItemData
 import com.charlie.gallery.ui.fragment.detail.DetailFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.charlie.gallery.ui.fragment.list.adapter.ListAdapter
+import com.charlie.gallery.ui.fragment.list.adapter.ListDecoration
 
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), ListContract.View {
 
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
         get() = checkNotNull(_binding) {
             "_binding iS Null"
         }
+    private lateinit var presenter: ListContract.Presenter
 
+    // region Lifecycle
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentListBinding.inflate(layoutInflater)
+        presenter = ListPresenter(this, ListModel())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        getImageList()
+        presenter.start()
     }
 
     private fun initView() {
-
         binding.gridListRecyclerview.apply {
             adapter = ListAdapter { currentId ->
-                parentFragmentManager.commit {
-                    add(
-                        R.id.fragment_container,
-                        DetailFragment.newInstance(
-                            currentId = currentId,
-                        )
-                    )
-                    addToBackStack(null)
-                }
+                presenter.onClickItem(currentId)
             }
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            addItemDecoration(ListDecoration())
-        }
-    }
-
-    private fun getImageList(
-        page: Int = 0,
-        limit: Int = 30,
-    ) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val imageList = RetrofitClient
-                .galleryApi
-                .requestImageList()
-            withContext(Dispatchers.Main) {
-                (binding.gridListRecyclerview.adapter as? ListAdapter)
-                    ?.initList(imageList)
-            }
+            addItemDecoration(ListDecoration(10, 8))
         }
     }
 
@@ -77,6 +53,32 @@ class ListFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
+    // endregion
+
+    //region ListContractor.View
+    override fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideLoading() {
+        binding.progressBar.visibility = View.GONE
+    }
+
+    override fun showList(imageItemDataList: List<ImageItemData>) {
+        (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(imageItemDataList)
+    }
+
+    override fun showDetailFragment(currentId: Int) {
+        parentFragmentManager.commit {
+            add<DetailFragment>(
+                R.id.fragment_container,
+                args = DetailFragment.arguments(currentId)
+            )
+            addToBackStack(null)
+        }
+    }
+    //endregion
 
     companion object {
 
