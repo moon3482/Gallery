@@ -14,4 +14,6 @@
     <string name="previous_floating_button">이전버튼</string>
     <string name="next_floating_button">다음 버튼</string>
     <string name="detail_image">디테일 이미지</string>
+    <string name="failed_loading">로딩에 실패하였습니다.</string>
+    <string name="reload">다시 시도</string>
 </resources>
