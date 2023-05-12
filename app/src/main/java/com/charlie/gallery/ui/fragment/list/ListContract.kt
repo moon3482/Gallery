@@ -9,11 +9,15 @@ interface ListContract {
         fun hideLoading()
         fun showList(imageItemDataList: List<ImageItemData>)
         fun showDetailFragment(currentId: Int)
+        fun showFailedToast()
+        fun showLoadingFailed()
+        fun hiedLoadingFailed()
     }
 
     interface Presenter {
         fun start()
         fun onClickItem(currentId: Int)
+        fun onClickReload()
     }
 
     interface Model {
