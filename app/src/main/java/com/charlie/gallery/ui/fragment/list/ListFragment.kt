@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -47,6 +48,9 @@ class ListFragment : Fragment(), ListContract.View {
             }
             addItemDecoration(ListDecoration(10, 8))
         }
+        binding.reloadButton.setOnClickListener {
+            presenter.onClickReload()
+        }
     }
 
     override fun onDestroyView() {
@@ -78,6 +82,19 @@ class ListFragment : Fragment(), ListContract.View {
             addToBackStack(null)
         }
     }
+
+    override fun showLoadingFailed() {
+        binding.failedLoadingLayout.visibility = View.VISIBLE
+    }
+
+    override fun hiedLoadingFailed() {
+        binding.failedLoadingLayout.visibility = View.GONE
+    }
+
+    override fun showFailedToast() {
+        Toast.makeText(requireContext(), "이미지를 불러오는데\n실패 하였습니다.", Toast.LENGTH_SHORT).show()
+    }
+
     //endregion
 
     companion object {
