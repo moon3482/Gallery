@@ -1,6 +1,5 @@
 package com.charlie.gallery.ui.fragment.detail
 
-import com.charlie.gallery.model.ImageItemData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -9,69 +8,97 @@ import kotlinx.coroutines.withContext
 class DetailPresenter(
     private val view: DetailContract.View,
     private val model: DetailContract.Model,
+    private var currentId: Int = -1,
 ) : DetailContract.Presenter {
 
-    override fun start(id: Int) {
+    override fun start() {
+        if (currentId < 0) {
+            view.exit()
+            return
+        }
         view.showLoading()
-        model.setCurrentId(id = id)
-        setScreen(currentId = model.getCurrentId())
+        setScreen()
+    }
+
+    override fun onClickUrl(url: String) {
+        view.moveWebView(url = url)
     }
 
     override fun onClickPrevious() {
-        if (model.getCurrentId() <= 0)
+        if (currentId <= 0) {
             return
+        }
         view.showLoading()
-        model.setCurrentId(id = model.getCurrentId() - 1)
-        setScreen(currentId = model.getCurrentId())
+        currentId--
+        setScreen()
     }
 
     override fun onClickNext() {
-        if (model.getCurrentId() >= 29)
+        if (currentId >= 29)
             return
         view.showLoading()
-        model.setCurrentId(id = model.getCurrentId() + 1)
-        setScreen(currentId = model.getCurrentId())
+        currentId++
+        setScreen()
     }
 
-    private fun setScreen(currentId: Int) {
+    private fun setScreen() {
+        if (currentId <= 0) {
+            view.hidePreviousButton()
+        } else {
+            view.showPreviousButton()
+        }
         CoroutineScope(Dispatchers.IO).launch {
 
-            val imageDetailData = runCatching {
-                model.getImageDetailData(id = currentId)
-            }
-            imageDetailData.onSuccess {
-                withContext(Dispatchers.Main) {
-                    view.hideLoading()
-                    view.showDetail(imageDetailData = it)
+            runCatching { model.getImageDetailData(id = currentId) }
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
+                        view.hideLoading()
+                        view.showSuccessDetail(imageDetailData = it)
+                        view.setOnClickUrl(url = it.url)
+                    }
                 }
-            }
+                .onFailure {
+                    withContext(Dispatchers.Main) {
+                        view.hideLoading()
+                        view.showFailedDetail()
+                    }
+                }
 
-            getImageItem(id = currentId) {
-                view.showCurrentPreview(imageItemData = it)
-            }
+            runCatching { model.getImageItemData(id = currentId) }
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
+                        view.showCurrentPreview(imageItemData = it)
+                    }
+                }
+                .onFailure {
+                    withContext(Dispatchers.Main) {
+                        view.clearCurrentPreview()
+                    }
+                }
 
-            getImageItem(id = currentId - 1) {
-                view.clearPreviousPreview()
-                view.showPreviousPreview(imageItemData = it)
-            }
+            runCatching { model.getImageItemData(id = currentId - 1) }
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
+                        view.showPreviousPreview(imageItemData = it)
+                    }
+                }
+                .onFailure {
+                    withContext(Dispatchers.Main) {
+                        view.clearPreviousPreview()
+                    }
+                }
 
-            getImageItem(id = currentId + 1) {
-                view.clearNextPreview()
-                view.showNextPreview(imageItemData = it)
-            }
-        }
-    }
-
-    private suspend fun getImageItem(
-        id: Int,
-        onSuccess: (ImageItemData) -> Unit,
-    ) {
-        runCatching {
-            model.getImageItemData(id = id)
-        }.onSuccess {
-            withContext(Dispatchers.Main) {
-                onSuccess(it)
-            }
+            runCatching { model.getImageItemData(id = currentId + 1) }
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
+                        view.showNextPreview(imageItemData = it)
+                    }
+                }
+                .onFailure {
+                    withContext(Dispatchers.Main) {
+                        view.clearNextPreview()
+                    }
+                }
         }
     }
 }
