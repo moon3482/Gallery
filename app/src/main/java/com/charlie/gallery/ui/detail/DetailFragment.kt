@@ -33,7 +33,11 @@ class DetailFragment : Fragment(), DetailContract.View {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailBinding.inflate(layoutInflater)
-        presenter = DetailPresenter(view = this, model = DetailModel(), getCurrentId(arguments))
+        presenter = DetailPresenter(
+            view = this,
+            model = DetailModel(),
+            currentId = getCurrentId(arguments),
+        )
         return binding.root
     }
 

@@ -110,7 +110,7 @@ class ListFragment : Fragment(), ListContract.View {
     }
 
     override fun showFailedToast() {
-        Toast.makeText(requireContext(), "이미지를 불러오는데\n실패 하였습니다.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), resources.getString(R.string.failed_load_image_list), Toast.LENGTH_SHORT).show()
     }
 
     //endregion
@@ -118,7 +118,6 @@ class ListFragment : Fragment(), ListContract.View {
     companion object {
 
         fun newInstance(): ListFragment {
-
             val fragment = ListFragment()
             fragment.arguments = arguments()
             return fragment

@@ -28,7 +28,6 @@ class ListViewHolder(
                 onClickViewHolder(imageItemData.id)
             }
         }
-
     }
 
     companion object {
