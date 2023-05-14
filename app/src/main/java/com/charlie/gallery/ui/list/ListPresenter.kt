@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list
+package com.charlie.gallery.ui.list
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

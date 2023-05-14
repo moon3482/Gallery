@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.detail
+package com.charlie.gallery.ui.detail
 
 import android.app.AlertDialog
 import android.content.Intent

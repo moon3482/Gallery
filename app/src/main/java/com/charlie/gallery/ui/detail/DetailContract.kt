@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.detail
+package com.charlie.gallery.ui.detail
 
 import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.model.ImageItemData

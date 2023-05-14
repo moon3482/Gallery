@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list
+package com.charlie.gallery.ui.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,9 +11,9 @@ import androidx.fragment.app.commit
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.model.ImageItemData
-import com.charlie.gallery.ui.fragment.detail.DetailFragment
-import com.charlie.gallery.ui.fragment.list.adapter.ListAdapter
-import com.charlie.gallery.ui.fragment.list.adapter.ListDecoration
+import com.charlie.gallery.ui.detail.DetailFragment
+import com.charlie.gallery.ui.list.adapter.ListAdapter
+import com.charlie.gallery.ui.list.adapter.ListDecoration
 
 class ListFragment : Fragment(), ListContract.View {
 
