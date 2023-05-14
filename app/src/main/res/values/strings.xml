@@ -16,4 +16,7 @@
     <string name="detail_image">디테일 이미지</string>
     <string name="failed_loading">로딩에 실패하였습니다.</string>
     <string name="reload">다시 시도</string>
+    <string name="notification">알림</string>
+    <string name="can_not_show_you_image">이미지를 표시 할 수 없습니다.</string>
+    <string name="return_to_page">돌아가기</string>
 </resources>
