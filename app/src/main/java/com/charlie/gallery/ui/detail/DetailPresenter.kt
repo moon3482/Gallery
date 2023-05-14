@@ -25,17 +25,12 @@ class DetailPresenter(
     }
 
     override fun onClickPrevious() {
-        if (currentId <= 0) {
-            return
-        }
         view.showLoading()
         currentId--
         setScreen()
     }
 
     override fun onClickNext() {
-        if (currentId >= 29)
-            return
         view.showLoading()
         currentId++
         setScreen()

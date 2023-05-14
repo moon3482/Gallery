@@ -27,4 +27,10 @@ class ListAdapter(
         this.imageItemDataList.addAll(imageItemDataList)
         notifyItemRangeChanged(0, this.imageItemDataList.size)
     }
+
+    fun addList(imageItemDataList: List<ImageItemData>) {
+        val temp = this.imageItemDataList.size
+        this.imageItemDataList.addAll(imageItemDataList)
+        notifyItemRangeInserted(temp, imageItemDataList.size)
+    }
 }

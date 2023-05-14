@@ -9,10 +9,11 @@ class ListPresenter(
     private val view: ListContract.View,
     private val model: ListContract.Model,
 ) : ListContract.Presenter {
+    private var currentPage = 1
     override fun start() {
         view.showLoading()
         CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageList() }
+            runCatching { model.getImageList(page = currentPage) }
                 .onSuccess {
                     withContext(Dispatchers.Main) {
                         view.hideLoading()
@@ -35,7 +36,7 @@ class ListPresenter(
     override fun onClickReload() {
         view.showLoading()
         CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageList() }
+            runCatching { model.getImageList(page = currentPage) }
                 .onSuccess {
                     withContext(Dispatchers.Main) {
                         view.hideLoading()
@@ -47,6 +48,26 @@ class ListPresenter(
                     withContext(Dispatchers.Main) {
                         view.hideLoading()
                         view.showLoadingFailed()
+                    }
+                }
+        }
+    }
+
+    override fun onNextPage() {
+        view.showLoading()
+        currentPage++
+        CoroutineScope(Dispatchers.IO).launch {
+            runCatching { model.getImageList(page = currentPage) }
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
+                        view.hideLoading()
+                        view.showNextPage(imageItemDataList = it)
+                    }
+                }
+                .onFailure {
+                    withContext(Dispatchers.Main) {
+                        view.hideLoading()
+                        view.showFailedToast()
                     }
                 }
         }

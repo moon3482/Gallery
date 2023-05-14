@@ -8,6 +8,7 @@ interface ListContract {
         fun showLoading()
         fun hideLoading()
         fun showList(imageItemDataList: List<ImageItemData>)
+        fun showNextPage(imageItemDataList: List<ImageItemData>)
         fun showDetailFragment(currentId: Int)
         fun showFailedToast()
         fun showLoadingFailed()
@@ -18,9 +19,10 @@ interface ListContract {
         fun start()
         fun onClickItem(currentId: Int)
         fun onClickReload()
+        fun onNextPage()
     }
 
     interface Model {
-        suspend fun getImageList(): List<ImageItemData>
+        suspend fun getImageList(page: Int): List<ImageItemData>
     }
 }

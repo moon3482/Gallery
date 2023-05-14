@@ -5,10 +5,10 @@ import com.charlie.gallery.network.RetrofitClient
 import retrofit2.await
 
 class ListModel : ListContract.Model {
-    override suspend fun getImageList(): List<ImageItemData> {
+    override suspend fun getImageList(page: Int): List<ImageItemData> {
         return RetrofitClient
             .galleryApi
-            .requestImageList()
+            .requestImageList(page = page)
             .await()
     }
 }

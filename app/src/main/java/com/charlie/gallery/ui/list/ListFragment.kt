@@ -8,6 +8,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.model.ImageItemData
@@ -47,6 +50,17 @@ class ListFragment : Fragment(), ListContract.View {
                 presenter.onClickItem(currentId)
             }
             addItemDecoration(ListDecoration(10, 8))
+
+            addOnScrollListener(object : OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
+                    layoutManager?.let {
+                        if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
+                            presenter.onNextPage()
+                        }
+                    }
+                }
+            })
         }
         binding.reloadButton.setOnClickListener {
             presenter.onClickReload()
@@ -71,6 +85,10 @@ class ListFragment : Fragment(), ListContract.View {
 
     override fun showList(imageItemDataList: List<ImageItemData>) {
         (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(imageItemDataList)
+    }
+
+    override fun showNextPage(imageItemDataList: List<ImageItemData>) {
+        (binding.gridListRecyclerview.adapter as? ListAdapter)?.addList(imageItemDataList)
     }
 
     override fun showDetailFragment(currentId: Int) {
