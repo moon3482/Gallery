@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list.adapter
+package com.charlie.gallery.ui.list.adapter
 
 import android.graphics.Rect
 import android.view.View

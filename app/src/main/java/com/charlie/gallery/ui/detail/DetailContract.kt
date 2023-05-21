@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.detail
+package com.charlie.gallery.ui.detail
 
 import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.model.ImageItemData
@@ -8,16 +8,24 @@ interface DetailContract {
     interface View {
         fun showLoading()
         fun hideLoading()
-        fun showDetail(imageDetailData: ImageDetailData)
+        fun showSuccessDetail(imageDetailData: ImageDetailData)
+        fun showFailedDetail()
         fun showCurrentPreview(imageItemData: ImageItemData)
+        fun clearCurrentPreview()
         fun showPreviousPreview(imageItemData: ImageItemData)
         fun clearPreviousPreview()
         fun showNextPreview(imageItemData: ImageItemData)
         fun clearNextPreview()
+        fun showPreviousButton()
+        fun hidePreviousButton()
+        fun setOnClickUrl(url: String)
+        fun moveWebView(url: String)
+        fun exit()
     }
 
     interface Presenter {
-        fun start(id: Int)
+        fun start()
+        fun onClickUrl(url: String)
         fun onClickPrevious()
         fun onClickNext()
     }
@@ -25,7 +33,5 @@ interface DetailContract {
     interface Model {
         suspend fun getImageDetailData(id: Int): ImageDetailData
         suspend fun getImageItemData(id: Int): ImageItemData
-        fun setCurrentId(id: Int)
-        fun getCurrentId(): Int
     }
 }

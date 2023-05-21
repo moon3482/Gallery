@@ -9,4 +9,11 @@ data class ImageItemData(
     val id: Int,
     @Json(name = "download_url")
     val downloadUrl: String,
-)
+) {
+    companion object {
+        operator fun invoke(imageDetailData: ImageDetailData) = ImageItemData(
+            id = imageDetailData.id,
+            downloadUrl = imageDetailData.downloadUrl,
+        )
+    }
+}

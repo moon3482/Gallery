@@ -1,5 +1,8 @@
-package com.charlie.gallery.ui.fragment.detail
+package com.charlie.gallery.ui.detail
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -23,12 +26,18 @@ class DetailFragment : Fragment(), DetailContract.View {
         }
 
     private lateinit var presenter: DetailPresenter
+
+    //region Lifecycle
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailBinding.inflate(layoutInflater)
-        presenter = DetailPresenter(view = this, model = DetailModel())
+        presenter = DetailPresenter(
+            view = this,
+            model = DetailModel(),
+            currentId = getCurrentId(arguments),
+        )
         return binding.root
     }
 
@@ -38,15 +47,12 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     private fun initView() {
-        arguments?.let { bundle ->
-            val currentId = getCurrentId(bundle)
-            presenter.start(id = currentId)
-            binding.previousFloatingButton.setOnClickListener {
-                presenter.onClickPrevious()
-            }
-            binding.nextFloatingButton.setOnClickListener {
-                presenter.onClickNext()
-            }
+        presenter.start()
+        binding.previousFloatingButton.setOnClickListener {
+            presenter.onClickPrevious()
+        }
+        binding.nextFloatingButton.setOnClickListener {
+            presenter.onClickNext()
         }
     }
 
@@ -54,6 +60,7 @@ class DetailFragment : Fragment(), DetailContract.View {
         _binding = null
         super.onDestroyView()
     }
+    //endregion
 
     //region DetailContract.View
     override fun showLoading() {
@@ -64,7 +71,7 @@ class DetailFragment : Fragment(), DetailContract.View {
         binding.detailProgressBar.visibility = View.GONE
     }
 
-    override fun showDetail(imageDetailData: ImageDetailData) {
+    override fun showSuccessDetail(imageDetailData: ImageDetailData) {
         with(binding) {
             Glide.with(this@DetailFragment)
                 .load(imageDetailData.downloadUrl)
@@ -76,14 +83,19 @@ class DetailFragment : Fragment(), DetailContract.View {
             widthSizeTextview.text = imageDetailData.width.toString()
             heightSizeTextview.text = imageDetailData.height.toString()
             urlLinkTextview.text = imageDetailData.url.toHyperLinkSpannable()
-            urlLinkTextview.setOnClickListener {
-                startActivity(
-                    android.content.Intent(
-                        android.content.Intent.ACTION_VIEW,
-                        android.net.Uri.parse(imageDetailData.url),
-                    )
-                )
-            }
+        }
+    }
+
+    override fun showFailedDetail() {
+        with(binding) {
+            Glide.with(this@DetailFragment)
+                .load(R.drawable.close)
+                .placeholder(R.drawable.loading)
+                .into(detailImageView)
+            authorNameTextview.text = ""
+            widthSizeTextview.text = ""
+            heightSizeTextview.text = ""
+            urlLinkTextview.text = ""
         }
     }
 
@@ -92,6 +104,10 @@ class DetailFragment : Fragment(), DetailContract.View {
             imageItemData = imageItemData,
             imageView = binding.currentImageView,
         )
+    }
+
+    override fun clearCurrentPreview() {
+        binding.currentImageView.setImageBitmap(null)
     }
 
     override fun showPreviousPreview(imageItemData: ImageItemData) {
@@ -116,6 +132,40 @@ class DetailFragment : Fragment(), DetailContract.View {
         binding.nextImageView.setImageBitmap(null)
     }
 
+    override fun showPreviousButton() {
+        binding.previousFloatingButton.visibility = View.VISIBLE
+    }
+
+    override fun hidePreviousButton() {
+        binding.previousFloatingButton.visibility = View.INVISIBLE
+    }
+
+    override fun setOnClickUrl(url: String) {
+        binding.urlLinkTextview.setOnClickListener {
+            presenter.onClickUrl(url = url)
+        }
+    }
+
+    override fun moveWebView(url: String) {
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(url),
+            )
+        )
+    }
+
+    override fun exit() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(resources.getString(R.string.notification))
+            .setMessage(resources.getString(R.string.can_not_show_you_image))
+            .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
     private fun setImage(
         imageItemData: ImageItemData?,
         imageView: ImageView,
@@ -127,6 +177,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     //endregion
+
     private fun String?.toHyperLinkSpannable(): SpannableString {
         return SpannableString(
             this.orEmpty()
@@ -161,9 +212,9 @@ class DetailFragment : Fragment(), DetailContract.View {
         }
 
         fun getCurrentId(
-            bundle: Bundle,
+            bundle: Bundle?,
         ): Int {
-            return bundle.getInt(CURRENT_IMAGE_ID)
+            return bundle?.getInt(CURRENT_IMAGE_ID) ?: -1
         }
 
     }

@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.detail
+package com.charlie.gallery.ui.detail
 
 import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.model.ImageItemData
@@ -6,8 +6,6 @@ import com.charlie.gallery.network.RetrofitClient
 import retrofit2.await
 
 class DetailModel : DetailContract.Model {
-
-    private var currentId: Int = 0
 
     override suspend fun getImageDetailData(id: Int): ImageDetailData {
         return RetrofitClient
@@ -17,15 +15,10 @@ class DetailModel : DetailContract.Model {
     }
 
     override suspend fun getImageItemData(id: Int): ImageItemData {
-        return RetrofitClient
+        val imageDetailData = RetrofitClient
             .galleryApi
-            .requestImageItem(id = id)
+            .requestImageDetail(id = id)
             .await()
+        return ImageItemData(imageDetailData = imageDetailData)
     }
-
-    override fun setCurrentId(id: Int) {
-        currentId = id
-    }
-
-    override fun getCurrentId() = currentId
 }

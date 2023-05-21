@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list.adapter
+package com.charlie.gallery.ui.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -28,7 +28,6 @@ class ListViewHolder(
                 onClickViewHolder(imageItemData.id)
             }
         }
-
     }
 
     companion object {

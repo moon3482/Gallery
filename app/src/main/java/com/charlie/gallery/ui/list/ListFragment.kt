@@ -1,18 +1,22 @@
-package com.charlie.gallery.ui.fragment.list
+package com.charlie.gallery.ui.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.model.ImageItemData
-import com.charlie.gallery.ui.fragment.detail.DetailFragment
-import com.charlie.gallery.ui.fragment.list.adapter.ListAdapter
-import com.charlie.gallery.ui.fragment.list.adapter.ListDecoration
+import com.charlie.gallery.ui.detail.DetailFragment
+import com.charlie.gallery.ui.list.adapter.ListAdapter
+import com.charlie.gallery.ui.list.adapter.ListDecoration
 
 class ListFragment : Fragment(), ListContract.View {
 
@@ -46,6 +50,20 @@ class ListFragment : Fragment(), ListContract.View {
                 presenter.onClickItem(currentId)
             }
             addItemDecoration(ListDecoration(10, 8))
+
+            addOnScrollListener(object : OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
+                    layoutManager?.let {
+                        if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
+                            presenter.onNextPage()
+                        }
+                    }
+                }
+            })
+        }
+        binding.reloadButton.setOnClickListener {
+            presenter.onClickReload()
         }
     }
 
@@ -69,6 +87,10 @@ class ListFragment : Fragment(), ListContract.View {
         (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(imageItemDataList)
     }
 
+    override fun showNextPage(imageItemDataList: List<ImageItemData>) {
+        (binding.gridListRecyclerview.adapter as? ListAdapter)?.addList(imageItemDataList)
+    }
+
     override fun showDetailFragment(currentId: Int) {
         parentFragmentManager.commit {
             add<DetailFragment>(
@@ -78,12 +100,24 @@ class ListFragment : Fragment(), ListContract.View {
             addToBackStack(null)
         }
     }
+
+    override fun showLoadingFailed() {
+        binding.failedLoadingLayout.visibility = View.VISIBLE
+    }
+
+    override fun hiedLoadingFailed() {
+        binding.failedLoadingLayout.visibility = View.GONE
+    }
+
+    override fun showFailedToast() {
+        Toast.makeText(requireContext(), resources.getString(R.string.failed_load_image_list), Toast.LENGTH_SHORT).show()
+    }
+
     //endregion
 
     companion object {
 
         fun newInstance(): ListFragment {
-
             val fragment = ListFragment()
             fragment.arguments = arguments()
             return fragment

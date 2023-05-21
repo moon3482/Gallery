@@ -1,4 +1,4 @@
-package com.charlie.gallery.ui.fragment.list.adapter
+package com.charlie.gallery.ui.list.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -26,5 +26,11 @@ class ListAdapter(
         this.imageItemDataList.clear()
         this.imageItemDataList.addAll(imageItemDataList)
         notifyItemRangeChanged(0, this.imageItemDataList.size)
+    }
+
+    fun addList(imageItemDataList: List<ImageItemData>) {
+        val temp = this.imageItemDataList.size
+        this.imageItemDataList.addAll(imageItemDataList)
+        notifyItemRangeInserted(temp, imageItemDataList.size)
     }
 }
