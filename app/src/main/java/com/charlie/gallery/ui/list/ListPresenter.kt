@@ -1,5 +1,6 @@
 package com.charlie.gallery.ui.list
 
+import com.charlie.gallery.model.ImageItemData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,23 +11,17 @@ class ListPresenter(
     private val model: ListContract.Model,
 ) : ListContract.Presenter {
     private var currentPage = 1
+
     override fun start() {
-        view.showLoading()
-        CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageList(page = currentPage) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        view.hideLoading()
-                        view.showList(imageItemDataList = it)
-                    }
-                }
-                .onFailure {
-                    withContext(Dispatchers.Main) {
-                        view.hideLoading()
-                        view.showLoadingFailed()
-                    }
-                }
-        }
+        showLoading()
+        loadingImageList(
+            onSuccess = {
+                view.showList(it)
+            },
+            onFailure = {
+                view.showLoadingFailed()
+            },
+        )
     }
 
     override fun onClickItem(currentId: Int) {
@@ -34,42 +29,53 @@ class ListPresenter(
     }
 
     override fun onClickReload() {
-        view.showLoading()
+        showLoading()
+        loadingImageList(
+            onSuccess = {
+                view.showList(it)
+            },
+            onFailure = {
+                view.showLoadingFailed()
+            },
+        )
+    }
+
+    override fun onNextPage() {
+        showLoading()
+        currentPage++
+        loadingImageList(
+            onSuccess = {
+                view.showNextPage(it)
+            },
+            onFailure = {
+                view.showFailedToast()
+            },
+        )
+    }
+
+    private fun loadingImageList(
+        onFailure: () -> Unit = {},
+        onSuccess: (List<ImageItemData>) -> Unit,
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching { model.getImageList(page = currentPage) }
                 .onSuccess {
                     withContext(Dispatchers.Main) {
                         view.hideLoading()
-                        view.hiedLoadingFailed()
-                        view.showList(imageItemDataList = it)
+                        onSuccess(it)
                     }
                 }
                 .onFailure {
                     withContext(Dispatchers.Main) {
                         view.hideLoading()
-                        view.showLoadingFailed()
+                        onFailure()
                     }
                 }
         }
     }
 
-    override fun onNextPage() {
+    private fun showLoading() {
         view.showLoading()
-        currentPage++
-        CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageList(page = currentPage) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        view.hideLoading()
-                        view.showNextPage(imageItemDataList = it)
-                    }
-                }
-                .onFailure {
-                    withContext(Dispatchers.Main) {
-                        view.hideLoading()
-                        view.showFailedToast()
-                    }
-                }
-        }
+        view.hiedLoadingFailed()
     }
 }

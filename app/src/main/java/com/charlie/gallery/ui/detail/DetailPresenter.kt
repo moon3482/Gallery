@@ -1,5 +1,6 @@
 package com.charlie.gallery.ui.detail
 
+import com.charlie.gallery.model.ImageItemData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,9 +39,9 @@ class DetailPresenter(
 
     private fun setScreen() {
         if (currentId <= 0) {
-            view.hidePreviousButton()
+            view.disablePreviousButton()
         } else {
-            view.showPreviousButton()
+            view.enablePreviousButton()
         }
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -58,42 +59,54 @@ class DetailPresenter(
                         view.showFailedDetail()
                     }
                 }
-
-            runCatching { model.getImageItemData(id = currentId) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        view.showCurrentPreview(imageItemData = it)
-                    }
-                }
-                .onFailure {
-                    withContext(Dispatchers.Main) {
-                        view.clearCurrentPreview()
-                    }
-                }
-
-            runCatching { model.getImageItemData(id = currentId - 1) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        view.showPreviousPreview(imageItemData = it)
-                    }
-                }
-                .onFailure {
-                    withContext(Dispatchers.Main) {
-                        view.clearPreviousPreview()
-                    }
-                }
-
-            runCatching { model.getImageItemData(id = currentId + 1) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        view.showNextPreview(imageItemData = it)
-                    }
-                }
-                .onFailure {
-                    withContext(Dispatchers.Main) {
-                        view.clearNextPreview()
-                    }
-                }
+            loadPreview(
+                currentId,
+                onSuccess = {
+                    view.showCurrentPreview(imageItemData = it)
+                },
+                onFailure = {
+                    view.clearCurrentPreview()
+                },
+            )
+            loadPreview(
+                currentId + 1,
+                onSuccess = {
+                    view.showNextPreview(imageItemData = it)
+                },
+                onFailure = {
+                    view.clearNextPreview()
+                },
+            )
+            loadPreview(
+                currentId - 1,
+                onSuccess = {
+                    view.enablePreviousButton()
+                    view.showPreviousPreview(imageItemData = it)
+                },
+                onFailure = {
+                    view.disablePreviousButton()
+                    view.clearPreviousPreview()
+                },
+            )
         }
+    }
+
+    private suspend fun loadPreview(
+        id: Int,
+        onSuccess: (ImageItemData) -> Unit,
+        onFailure: () -> Unit,
+    ) {
+        runCatching { model.getImageItemData(id = id) }
+            .onSuccess {
+                withContext(Dispatchers.Main) {
+                    onSuccess(it)
+
+                }
+            }
+            .onFailure {
+                withContext(Dispatchers.Main) {
+                    onFailure()
+                }
+            }
     }
 }

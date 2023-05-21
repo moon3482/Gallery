@@ -4,9 +4,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +14,7 @@ import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
 import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.model.ImageItemData
+import com.charlie.gallery.util.toHyperLinkSpannable
 
 class DetailFragment : Fragment(), DetailContract.View {
     private var _binding: FragmentDetailBinding? = null
@@ -71,18 +69,18 @@ class DetailFragment : Fragment(), DetailContract.View {
         binding.detailProgressBar.visibility = View.GONE
     }
 
-    override fun showSuccessDetail(imageDetailData: ImageDetailData) {
+    override fun showSuccessDetail(imageDetailData: ImageDetailData?) {
         with(binding) {
             Glide.with(this@DetailFragment)
-                .load(imageDetailData.downloadUrl)
+                .load(imageDetailData?.downloadUrl)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.close)
                 .into(detailImageView)
 
-            authorNameTextview.text = imageDetailData.author
-            widthSizeTextview.text = imageDetailData.width.toString()
-            heightSizeTextview.text = imageDetailData.height.toString()
-            urlLinkTextview.text = imageDetailData.url.toHyperLinkSpannable()
+            authorNameTextview.text = imageDetailData?.author
+            widthSizeTextview.text = imageDetailData?.width?.toString().orEmpty()
+            heightSizeTextview.text = imageDetailData?.height?.toString().orEmpty()
+            urlLinkTextview.text = imageDetailData?.url.toHyperLinkSpannable()
         }
     }
 
@@ -132,12 +130,12 @@ class DetailFragment : Fragment(), DetailContract.View {
         binding.nextImageView.setImageBitmap(null)
     }
 
-    override fun showPreviousButton() {
-        binding.previousFloatingButton.visibility = View.VISIBLE
+    override fun enablePreviousButton() {
+        binding.previousFloatingButton.isEnabled = true
     }
 
-    override fun hidePreviousButton() {
-        binding.previousFloatingButton.visibility = View.INVISIBLE
+    override fun disablePreviousButton() {
+        binding.previousFloatingButton.isEnabled = false
     }
 
     override fun setOnClickUrl(url: String) {
@@ -178,18 +176,6 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     //endregion
 
-    private fun String?.toHyperLinkSpannable(): SpannableString {
-        return SpannableString(
-            this.orEmpty()
-        ).apply {
-            setSpan(
-                UnderlineSpan(),
-                0,
-                this.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-    }
 
     companion object {
 
