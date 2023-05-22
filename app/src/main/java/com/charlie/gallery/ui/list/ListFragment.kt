@@ -102,11 +102,11 @@ class ListFragment : Fragment(), ListContract.View {
     }
 
     override fun showLoadingFailed() {
-        binding.failedLoadingLayout.visibility = View.VISIBLE
+        binding.failedLoadingGroup.visibility = View.VISIBLE
     }
 
     override fun hiedLoadingFailed() {
-        binding.failedLoadingLayout.visibility = View.GONE
+        binding.failedLoadingGroup.visibility = View.GONE
     }
 
     override fun showFailedToast() {
