@@ -16,10 +16,7 @@ class ListAdapter(
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val data = imageItemDataList[position]
-        holder.bind(
-            data,
-            onClickViewHolder,
-        )
+        holder.bind(data, onClickViewHolder)
     }
 
     fun initList(imageItemDataList: List<ImageItemData>) {
