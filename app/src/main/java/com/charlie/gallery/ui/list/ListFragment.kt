@@ -9,14 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
 import com.charlie.gallery.model.ImageItemData
 import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
+import com.charlie.gallery.util.doOnScrolled
 
 class ListFragment : Fragment(), ListContract.View {
 
@@ -50,17 +49,14 @@ class ListFragment : Fragment(), ListContract.View {
                 presenter.onClickItem(currentId)
             }
             addItemDecoration(ListDecoration(10, 8))
-
-            addOnScrollListener(object : OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
-                    layoutManager?.let {
-                        if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
-                            presenter.onNextPage()
-                        }
+            doOnScrolled { _, _, _ ->
+                val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
+                layoutManager?.let {
+                    if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
+                        presenter.onNextPage()
                     }
                 }
-            })
+            }
         }
         binding.reloadButton.setOnClickListener {
             presenter.onClickReload()
