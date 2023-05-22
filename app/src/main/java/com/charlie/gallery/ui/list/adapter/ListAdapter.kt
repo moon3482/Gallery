@@ -6,9 +6,9 @@ import com.charlie.gallery.model.ImageItemData
 
 class ListAdapter(
     private val imageItemDataList: MutableList<ImageItemData> = mutableListOf(),
-    private val onClickViewHolder: (Int) -> Unit,
 ) : RecyclerView.Adapter<ListViewHolder>() {
 
+    private var onClickItem: ((Int) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
         ListViewHolder(parent)
 
@@ -16,7 +16,7 @@ class ListAdapter(
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val data = imageItemDataList[position]
-        holder.bind(data, onClickViewHolder)
+        holder.bind(data, onClickItem)
     }
 
     fun initList(imageItemDataList: List<ImageItemData>) {
@@ -29,5 +29,9 @@ class ListAdapter(
         val temp = this.imageItemDataList.size
         this.imageItemDataList.addAll(imageItemDataList)
         notifyItemRangeInserted(temp, imageItemDataList.size)
+    }
+
+    fun setOnClickItem(onClick: (Int) -> Unit) {
+        this.onClickItem = onClick
     }
 }

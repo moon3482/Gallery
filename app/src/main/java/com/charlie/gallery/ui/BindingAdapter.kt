@@ -25,5 +25,5 @@ fun isVisible(view: View, isVisible: Boolean) {
 
 @BindingAdapter("bind:itemClickListener")
 fun RecyclerView.setItemClickListener(uiEvent: UIEvent) {
-    (adapter as? ListAdapter)?.setOnClickViewHolder(uiEvent::onClickItem)
+    (adapter as? ListAdapter)?.setOnClickItem(uiEvent::onClickItem)
 }
