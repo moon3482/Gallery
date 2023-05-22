@@ -8,17 +8,12 @@ interface DetailContract {
     interface View {
         fun showLoading()
         fun hideLoading()
-        fun showSuccessDetail(imageDetailData: ImageDetailData?)
-        fun showFailedDetail()
-        fun showCurrentPreview(imageItemData: ImageItemData)
-        fun clearCurrentPreview()
-        fun showPreviousPreview(imageItemData: ImageItemData)
-        fun clearPreviousPreview()
-        fun showNextPreview(imageItemData: ImageItemData)
-        fun clearNextPreview()
+        fun showDetail(imageDetailData: ImageDetailData?)
+        fun showCurrentPreview(imageItemData: ImageItemData?)
+        fun showPreviousPreview(imageItemData: ImageItemData?)
+        fun showNextPreview(imageItemData: ImageItemData?)
         fun enablePreviousButton()
         fun disablePreviousButton()
-        fun setOnClickUrl(url: String)
         fun moveWebView(url: String)
         fun exit()
     }
@@ -32,6 +27,5 @@ interface DetailContract {
 
     interface Model {
         suspend fun getImageDetailData(id: Int): ImageDetailData
-        suspend fun getImageItemData(id: Int): ImageItemData
     }
 }

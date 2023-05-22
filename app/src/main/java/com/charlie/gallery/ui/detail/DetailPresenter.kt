@@ -1,5 +1,6 @@
 package com.charlie.gallery.ui.detail
 
+import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.model.ImageItemData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,47 +46,37 @@ class DetailPresenter(
         }
         CoroutineScope(Dispatchers.IO).launch {
 
-            runCatching { model.getImageDetailData(id = currentId) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        view.hideLoading()
-                        view.showSuccessDetail(imageDetailData = it)
-                        view.setOnClickUrl(url = it.url)
-                    }
-                }
-                .onFailure {
-                    withContext(Dispatchers.Main) {
-                        view.hideLoading()
-                        view.showFailedDetail()
-                    }
-                }
             loadPreview(
                 currentId,
                 onSuccess = {
-                    view.showCurrentPreview(imageItemData = it)
+                    view.hideLoading()
+                    view.showDetail(imageDetailData = it)
+                    view.showCurrentPreview(imageItemData = ImageItemData(it))
                 },
                 onFailure = {
-                    view.clearCurrentPreview()
+                    view.hideLoading()
+                    view.showDetail(imageDetailData = null)
+                    view.showCurrentPreview(imageItemData = null)
                 },
             )
             loadPreview(
                 currentId + 1,
                 onSuccess = {
-                    view.showNextPreview(imageItemData = it)
+                    view.showNextPreview(imageItemData = ImageItemData(it))
                 },
                 onFailure = {
-                    view.clearNextPreview()
+                    view.showPreviousPreview(imageItemData = null)
                 },
             )
             loadPreview(
                 currentId - 1,
                 onSuccess = {
                     view.enablePreviousButton()
-                    view.showPreviousPreview(imageItemData = it)
+                    view.showPreviousPreview(imageItemData = ImageItemData(it))
                 },
                 onFailure = {
                     view.disablePreviousButton()
-                    view.clearPreviousPreview()
+                    view.showPreviousPreview(imageItemData = null)
                 },
             )
         }
@@ -93,20 +84,13 @@ class DetailPresenter(
 
     private suspend fun loadPreview(
         id: Int,
-        onSuccess: (ImageItemData) -> Unit,
-        onFailure: () -> Unit,
+        onSuccess: (ImageDetailData) -> Unit,
+        onFailure: (Throwable) -> Unit,
     ) {
-        runCatching { model.getImageItemData(id = id) }
-            .onSuccess {
-                withContext(Dispatchers.Main) {
-                    onSuccess(it)
-
-                }
-            }
-            .onFailure {
-                withContext(Dispatchers.Main) {
-                    onFailure()
-                }
-            }
+        runCatching { model.getImageDetailData(id = id) }
+            .fold(
+                onSuccess = { withContext(Dispatchers.Main) { onSuccess(it) } },
+                onFailure = { withContext(Dispatchers.Main) { onFailure(it) } },
+            )
     }
 }

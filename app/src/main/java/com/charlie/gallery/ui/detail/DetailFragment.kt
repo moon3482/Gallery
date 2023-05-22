@@ -69,10 +69,10 @@ class DetailFragment : Fragment(), DetailContract.View {
         binding.detailProgressBar.visibility = View.GONE
     }
 
-    override fun showSuccessDetail(imageDetailData: ImageDetailData?) {
+    override fun showDetail(imageDetailData: ImageDetailData?) {
         with(binding) {
             Glide.with(this@DetailFragment)
-                .load(imageDetailData?.downloadUrl)
+                .load(imageDetailData?.downloadUrl ?: R.drawable.close)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.close)
                 .into(detailImageView)
@@ -81,53 +81,33 @@ class DetailFragment : Fragment(), DetailContract.View {
             widthSizeTextview.text = imageDetailData?.width?.toString().orEmpty()
             heightSizeTextview.text = imageDetailData?.height?.toString().orEmpty()
             urlLinkTextview.text = imageDetailData?.url.toHyperLinkSpannable()
+            urlLinkTextview.setOnClickListener {
+                imageDetailData?.let {
+                    presenter.onClickUrl(it.url)
+                }
+            }
         }
     }
 
-    override fun showFailedDetail() {
-        with(binding) {
-            Glide.with(this@DetailFragment)
-                .load(R.drawable.close)
-                .placeholder(R.drawable.loading)
-                .into(detailImageView)
-            authorNameTextview.text = ""
-            widthSizeTextview.text = ""
-            heightSizeTextview.text = ""
-            urlLinkTextview.text = ""
-        }
-    }
-
-    override fun showCurrentPreview(imageItemData: ImageItemData) {
+    override fun showCurrentPreview(imageItemData: ImageItemData?) {
         setImage(
             imageItemData = imageItemData,
             imageView = binding.currentImageView,
         )
     }
 
-    override fun clearCurrentPreview() {
-        binding.currentImageView.setImageBitmap(null)
-    }
-
-    override fun showPreviousPreview(imageItemData: ImageItemData) {
+    override fun showPreviousPreview(imageItemData: ImageItemData?) {
         setImage(
             imageItemData = imageItemData,
             imageView = binding.previousImageView,
         )
     }
 
-    override fun clearPreviousPreview() {
-        binding.previousImageView.setImageBitmap(null)
-    }
-
-    override fun showNextPreview(imageItemData: ImageItemData) {
+    override fun showNextPreview(imageItemData: ImageItemData?) {
         setImage(
             imageItemData = imageItemData,
             imageView = binding.nextImageView,
         )
-    }
-
-    override fun clearNextPreview() {
-        binding.nextImageView.setImageBitmap(null)
     }
 
     override fun enablePreviousButton() {
@@ -136,12 +116,6 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     override fun disablePreviousButton() {
         binding.previousFloatingButton.isEnabled = false
-    }
-
-    override fun setOnClickUrl(url: String) {
-        binding.urlLinkTextview.setOnClickListener {
-            presenter.onClickUrl(url = url)
-        }
     }
 
     override fun moveWebView(url: String) {
@@ -170,7 +144,6 @@ class DetailFragment : Fragment(), DetailContract.View {
     ) {
         Glide.with(this)
             .load(imageItemData?.downloadUrl)
-            .error(R.drawable.close)
             .into(imageView)
     }
 
