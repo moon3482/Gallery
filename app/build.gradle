@@ -37,6 +37,10 @@ android {
         enable true
     }
 
+    dataBinding {
+        enabled true
+    }
+
 }
 
 dependencies {
@@ -49,7 +53,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
-    implementation "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
     implementation "androidx.activity:activity-ktx:$androidx.activityVersion"
     implementation "androidx.fragment:fragment-ktx:$androidx.fragmentVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
