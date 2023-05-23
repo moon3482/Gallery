@@ -1,227 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:clickable="true"
-    android:focusable="true"
-    tools:context=".ui.detail.DetailFragment">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/begin_guide_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
+        <variable
+            name="vm"
+            type="com.charlie.gallery.ui.detail.DetailViewModel" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/end_guide_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="20dp" />
+        <variable
+            name="event"
+            type="com.charlie.gallery.ui.detail.DetailUIEvent" />
+    </data>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/top_guide_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/bottom_guide_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="20dp" />
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/detail_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/white"
-        android:elevation="10dp"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:clickable="true"
+        android:focusable="true"
+        tools:context=".ui.detail.DetailFragment">
 
-    <ImageView
-        android:id="@+id/detail_imageView"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@string/detail_image"
-        app:layout_constraintEnd_toEndOf="@id/end_guide_line"
-        app:layout_constraintStart_toStartOf="@id/begin_guide_line"
-        app:layout_constraintTop_toBottomOf="@id/detail_toolbar"
-        tools:src="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/image_information_textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/image_information"
-        android:textColor="@color/black"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/end_guide_line"
-        app:layout_constraintStart_toStartOf="@id/begin_guide_line"
-        app:layout_constraintTop_toBottomOf="@id/detail_imageView" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false"
-        app:layout_constraintEnd_toEndOf="@id/end_guide_line"
-        app:layout_constraintStart_toStartOf="@id/begin_guide_line"
-        app:layout_constraintTop_toBottomOf="@id/image_information_textView">
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/begin_guide_line"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:text="@string/image_author" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/end_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:text="@string/width_size" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/top_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:text="@string/height_size" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottom_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:text="@string/url_link" />
-        </LinearLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/detail_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/detail_imageView"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/detail_image"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:layout_constraintTop_toBottomOf="@id/detail_toolbar"
+            bind:detailImage="@{vm.currentImageUrl}"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/image_information_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/image_information"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:layout_constraintTop_toBottomOf="@id/detail_imageView" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginTop="5dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:layout_constraintTop_toBottomOf="@id/image_information_textView">
 
-            <TextView
-                android:id="@+id/author_name_textview"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                android:textColor="@color/black"
-                tools:text="Master Yi" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/image_author" />
 
-            <TextView
-                android:id="@+id/width_size_textview"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/width_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/height_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/url_link" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                tools:text="3000" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/height_size_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                tools:text="2000" />
+                <TextView
+                    android:id="@+id/author_name_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.author}"
+                    android:textColor="@color/black"
+                    tools:text="Master Yi" />
 
-            <TextView
-                android:id="@+id/url_link_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/hyperlink"
-                tools:text="http://foo.kr" />
+                <TextView
+                    android:id="@+id/width_size_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.width}"
+                    android:textColor="@color/black"
+                    tools:text="3000" />
+
+                <TextView
+                    android:id="@+id/height_size_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.height}"
+                    android:textColor="@color/black"
+                    tools:text="2000" />
+
+                <TextView
+                    android:id="@+id/url_link_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.url}"
+                    android:textColor="@color/hyperlink"
+                    tools:text="http://foo.kr" />
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/previous_floating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/previous_floating_button"
+            android:enabled="@{vm.isEnablePreviousButton}"
+            android:src="@drawable/round_navigate_before_24"
+            app:backgroundTint="@drawable/selector_detail_nav_button"
+            app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:maxImageSize="40dp"
+            app:tint="@android:color/white" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/previous_floating_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/round_navigate_before_24"
-        app:tint="@android:color/white"
-        app:backgroundTint="@drawable/selector_detail_nav_button"
-        app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
-        app:layout_constraintStart_toStartOf="@id/begin_guide_line"
-        app:maxImageSize="40dp"
-        android:contentDescription="@string/previous_floating_button" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/next_floating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/next_floating_button"
+            android:enabled="@{vm.isEnableNextButton}"
+            android:src="@drawable/round_navigate_next_24"
+            app:backgroundTint="@drawable/selector_detail_nav_button"
+            app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:maxImageSize="40dp"
+            app:tint="@android:color/white" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/next_floating_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/round_navigate_next_24"
-        app:tint="@android:color/white"
-        app:backgroundTint="@drawable/selector_detail_nav_button"
-        app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
-        app:layout_constraintEnd_toEndOf="@id/end_guide_line"
-        app:maxImageSize="40dp"
-        android:contentDescription="@string/next_floating_button" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/next_floating_button"
+            app:layout_constraintEnd_toStartOf="@id/next_floating_button"
+            app:layout_constraintStart_toEndOf="@id/previous_floating_button"
+            app:layout_constraintTop_toTopOf="@id/previous_floating_button">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@id/next_floating_button"
-        app:layout_constraintEnd_toStartOf="@id/next_floating_button"
-        app:layout_constraintStart_toEndOf="@id/previous_floating_button"
-        app:layout_constraintTop_toTopOf="@id/previous_floating_button">
+            <ImageView
+                android:id="@+id/previous_imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/previous_image"
+                android:padding="5dp"
+                bind:previewImage="@{vm.previousImageUrl}"
+                tools:src="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/previous_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:contentDescription="@string/previous_image"
-            android:padding="5dp"
-            tools:src="@tools:sample/avatars" />
+            <ImageView
+                android:id="@+id/current_imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_preview_image_boder"
+                android:contentDescription="@string/current_image"
+                android:padding="5dp"
+                bind:previewImage="@{vm.currentImageUrl}"
+                tools:src="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/current_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_preview_image_boder"
-            android:contentDescription="@string/current_image"
-            android:padding="5dp"
-            tools:src="@tools:sample/avatars" />
+            <ImageView
+                android:id="@+id/next_imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/next_image"
+                android:padding="5dp"
+                bind:previewImage="@{vm.nextImageUrl}"
+                tools:src="@tools:sample/avatars" />
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/next_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:contentDescription="@string/next_image"
-            android:padding="5dp"
-            tools:src="@tools:sample/avatars" />
-    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/detailProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            bind:isVisible="@{vm.isLoading}" />
 
-    <ProgressBar
-        android:id="@+id/detailProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
