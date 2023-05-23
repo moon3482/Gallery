@@ -1,5 +1,5 @@
 package com.charlie.gallery.ui.list
 
-interface UIEvent {
+interface ListUIEvent {
     fun onClickItem(position: Int)
 }

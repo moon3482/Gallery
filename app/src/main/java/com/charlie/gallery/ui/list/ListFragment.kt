@@ -16,7 +16,7 @@ import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
 import com.charlie.gallery.util.doOnScrolled
 
-class ListFragment : Fragment(), UIEvent {
+class ListFragment : Fragment(), ListUIEvent {
 
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
