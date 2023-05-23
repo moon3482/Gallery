@@ -47,3 +47,10 @@ fun ImageView.setPreviewImage(imageUrl: String?) {
         .load(imageUrl)
         .into(this)
 }
+
+@BindingAdapter("bind:moveWebView", "bind:url")
+fun View.moveWebView(event: DetailUIEvent?, url: String?) {
+    this.setOnClickListener {
+        event?.moveWebView(url)
+    }
+}

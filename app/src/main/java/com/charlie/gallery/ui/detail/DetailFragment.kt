@@ -40,6 +40,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
         observe()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = detailViewModel
+        binding.event = this
     }
 
     private fun initView() {
@@ -70,13 +71,15 @@ class DetailFragment : Fragment(), DetailUIEvent {
     }
     //endregion
 
-    override fun moveWebView(url: String) {
-        startActivity(
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(url),
+    override fun moveWebView(url: String?) {
+        url?.let {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(url),
+                )
             )
-        )
+        }
     }
 
     companion object {
