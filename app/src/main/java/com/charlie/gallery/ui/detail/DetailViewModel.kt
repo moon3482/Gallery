@@ -32,7 +32,7 @@ class DetailViewModel(
         get() = _height
 
     private val _url: MutableLiveData<String> = MutableLiveData()
-    val url: MutableLiveData<String>
+    val url: LiveData<String>
         get() = _url
 
     private val _isEnablePreviousButton: MutableLiveData<Boolean> = MutableLiveData(true)
@@ -71,7 +71,6 @@ class DetailViewModel(
     fun onClickPrevious() {
         _currentId.value = _currentId.value?.minus(1) ?: -1
         setScreen(_currentId.value!!)
-
     }
 
     fun onClickNext() {
@@ -107,7 +106,7 @@ class DetailViewModel(
             onFailure = {
                 _isEnablePreviousButton.postValue(false)
                 _previousImageUrl.postValue(null)
-            }
+            },
         )
         load(
             id = id + 1,
@@ -118,7 +117,7 @@ class DetailViewModel(
             onFailure = {
                 _isEnableNextButton.postValue(false)
                 _nextImageUrl.postValue(null)
-            }
+            },
         )
     }
 
@@ -135,7 +134,7 @@ class DetailViewModel(
                     },
                     onFailure = {
                         onFailure(it)
-                    }
+                    },
                 )
         }
     }
