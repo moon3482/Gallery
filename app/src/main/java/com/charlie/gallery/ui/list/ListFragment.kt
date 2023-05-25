@@ -9,23 +9,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
-import com.charlie.gallery.model.ImageItemData
 import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
+import com.charlie.gallery.util.doOnScrolled
 
-class ListFragment : Fragment(), ListContract.View {
+class ListFragment : Fragment(), ListUIEvent {
 
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
         get() = checkNotNull(_binding) {
             "_binding iS Null"
         }
-    private lateinit var presenter: ListContract.Presenter
+    private val listViewModel by lazy { ListViewModel(ListModel()) }
 
     // region Lifecycle
     override fun onCreateView(
@@ -34,36 +32,39 @@ class ListFragment : Fragment(), ListContract.View {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentListBinding.inflate(layoutInflater)
-        presenter = ListPresenter(this, ListModel())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        presenter.start()
+        observe()
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = listViewModel
+        binding.event = this
     }
 
     private fun initView() {
         binding.gridListRecyclerview.apply {
-            adapter = ListAdapter { currentId ->
-                presenter.onClickItem(currentId)
-            }
+            adapter = ListAdapter()
             addItemDecoration(ListDecoration(10, 8))
-
-            addOnScrollListener(object : OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
-                    layoutManager?.let {
-                        if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
-                            presenter.onNextPage()
-                        }
+            doOnScrolled { _, _, _ ->
+                val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
+                layoutManager?.let {
+                    if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
+                        listViewModel.onNextPage()
                     }
                 }
-            })
+            }
         }
         binding.reloadButton.setOnClickListener {
-            presenter.onClickReload()
+            listViewModel.onReload()
+        }
+    }
+
+    private fun observe() {
+        listViewModel.onFailToastMessage.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), resources.getString(R.string.failed_load_image_list), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -74,46 +75,14 @@ class ListFragment : Fragment(), ListContract.View {
 
     // endregion
 
-    //region ListContractor.View
-    override fun showLoading() {
-        binding.progressBar.visibility = View.VISIBLE
-    }
-
-    override fun hideLoading() {
-        binding.progressBar.visibility = View.GONE
-    }
-
-    override fun showList(imageItemDataList: List<ImageItemData>) {
-        (binding.gridListRecyclerview.adapter as? ListAdapter)?.initList(imageItemDataList)
-    }
-
-    override fun showNextPage(imageItemDataList: List<ImageItemData>) {
-        (binding.gridListRecyclerview.adapter as? ListAdapter)?.addList(imageItemDataList)
-    }
-
-    override fun showDetailFragment(currentId: Int) {
+    override fun onClickItem(position: Int) {
         parentFragmentManager.commit {
             add<DetailFragment>(
-                R.id.fragment_container,
-                args = DetailFragment.arguments(currentId)
+                R.id.fragment_container, args = DetailFragment.arguments(position)
             )
             addToBackStack(null)
         }
     }
-
-    override fun showLoadingFailed() {
-        binding.failedLoadingLayout.visibility = View.VISIBLE
-    }
-
-    override fun hiedLoadingFailed() {
-        binding.failedLoadingLayout.visibility = View.GONE
-    }
-
-    override fun showFailedToast() {
-        Toast.makeText(requireContext(), resources.getString(R.string.failed_load_image_list), Toast.LENGTH_SHORT).show()
-    }
-
-    //endregion
 
     companion object {
 

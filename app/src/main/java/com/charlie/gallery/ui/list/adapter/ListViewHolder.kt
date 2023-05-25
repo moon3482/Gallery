@@ -14,7 +14,7 @@ class ListViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         imageItemData: ImageItemData,
-        onClickViewHolder: (Int) -> Unit,
+        onClickViewHolder: ((Int) -> Unit)?,
     ) {
         with(binding) {
             Glide.with(this.root)
@@ -25,7 +25,7 @@ class ListViewHolder(
                 .into(imageviewItem)
 
             imageviewItem.setOnClickListener {
-                onClickViewHolder(imageItemData.id)
+                onClickViewHolder?.invoke(imageItemData.id)
             }
         }
     }

@@ -4,7 +4,7 @@ import com.charlie.gallery.model.ImageItemData
 import com.charlie.gallery.network.RetrofitClient
 import retrofit2.await
 
-class ListModel : ListContract.Model {
+class ListModel : Model {
     override suspend fun getImageList(page: Int): List<ImageItemData> {
         return RetrofitClient
             .galleryApi
