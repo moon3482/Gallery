@@ -3,7 +3,6 @@ package com.charlie.gallery.ui.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import com.charlie.gallery.model.ImageDetailData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,24 +24,14 @@ class DetailViewModel(
         get() = _detailUiState.asStateFlow()
 
     private val _imageDetailData: MutableLiveData<ImageDetailData> = MutableLiveData()
+    val imageDetailData: LiveData<ImageDetailData>
+        get() = _imageDetailData
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isLoading: LiveData<Boolean>
         get() = _detailUiState
             .mapLatest { it == DetailUiState.Loading }
             .asLiveData()
-
-    val author: LiveData<String>
-        get() = _imageDetailData.map { it.author }
-
-    val width: LiveData<String>
-        get() = _imageDetailData.map { it.width.toString() }
-
-    val height: LiveData<String>
-        get() = _imageDetailData.map { it.height.toString() }
-
-    val url: LiveData<String>
-        get() = _imageDetailData.map { it.url }
 
     private val _isEnablePreviousButton: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnablePreviousButton: LiveData<Boolean>
@@ -84,6 +73,8 @@ class DetailViewModel(
 
     private fun setScreen() {
         _detailUiState.tryEmit(DetailUiState.Loading)
+        if (currentId >= 0)
+            _isEnablePreviousButton.value = false
         load(
             id = currentId,
             onSuccess = {
@@ -103,7 +94,6 @@ class DetailViewModel(
                 _previousImageUrl.value = it.downloadUrl
             },
             onFailure = {
-                _isEnablePreviousButton.value = false
                 _previousImageUrl.value = null
             },
         )
