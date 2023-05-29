@@ -19,16 +19,10 @@ class ListAdapter(
         holder.bind(data, onClickItem)
     }
 
-    fun initList(imageItemDataList: List<ImageItemData>) {
+    fun updateList(imageItemDataList: List<ImageItemData>) {
         this.imageItemDataList.clear()
         this.imageItemDataList.addAll(imageItemDataList)
-        notifyItemRangeChanged(0, this.imageItemDataList.size)
-    }
-
-    fun addList(imageItemDataList: List<ImageItemData>) {
-        val temp = this.imageItemDataList.size
-        this.imageItemDataList.addAll(imageItemDataList)
-        notifyItemRangeInserted(temp, imageItemDataList.size)
+        notifyDataSetChanged()
     }
 
     fun setOnClickItem(onClick: (Int) -> Unit) {

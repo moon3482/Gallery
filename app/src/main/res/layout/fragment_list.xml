@@ -40,9 +40,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:spanCount="2"
-            bind:init="@{vm.initImageList}"
             bind:itemClickListener="@{event}"
-            bind:nextPage="@{vm.addImageList}" />
+            bind:list="@{vm.imageList}" />
 
 
         <TextView
@@ -77,9 +76,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            bind:isVisible="@{vm.isFailedLoading}"
+            bind:isVisible="@{vm.isFailure}"
             tools:visibility="visible" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

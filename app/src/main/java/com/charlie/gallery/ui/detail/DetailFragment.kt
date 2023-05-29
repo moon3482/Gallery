@@ -8,8 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
+import kotlinx.coroutines.launch
 
 class DetailFragment : Fragment(), DetailUIEvent {
     private var _binding: FragmentDetailBinding? = null
@@ -21,7 +25,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
     private val detailViewModel: DetailViewModel by lazy {
         DetailViewModel(
             model = DetailModel(),
-            initId = getCurrentId(arguments),
+            currentId = getCurrentId(arguments),
         )
     }
 
@@ -53,15 +57,25 @@ class DetailFragment : Fragment(), DetailUIEvent {
     }
 
     private fun observe() {
-        detailViewModel.onFailedInit.observe(viewLifecycleOwner) {
-            AlertDialog.Builder(requireContext())
-                .setTitle(resources.getString(R.string.notification))
-                .setMessage(resources.getString(R.string.can_not_show_you_image))
-                .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                detailViewModel.detailUiState.collect {
+                    when (it) {
+                        DetailUiState.Fail -> {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(resources.getString(R.string.notification))
+                                .setMessage(resources.getString(R.string.can_not_show_you_image))
+                                .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
+                                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                                }
+                                .setCancelable(false)
+                                .show()
+                        }
+
+                        else -> Unit
+                    }
                 }
-                .setCancelable(false)
-                .show()
+            }
         }
     }
 

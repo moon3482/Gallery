@@ -8,6 +8,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
@@ -15,6 +18,9 @@ import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
 import com.charlie.gallery.util.doOnScrolled
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ListFragment : Fragment(), ListUIEvent {
 
@@ -23,7 +29,7 @@ class ListFragment : Fragment(), ListUIEvent {
         get() = checkNotNull(_binding) {
             "_binding iS Null"
         }
-    private val listViewModel by lazy { ListViewModel(ListModel()) }
+    private val listViewModel: ListViewModel by lazy { ListViewModel(ListModel()) }
 
     // region Lifecycle
     override fun onCreateView(
@@ -63,8 +69,26 @@ class ListFragment : Fragment(), ListUIEvent {
     }
 
     private fun observe() {
-        listViewModel.onFailToastMessage.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), resources.getString(R.string.failed_load_image_list), Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                listViewModel.onFailToastMessage.collect {
+                    when (it) {
+                        is ListUIState.Fail -> {
+                            withContext(Dispatchers.Main) {
+                                Toast
+                                    .makeText(
+                                        requireContext(),
+                                        resources.getString(R.string.failed_load_image_list),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                            }
+                        }
+
+                        else -> Unit
+                    }
+                }
+            }
         }
     }
 
