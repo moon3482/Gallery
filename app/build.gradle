@@ -63,4 +63,8 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$testing.androidjunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$testing.espressoCoreVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$liveDataVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
 }
