@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class ImageEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("row_id")
-    private val id: Long = 0,
+    private val id: Int = 0,
     @ColumnInfo(name = "id")
     val imageId: Int,
     @ColumnInfo(name = "author")
