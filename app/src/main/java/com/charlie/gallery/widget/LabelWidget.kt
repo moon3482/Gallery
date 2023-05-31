@@ -26,11 +26,6 @@ import com.charlie.gallery.util.toHyperLinkSpannable
             attribute = "android:urlLink",
             method = "setUrlLink",
         ),
-        BindingMethod(
-            type = LabelWidget::class,
-            attribute = "android:moveWebView",
-            method = "setMoveWebView",
-        ),
     ]
 )
 

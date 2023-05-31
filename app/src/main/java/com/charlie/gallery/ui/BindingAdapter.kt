@@ -36,13 +36,6 @@ fun ImageView.setDetailImage(imageUrl: String?) {
         .into(this)
 }
 
-@BindingAdapter("bind:previewImage")
-fun ImageView.setPreviewImage(imageUrl: String?) {
-    Glide.with(this)
-        .load(imageUrl)
-        .into(this)
-}
-
 @BindingAdapter("bind:moveWebView", "bind:url")
 fun View.moveWebView(event: DetailUIEvent?, url: String?) {
     this.setOnClickListener {

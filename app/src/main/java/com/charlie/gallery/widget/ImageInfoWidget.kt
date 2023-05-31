@@ -36,7 +36,6 @@ class ImageInfoWidget @JvmOverloads constructor(
         true
     )
 
-
     fun setImageInfo(imageDetailData: ImageDetailData?) {
         binding.imageData = imageDetailData
     }

@@ -1,9 +1,9 @@
 package com.charlie.gallery.util
 
-import android.graphics.Typeface
+import android.graphics.Color
 import android.text.Spannable
 import android.text.Spanned
-import android.text.style.StyleSpan
+import android.text.style.ForegroundColorSpan
 import androidx.core.text.buildSpannedString
 import androidx.core.text.underline
 import androidx.recyclerview.widget.RecyclerView
@@ -13,8 +13,11 @@ fun String?.toHyperLinkSpannable(): Spanned {
         underline {
             append(
                 this@toHyperLinkSpannable.orEmpty(),
-                StyleSpan(Typeface.NORMAL),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            ).setSpan(
+                ForegroundColorSpan(Color.BLUE),
+                0,
+                this.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
             )
         }
     }
