@@ -12,14 +12,9 @@ import com.charlie.gallery.ui.detail.DetailUIEvent
 import com.charlie.gallery.ui.list.ListUIEvent
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 
-@BindingAdapter("bind:init")
-fun RecyclerView.initList(imageItemDataList: List<ImageItemData>?) {
-    (this.adapter as? ListAdapter)?.initList(imageItemDataList = imageItemDataList ?: emptyList())
-}
-
-@BindingAdapter("bind:nextPage")
-fun RecyclerView.nextPage(imageItemDataList: List<ImageItemData>?) {
-    (this.adapter as? ListAdapter)?.addList(imageItemDataList = imageItemDataList ?: emptyList())
+@BindingAdapter("bind:list")
+fun RecyclerView.setList(imageItemDataList: List<ImageItemData>?) {
+    (this.adapter as? ListAdapter)?.updateList(imageItemDataList = imageItemDataList ?: emptyList())
 }
 
 @BindingAdapter("bind:isVisible")
@@ -38,13 +33,6 @@ fun ImageView.setDetailImage(imageUrl: String?) {
         .load(imageUrl)
         .placeholder(R.drawable.loading)
         .error(if (imageUrl != null) R.drawable.close else null)
-        .into(this)
-}
-
-@BindingAdapter("bind:previewImage")
-fun ImageView.setPreviewImage(imageUrl: String?) {
-    Glide.with(this)
-        .load(imageUrl)
         .into(this)
 }
 

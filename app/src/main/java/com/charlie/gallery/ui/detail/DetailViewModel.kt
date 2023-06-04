@@ -2,38 +2,36 @@ package com.charlie.gallery.ui.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.charlie.gallery.model.ImageDetailData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailViewModel(
     private val model: Model,
-    private val initId: Int = -1,
+    private var currentId: Int = -1,
 ) {
-    private val _currentId = MutableLiveData<Int>()
-    val currentId: LiveData<Int>
-        get() = _currentId
 
-    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    private val _detailUiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.Loading)
+    val detailUiState: StateFlow<DetailUiState>
+        get() = _detailUiState.asStateFlow()
+
+    private val _imageDetailData: MutableLiveData<ImageDetailData> = MutableLiveData()
+    val imageDetailData: LiveData<ImageDetailData>
+        get() = _imageDetailData
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     val isLoading: LiveData<Boolean>
-        get() = _isLoading
-
-    private val _author: MutableLiveData<String> = MutableLiveData()
-    val author: LiveData<String>
-        get() = _author
-
-    private val _width: MutableLiveData<String> = MutableLiveData()
-    val width: LiveData<String>
-        get() = _width
-
-    private val _height: MutableLiveData<String> = MutableLiveData()
-    val height: LiveData<String>
-        get() = _height
-
-    private val _url: MutableLiveData<String> = MutableLiveData()
-    val url: LiveData<String>
-        get() = _url
+        get() = _detailUiState
+            .mapLatest { it == DetailUiState.Loading }
+            .asLiveData()
 
     private val _isEnablePreviousButton: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnablePreviousButton: LiveData<Boolean>
@@ -55,68 +53,59 @@ class DetailViewModel(
     val nextImageUrl: LiveData<String?>
         get() = _nextImageUrl
 
-    private val _onFailedInit: MutableLiveData<Unit> = MutableLiveData()
-    val onFailedInit: LiveData<Unit>
-        get() = _onFailedInit
-
     init {
-        if (initId < 0) {
-            _onFailedInit.value = Unit
+        if (currentId < 0) {
+            _detailUiState.tryEmit(DetailUiState.Fail)
         } else {
-            _currentId.value = initId
-            setScreen(initId)
+            setScreen()
         }
     }
 
     fun onClickPrevious() {
-        _currentId.value = _currentId.value?.minus(1) ?: -1
-        setScreen(_currentId.value!!)
+        currentId--
+        setScreen()
     }
 
     fun onClickNext() {
-        _currentId.value = _currentId.value?.plus(1) ?: -1
-        setScreen(_currentId.value!!)
+        currentId++
+        setScreen()
     }
 
-    private fun setScreen(
-        id: Int,
-    ) {
-        _isLoading.value = true
+    private fun setScreen() {
+        _detailUiState.tryEmit(DetailUiState.Loading)
+        if (currentId >= 0)
+            _isEnablePreviousButton.value = false
         load(
-            id = id,
+            id = currentId,
             onSuccess = {
-                _isLoading.postValue(false)
-                _currentImageUrl.postValue(it.downloadUrl)
-                _author.postValue(it.author)
-                _width.postValue(it.width.toString())
-                _height.postValue(it.height.toString())
-                _url.postValue(it.url)
+                _detailUiState.tryEmit(DetailUiState.Success)
+                _currentImageUrl.value = it.downloadUrl
+                _imageDetailData.value = it
             },
             onFailure = {
-                _isLoading.postValue(false)
-                _currentImageUrl.postValue(null)
+                _detailUiState.tryEmit(DetailUiState.Fail)
+                _currentImageUrl.value = null
             },
         )
         load(
-            id = id - 1,
+            id = currentId - 1,
             onSuccess = {
-                _isEnablePreviousButton.postValue(true)
-                _previousImageUrl.postValue(it.downloadUrl)
+                _isEnablePreviousButton.value = true
+                _previousImageUrl.value = it.downloadUrl
             },
             onFailure = {
-                _isEnablePreviousButton.postValue(false)
-                _previousImageUrl.postValue(null)
+                _previousImageUrl.value = null
             },
         )
         load(
-            id = id + 1,
+            id = currentId + 1,
             onSuccess = {
-                _isEnableNextButton.postValue(true)
-                _nextImageUrl.postValue(it.downloadUrl)
+                _isEnableNextButton.value = true
+                _nextImageUrl.value = it.downloadUrl
             },
             onFailure = {
-                _isEnableNextButton.postValue(false)
-                _nextImageUrl.postValue(null)
+                _isEnableNextButton.value = false
+                _nextImageUrl.value = null
             },
         )
     }
@@ -128,14 +117,15 @@ class DetailViewModel(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching { model.getImageDetailData(id = id) }
-                .fold(
-                    onSuccess = {
+                .onSuccess {
+                    withContext(Dispatchers.Main) {
                         onSuccess(it)
-                    },
-                    onFailure = {
+                    }
+                }.onFailure {
+                    withContext(Dispatchers.Main) {
                         onFailure(it)
-                    },
-                )
+                    }
+                }
         }
     }
 }
