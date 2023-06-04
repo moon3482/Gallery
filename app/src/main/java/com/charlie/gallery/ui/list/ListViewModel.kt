@@ -14,17 +14,13 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel(private val model: Model) {
+class ListViewModel(private val getImageList: ListModel) {
 
     private var page = 1
 
     private val _imageList: MutableLiveData<List<ImageItemData>> = MutableLiveData()
     val imageList: LiveData<List<ImageItemData>>
         get() = _imageList
-
-    private val _onFailToastMessage: MutableStateFlow<ListUIState> = MutableStateFlow(ListUIState.Loading)
-    val onFailToastMessage: StateFlow<ListUIState>
-        get() = _onFailToastMessage.asStateFlow()
 
     private val _uiState: MutableStateFlow<ListUIState> = MutableStateFlow(ListUIState.Loading)
     val uiState: StateFlow<ListUIState>
@@ -55,20 +51,20 @@ class ListViewModel(private val model: Model) {
 
     fun onNextPage() {
         page++
-        _uiState.tryEmit(ListUIState.Loading)
+        sendUiState(ListUIState.Loading)
         load(
             onSuccess = {
                 _imageList.value = (_imageList.value ?: mutableListOf()) + it
             },
             onFailure = {
-                _onFailToastMessage.tryEmit(ListUIState.Fail(page = page))
+                sendUiState(ListUIState.Fail(page))
             }
         )
     }
 
     fun onReload() {
         page = 1
-        _uiState.tryEmit(ListUIState.Loading)
+        sendUiState(ListUIState.Loading)
         load(
             onSuccess = {
                 _imageList.value = it
@@ -83,20 +79,37 @@ class ListViewModel(private val model: Model) {
         onSuccess: (List<ImageItemData>) -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
-        _uiState.tryEmit(ListUIState.Loading)
+        sendUiState(ListUIState.Loading)
         CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageList(page) }
+            runCatching { getImageList(page) }
                 .onSuccess {
                     withContext(Dispatchers.Main) {
-                        _uiState.tryEmit(ListUIState.Success)
+                        sendUiState(ListUIState.Success)
                         onSuccess(it)
                     }
-                }.onFailure {
+                }
+                .onFailure {
                     withContext(Dispatchers.Main) {
-                        _uiState.tryEmit(ListUIState.Fail(page))
+                        sendUiState(ListUIState.Fail(page))
                         onFailure(it)
                     }
                 }
         }
+    }
+
+    private fun sendUiState(uiState: ListUIState) {
+        when (uiState) {
+            is ListUIState.Fail -> {
+                _uiState.tryEmit(uiState)
+                _uiState.tryEmit(ListUIState.None)
+            }
+
+            ListUIState.Loading,
+            ListUIState.None,
+            ListUIState.Success -> {
+                _uiState.tryEmit(uiState)
+            }
+        }
+
     }
 }

@@ -4,9 +4,9 @@ import com.charlie.gallery.model.ImageDetailData
 import com.charlie.gallery.network.RetrofitClient
 import retrofit2.await
 
-class DetailModel : Model {
+class DetailModel {
 
-    override suspend fun getImageDetailData(id: Int): ImageDetailData {
+    suspend operator fun invoke(id: Int): ImageDetailData {
         return RetrofitClient
             .galleryApi
             .requestImageDetail(id = id)

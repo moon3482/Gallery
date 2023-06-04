@@ -24,7 +24,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
 
     private val detailViewModel: DetailViewModel by lazy {
         DetailViewModel(
-            model = DetailModel(),
+            getImageDetailData = DetailModel(),
             currentId = getCurrentId(arguments),
         )
     }
@@ -71,8 +71,9 @@ class DetailFragment : Fragment(), DetailUIEvent {
                                 .setCancelable(false)
                                 .show()
                         }
-
-                        else -> Unit
+                        
+                        DetailUiState.Loading,
+                        DetailUiState.Success -> Unit
                     }
                 }
             }
