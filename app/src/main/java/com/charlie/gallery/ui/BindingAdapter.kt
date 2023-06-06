@@ -7,14 +7,14 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.charlie.gallery.R
-import com.charlie.gallery.model.ImageItemData
+import com.charlie.gallery.model.ImageItemModel
 import com.charlie.gallery.ui.detail.DetailUIEvent
 import com.charlie.gallery.ui.list.ListUIEvent
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 
 @BindingAdapter("bind:list")
-fun RecyclerView.setList(imageItemDataList: List<ImageItemData>?) {
-    (this.adapter as? ListAdapter)?.updateList(imageItemDataList = imageItemDataList ?: emptyList())
+fun RecyclerView.setList(imageItemModelList: List<ImageItemModel>?) {
+    (this.adapter as? ListAdapter)?.updateList(imageItemModelList = imageItemModelList ?: emptyList())
 }
 
 @BindingAdapter("bind:isVisible")

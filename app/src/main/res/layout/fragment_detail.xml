@@ -78,15 +78,25 @@
             bind:detailImage="@{vm.currentImageUrl}"
             tools:src="@tools:sample/avatars" />
 
+        <ImageView
+            android:id="@+id/bookmark_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="#000000"
+            android:src="@drawable/baseline_bookmark_border_24"
+            android:contentDescription="@string/bookmark_button"
+            app:layout_constraintTop_toBottomOf="@id/detail_imageView"
+            app:layout_constraintStart_toStartOf="@id/detail_imageView" />
+
 
         <com.charlie.gallery.widget.ImageInfoWidget
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:imageInfo="@{vm.imageDetailData}"
-            android:moveWebView="@{event}"
             app:layout_constraintEnd_toEndOf="@id/end_guide_line"
             app:layout_constraintStart_toStartOf="@id/begin_guide_line"
-            app:layout_constraintTop_toBottomOf="@id/detail_imageView" />
+            app:layout_constraintTop_toBottomOf="@id/bookmark_imageView"
+            bind:imageInfo="@{vm.imageDetailDataResponse}"
+            bind:moveWebView="@{event}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/previous_floating_button"
@@ -117,13 +127,13 @@
         <com.charlie.gallery.widget.PreviewWidget
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:current="@{vm.currentImageUrl}"
-            android:next="@{vm.nextImageUrl}"
-            android:previous="@{vm.previousImageUrl}"
             app:layout_constraintBottom_toBottomOf="@id/previous_floating_button"
             app:layout_constraintEnd_toStartOf="@id/next_floating_button"
             app:layout_constraintStart_toEndOf="@id/previous_floating_button"
-            app:layout_constraintTop_toTopOf="@id/previous_floating_button" />
+            app:layout_constraintTop_toTopOf="@id/previous_floating_button"
+            bind:current="@{vm.currentImageUrl}"
+            bind:next="@{vm.nextImageUrl}"
+            bind:previous="@{vm.previousImageUrl}" />
 
         <ProgressBar
             android:id="@+id/detailProgressBar"

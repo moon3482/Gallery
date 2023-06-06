@@ -7,19 +7,19 @@ import android.widget.LinearLayout
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
 import com.charlie.gallery.databinding.WidgetImageInfoBinding
-import com.charlie.gallery.model.ImageDetailData
+import com.charlie.gallery.model.ImageDetailModel
 import com.charlie.gallery.ui.detail.DetailUIEvent
 
 @BindingMethods(
     value = [
         BindingMethod(
             type = ImageInfoWidget::class,
-            attribute = "android:imageInfo",
+            attribute = "bind:imageInfo",
             method = "setImageInfo",
         ),
         BindingMethod(
             type = ImageInfoWidget::class,
-            attribute = "android:moveWebView",
+            attribute = "bind:moveWebView",
             method = "setMoveWebView",
         ),
     ]
@@ -36,11 +36,17 @@ class ImageInfoWidget @JvmOverloads constructor(
         true
     )
 
-    fun setImageInfo(imageDetailData: ImageDetailData?) {
-        binding.imageData = imageDetailData
-    }
+    var imageInfo: ImageDetailModel? = null
+        get() = binding.imageData
+        set(value) {
+            binding.imageData = value
+            field = value
+        }
 
-    fun setMoveWebView(detailUIEvent: DetailUIEvent?) {
-        binding.event = detailUIEvent
-    }
+    var moveWebView: DetailUIEvent? = null
+        get() = binding.event
+        set(value) {
+            binding.event = value
+            field = value
+        }
 }

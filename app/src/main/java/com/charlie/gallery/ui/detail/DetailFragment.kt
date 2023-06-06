@@ -1,6 +1,7 @@
 package com.charlie.gallery.ui.detail
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
+import com.charlie.gallery.db.GalleryDatabase
+import com.charlie.gallery.network.RetrofitClient
+import com.charlie.gallery.usecase.GetDetailImageUseCase
 import kotlinx.coroutines.launch
 
 class DetailFragment : Fragment(), DetailUIEvent {
@@ -22,14 +26,22 @@ class DetailFragment : Fragment(), DetailUIEvent {
             "_binding is Null"
         }
 
-    private val detailViewModel: DetailViewModel by lazy {
-        DetailViewModel(
-            getImageDetailData = DetailModel(),
+    private lateinit var detailViewModel: DetailViewModel
+
+    //region Lifecycle
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        detailViewModel = DetailViewModel(
+            getDetailImageUseCase = GetDetailImageUseCase(
+                galleryApi = RetrofitClient.galleryApi,
+                galleryDao = GalleryDatabase
+                    .getDatabase(context.applicationContext)
+                    .galleryDao()
+            ),
             currentId = getCurrentId(arguments),
         )
     }
 
-    //region Lifecycle
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,7 +83,8 @@ class DetailFragment : Fragment(), DetailUIEvent {
                                 .setCancelable(false)
                                 .show()
                         }
-                        
+
+                        DetailUiState.None,
                         DetailUiState.Loading,
                         DetailUiState.Success -> Unit
                     }
@@ -124,5 +137,4 @@ class DetailFragment : Fragment(), DetailUIEvent {
         }
 
     }
-
 }

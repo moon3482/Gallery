@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import com.charlie.gallery.model.ImageDetailData
+import com.charlie.gallery.model.ImageDetailModel
+import com.charlie.gallery.usecase.GetDetailImageUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DetailViewModel(
-    private val getImageDetailData: DetailModel,
+    private val getDetailImageUseCase: GetDetailImageUseCase,
     private var currentId: Int,
 ) {
 
@@ -24,9 +25,9 @@ class DetailViewModel(
     val detailUiState: StateFlow<DetailUiState>
         get() = _detailUiState.asStateFlow()
 
-    private val _imageDetailData: MutableLiveData<ImageDetailData> = MutableLiveData()
-    val imageDetailData: LiveData<ImageDetailData>
-        get() = _imageDetailData
+    private val _imageDetailDataResponse: MutableLiveData<ImageDetailModel> = MutableLiveData()
+    val imageDetailDataResponse: LiveData<ImageDetailModel>
+        get() = _imageDetailDataResponse
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isLoading: LiveData<Boolean>
@@ -41,7 +42,7 @@ class DetailViewModel(
         get() = _nextImageUrl.map { it != null }
 
     val currentImageUrl: LiveData<String>
-        get() = _imageDetailData.map { it.downloadUrl }
+        get() = _imageDetailDataResponse.map { it.downloadUrl }
 
     private val _previousImageUrl: MutableLiveData<String?> = MutableLiveData()
     val previousImageUrl: LiveData<String?>
@@ -53,7 +54,7 @@ class DetailViewModel(
 
     init {
         if (currentId < 0) {
-            _detailUiState.tryEmit(DetailUiState.Fail)
+            sendState(DetailUiState.Fail)
         } else {
             setScreen()
         }
@@ -74,17 +75,17 @@ class DetailViewModel(
         load(
             id = currentId,
             onSuccess = {
-                _detailUiState.tryEmit(DetailUiState.Success)
-                _imageDetailData.value = it
+                sendState(DetailUiState.Success)
+                _imageDetailDataResponse.value = it
             },
             onFailure = {
-                _detailUiState.tryEmit(DetailUiState.Fail)
+                sendState(DetailUiState.Fail)
             },
         )
         load(
             id = currentId - 1,
             onSuccess = {
-                _previousImageUrl.value = it.downloadUrl
+                _previousImageUrl.value = it?.downloadUrl
             },
             onFailure = {
                 _previousImageUrl.value = null
@@ -93,7 +94,7 @@ class DetailViewModel(
         load(
             id = currentId + 1,
             onSuccess = {
-                _nextImageUrl.value = it.downloadUrl
+                _nextImageUrl.value = it?.downloadUrl
             },
             onFailure = {
                 _nextImageUrl.value = null
@@ -103,11 +104,11 @@ class DetailViewModel(
 
     private fun load(
         id: Int,
-        onSuccess: (ImageDetailData) -> Unit,
+        onSuccess: (ImageDetailModel?) -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            runCatching { getImageDetailData(id = id) }
+            runCatching { getDetailImageUseCase(id = id) }
                 .onSuccess {
                     withContext(Dispatchers.Main) {
                         onSuccess(it)
@@ -117,6 +118,19 @@ class DetailViewModel(
                         onFailure(it)
                     }
                 }
+        }
+    }
+
+    private fun sendState(uiState: DetailUiState) {
+        when (uiState) {
+            DetailUiState.Fail -> {
+                _detailUiState.tryEmit(uiState)
+                _detailUiState.tryEmit(uiState)
+            }
+
+            DetailUiState.None,
+            DetailUiState.Loading,
+            DetailUiState.Success -> _detailUiState.tryEmit(uiState)
         }
     }
 }
