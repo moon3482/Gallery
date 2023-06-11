@@ -65,6 +65,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$liveDataVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 
 }

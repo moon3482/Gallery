@@ -14,17 +14,17 @@ import com.charlie.gallery.databinding.WidgetPreviewBinding
     value = [
         BindingMethod(
             type = PreviewWidget::class,
-            attribute = "android:previousUrl",
+            attribute = "bind:previousUrl",
             method = "setPrevious"
         ),
         BindingMethod(
             type = PreviewWidget::class,
-            attribute = "android:currentUrl",
+            attribute = "bind:currentUrl",
             method = "setCurrent"
         ),
         BindingMethod(
             type = PreviewWidget::class,
-            attribute = "android:nextUrl",
+            attribute = "bind:nextUrl",
             method = "setNext"
         ),
     ]
@@ -42,17 +42,21 @@ class PreviewWidget @JvmOverloads constructor(
         true,
     )
 
-    fun setPrevious(imageUrl: String?) {
-        setImage(imageUrl, binding.previousImageView)
-    }
-
-    fun setCurrent(imageUrl: String?) {
-        setImage(imageUrl, binding.currentImageView)
-    }
-
-    fun setNext(imageUrl: String?) {
-        setImage(imageUrl, binding.nextImageView)
-    }
+    var previous: String? = null
+        set(value) {
+            setImage(value, binding.previousImageView)
+            field = value
+        }
+    var current: String? = null
+        set(value) {
+            setImage(value, binding.currentImageView)
+            field = value
+        }
+    var next: String? = null
+        set(value) {
+            setImage(value, binding.nextImageView)
+            field = value
+        }
 
     private fun setImage(imageUrl: String?, imageView: ImageView) {
         Glide.with(imageView)

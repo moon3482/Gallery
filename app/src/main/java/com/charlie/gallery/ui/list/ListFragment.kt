@@ -1,5 +1,6 @@
 package com.charlie.gallery.ui.list
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +15,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
+import com.charlie.gallery.db.GalleryDatabase
 import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
+import com.charlie.gallery.usecase.GetImageListUseCase
+import com.charlie.gallery.usecase.UpdateImageListUseCase
 import com.charlie.gallery.util.doOnScrolled
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ListFragment : Fragment(), ListUIEvent {
 
@@ -29,9 +31,23 @@ class ListFragment : Fragment(), ListUIEvent {
         get() = checkNotNull(_binding) {
             "_binding iS Null"
         }
-    private val listViewModel: ListViewModel by lazy { ListViewModel(ListModel()) }
+    private lateinit var listViewModel: ListViewModel
 
     // region Lifecycle
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val galleryDao = GalleryDatabase.getDatabase(requireContext()).galleryDao()
+        listViewModel = ListViewModel(
+            UpdateImageListUseCase(
+                getImageList = ListModel(),
+                galleryDao = galleryDao,
+            ),
+            GetImageListUseCase(
+                galleryDao = galleryDao,
+            ),
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,21 +87,21 @@ class ListFragment : Fragment(), ListUIEvent {
     private fun observe() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                listViewModel.onFailToastMessage.collect {
+                listViewModel.uiState.collect {
                     when (it) {
                         is ListUIState.Fail -> {
-                            withContext(Dispatchers.Main) {
-                                Toast
-                                    .makeText(
-                                        requireContext(),
-                                        resources.getString(R.string.failed_load_image_list),
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                            }
+                            Toast
+                                .makeText(
+                                    requireContext(),
+                                    resources.getString(R.string.failed_load_image_list),
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
                         }
 
-                        else -> Unit
+                        ListUIState.None,
+                        ListUIState.Success,
+                        ListUIState.Loading -> Unit
                     }
                 }
             }

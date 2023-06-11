@@ -13,17 +13,17 @@ import com.charlie.gallery.util.toHyperLinkSpannable
     value = [
         BindingMethod(
             type = LabelWidget::class,
-            attribute = "android:label",
+            attribute = "bind:label",
             method = "setLabel",
         ),
         BindingMethod(
             type = LabelWidget::class,
-            attribute = "android:content",
+            attribute = "bind:content",
             method = "setContent",
         ),
         BindingMethod(
             type = LabelWidget::class,
-            attribute = "android:urlLink",
+            attribute = "bind:urlLink",
             method = "setUrlLink",
         ),
     ]
@@ -36,20 +36,27 @@ class LabelWidget @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding = WidgetLabelBinding.inflate(
-        LayoutInflater.from(context),
-        this,
-        true
+        LayoutInflater.from(context), this, true
     )
 
-    fun setLabel(label: String?) {
-        binding.labelText.text = label
-    }
+    var label: String? = null
+        get() = binding.labelText.text.toString()
+        set(value) {
+            binding.labelText.text = value
+            field = value
+        }
 
-    fun setContent(content: String?) {
-        binding.contentText.text = content
-    }
+    var content: String? = null
+        get() = binding.contentText.text.toString()
+        set(value) {
+            binding.contentText.text = value
+            field = value
+        }
 
-    fun setUrlLink(url: String?) {
-        binding.contentText.text = url.toHyperLinkSpannable()
-    }
+    var urlLink: String? = null
+        get() = binding.contentText.text.toString()
+        set(value) {
+            binding.contentText.text = value.toHyperLinkSpannable()
+            field = value
+        }
 }

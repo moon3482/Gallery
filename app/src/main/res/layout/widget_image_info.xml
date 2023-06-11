@@ -6,7 +6,7 @@
 
         <variable
             name="imageData"
-            type="com.charlie.gallery.model.ImageDetailData" />
+            type="com.charlie.gallery.model.ImageDetailModel" />
 
         <variable
             name="event"
@@ -31,28 +31,28 @@
         <com.charlie.gallery.widget.LabelWidget
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:label='@{@string/image_author}'
-            android:content='@{imageData.author}' />
+            bind:content='@{imageData.author}'
+            bind:label='@{@string/image_author}' />
 
         <com.charlie.gallery.widget.LabelWidget
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:label='@{@string/width_size}'
-            android:content='@{String.valueOf(imageData.width)}' />
+            bind:content='@{String.valueOf(imageData.width)}'
+            bind:label='@{@string/width_size}' />
 
         <com.charlie.gallery.widget.LabelWidget
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:label='@{@string/height_size}'
-            android:content='@{String.valueOf(imageData.height)}' />
+            bind:content='@{String.valueOf(imageData.height)}'
+            bind:label='@{@string/height_size}' />
 
         <com.charlie.gallery.widget.LabelWidget
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:label='@{@string/url_link}'
-            android:urlLink="@{imageData.url}"
+            bind:label='@{@string/url_link}'
+            bind:moveWebView="@{event}"
             bind:url="@{imageData.url}"
-            bind:moveWebView="@{event}" />
+            bind:urlLink="@{imageData.url}" />
 
     </LinearLayout>
 </layout>

@@ -1,11 +1,11 @@
-package com.charlie.gallery.model
+package com.charlie.gallery.remote
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 
 @JsonClass(generateAdapter = true)
-data class ImageDetailData(
+data class ImageDetailDataResponse(
     @Json(name = "id")
     val id: Int,
     @Json(name = "author")

@@ -3,100 +3,101 @@ package com.charlie.gallery.ui.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import com.charlie.gallery.model.ImageItemData
+import com.charlie.gallery.model.ImageItemModel
+import com.charlie.gallery.usecase.GetImageListUseCase
+import com.charlie.gallery.usecase.UpdateImageListUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel(private val model: Model) {
-
+class ListViewModel(
+    private val updateImageList: UpdateImageListUseCase,
+    private val getImageListUseCase: GetImageListUseCase,
+) {
+    private val limit = 30
     private var page = 1
 
-    private val _imageList: MutableLiveData<List<ImageItemData>> = MutableLiveData()
-    val imageList: LiveData<List<ImageItemData>>
+    private val _imageList: MutableLiveData<List<ImageItemModel>> = MutableLiveData()
+    val imageList: LiveData<List<ImageItemModel>>
         get() = _imageList
-
-    private val _onFailToastMessage: MutableStateFlow<ListUIState> = MutableStateFlow(ListUIState.Loading)
-    val onFailToastMessage: StateFlow<ListUIState>
-        get() = _onFailToastMessage.asStateFlow()
 
     private val _uiState: MutableStateFlow<ListUIState> = MutableStateFlow(ListUIState.Loading)
     val uiState: StateFlow<ListUIState>
         get() = _uiState.asStateFlow()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val isLoading: LiveData<Boolean>
-        get() = _uiState
-            .mapLatest { it == ListUIState.Loading }
-            .asLiveData()
+        get() = _uiState.map { it == ListUIState.Loading }.asLiveData()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val isFailure: LiveData<Boolean>
-        get() = _uiState
-            .mapLatest { it != ListUIState.Loading && it != ListUIState.Success }
-            .asLiveData()
+        get() = _uiState.map { it == ListUIState.Fail(page) }.asLiveData()
 
     init {
-        load(
-            onSuccess = {
-                _imageList.postValue(it)
-            },
-            onFailure = {
-                _imageList.postValue(emptyList())
+        CoroutineScope(Dispatchers.IO).launch {
+            getImageListUseCase(page, (page - 10) * limit).collectLatest { entityList ->
+                withContext(Dispatchers.Main) {
+                    _imageList.value = entityList.map { ImageItemModel(it) }
+                }
             }
-        )
+        }
+
+        load(onSuccess = {
+            sendUiState(ListUIState.Success)
+        }, onFailure = {
+            _uiState.value = ListUIState.Fail(page)
+        })
     }
 
     fun onNextPage() {
         page++
-        _uiState.tryEmit(ListUIState.Loading)
-        load(
-            onSuccess = {
-                _imageList.value = (_imageList.value ?: mutableListOf()) + it
-            },
-            onFailure = {
-                _onFailToastMessage.tryEmit(ListUIState.Fail(page = page))
-            }
-        )
+        sendUiState(ListUIState.Loading)
+        load(onSuccess = {
+            sendUiState(ListUIState.Success)
+        }, onFailure = {
+            sendUiState(ListUIState.Fail(page))
+        })
     }
 
     fun onReload() {
         page = 1
-        _uiState.tryEmit(ListUIState.Loading)
-        load(
-            onSuccess = {
-                _imageList.value = it
-            },
-            onFailure = {
-                _imageList.value = emptyList()
-            }
-        )
+        sendUiState(ListUIState.Loading)
+        load(onSuccess = {
+            sendUiState(ListUIState.Success)
+        }, onFailure = {
+            _uiState.value = ListUIState.Fail(page)
+        })
     }
 
     private fun load(
-        onSuccess: (List<ImageItemData>) -> Unit,
+        onSuccess: () -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
-        _uiState.tryEmit(ListUIState.Loading)
+        sendUiState(ListUIState.Loading)
         CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageList(page) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        _uiState.tryEmit(ListUIState.Success)
-                        onSuccess(it)
-                    }
-                }.onFailure {
-                    withContext(Dispatchers.Main) {
-                        _uiState.tryEmit(ListUIState.Fail(page))
-                        onFailure(it)
-                    }
-                }
+            updateImageList(
+                page,
+                onSuccess = onSuccess,
+                onFailure = onFailure,
+            )
         }
+    }
+
+    private fun sendUiState(uiState: ListUIState) {
+        when (uiState) {
+            is ListUIState.Fail -> {
+                _uiState.tryEmit(uiState)
+                _uiState.tryEmit(ListUIState.None)
+            }
+
+            ListUIState.Loading, ListUIState.None, ListUIState.Success -> {
+                _uiState.tryEmit(uiState)
+            }
+        }
+
     }
 }

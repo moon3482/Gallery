@@ -3,7 +3,9 @@ package com.charlie.gallery.ui.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import com.charlie.gallery.model.ImageDetailData
+import androidx.lifecycle.map
+import com.charlie.gallery.model.ImageDetailModel
+import com.charlie.gallery.usecase.GetDetailImageUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,17 +17,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DetailViewModel(
-    private val model: Model,
-    private var currentId: Int = -1,
+    private val getDetailImageUseCase: GetDetailImageUseCase,
+    private var currentId: Int,
 ) {
 
     private val _detailUiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState>
         get() = _detailUiState.asStateFlow()
 
-    private val _imageDetailData: MutableLiveData<ImageDetailData> = MutableLiveData()
-    val imageDetailData: LiveData<ImageDetailData>
-        get() = _imageDetailData
+    private val _imageDetailDataResponse: MutableLiveData<ImageDetailModel> = MutableLiveData()
+    val imageDetailDataResponse: LiveData<ImageDetailModel>
+        get() = _imageDetailDataResponse
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isLoading: LiveData<Boolean>
@@ -33,17 +35,14 @@ class DetailViewModel(
             .mapLatest { it == DetailUiState.Loading }
             .asLiveData()
 
-    private val _isEnablePreviousButton: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnablePreviousButton: LiveData<Boolean>
-        get() = _isEnablePreviousButton
+        get() = _previousImageUrl.map { it != null }
 
-    private val _isEnableNextButton: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnableNextButton: LiveData<Boolean>
-        get() = _isEnableNextButton
+        get() = _nextImageUrl.map { it != null }
 
-    private val _currentImageUrl: MutableLiveData<String?> = MutableLiveData()
-    val currentImageUrl: LiveData<String?>
-        get() = _currentImageUrl
+    val currentImageUrl: LiveData<String>
+        get() = _imageDetailDataResponse.map { it.downloadUrl }
 
     private val _previousImageUrl: MutableLiveData<String?> = MutableLiveData()
     val previousImageUrl: LiveData<String?>
@@ -55,7 +54,7 @@ class DetailViewModel(
 
     init {
         if (currentId < 0) {
-            _detailUiState.tryEmit(DetailUiState.Fail)
+            sendState(DetailUiState.Fail)
         } else {
             setScreen()
         }
@@ -73,25 +72,20 @@ class DetailViewModel(
 
     private fun setScreen() {
         _detailUiState.tryEmit(DetailUiState.Loading)
-        if (currentId >= 0)
-            _isEnablePreviousButton.value = false
         load(
             id = currentId,
             onSuccess = {
-                _detailUiState.tryEmit(DetailUiState.Success)
-                _currentImageUrl.value = it.downloadUrl
-                _imageDetailData.value = it
+                sendState(DetailUiState.Success)
+                _imageDetailDataResponse.value = it
             },
             onFailure = {
-                _detailUiState.tryEmit(DetailUiState.Fail)
-                _currentImageUrl.value = null
+                sendState(DetailUiState.Fail)
             },
         )
         load(
             id = currentId - 1,
             onSuccess = {
-                _isEnablePreviousButton.value = true
-                _previousImageUrl.value = it.downloadUrl
+                _previousImageUrl.value = it?.downloadUrl
             },
             onFailure = {
                 _previousImageUrl.value = null
@@ -100,11 +94,9 @@ class DetailViewModel(
         load(
             id = currentId + 1,
             onSuccess = {
-                _isEnableNextButton.value = true
-                _nextImageUrl.value = it.downloadUrl
+                _nextImageUrl.value = it?.downloadUrl
             },
             onFailure = {
-                _isEnableNextButton.value = false
                 _nextImageUrl.value = null
             },
         )
@@ -112,11 +104,11 @@ class DetailViewModel(
 
     private fun load(
         id: Int,
-        onSuccess: (ImageDetailData) -> Unit,
+        onSuccess: (ImageDetailModel?) -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            runCatching { model.getImageDetailData(id = id) }
+            runCatching { getDetailImageUseCase(id = id) }
                 .onSuccess {
                     withContext(Dispatchers.Main) {
                         onSuccess(it)
@@ -126,6 +118,19 @@ class DetailViewModel(
                         onFailure(it)
                     }
                 }
+        }
+    }
+
+    private fun sendState(uiState: DetailUiState) {
+        when (uiState) {
+            DetailUiState.Fail -> {
+                _detailUiState.tryEmit(uiState)
+                _detailUiState.tryEmit(uiState)
+            }
+
+            DetailUiState.None,
+            DetailUiState.Loading,
+            DetailUiState.Success -> _detailUiState.tryEmit(uiState)
         }
     }
 }
