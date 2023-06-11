@@ -1,7 +1,7 @@
 package com.charlie.gallery.usecase
 
-import com.charlie.gallery.db.GalleryDao
-import com.charlie.gallery.local.ImageEntity
+import com.charlie.gallery.local.GalleryDao
+import com.charlie.gallery.local.model.ImageEntity
 import com.charlie.gallery.ui.list.ListModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

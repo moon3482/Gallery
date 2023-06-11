@@ -1,7 +1,7 @@
 package com.charlie.gallery.model
 
-import com.charlie.gallery.local.ImageEntity
-import com.charlie.gallery.remote.ImageDetailDataResponse
+import com.charlie.gallery.local.model.ImageEntity
+import com.charlie.gallery.remote.model.ImageDetailDataResponse
 
 data class ImageDetailModel(
     val author: String,

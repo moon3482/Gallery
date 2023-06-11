@@ -1,7 +1,7 @@
 package com.charlie.gallery.ui.list
 
-import com.charlie.gallery.network.RetrofitClient
-import com.charlie.gallery.remote.ImageDetailDataResponse
+import com.charlie.gallery.remote.RetrofitClient
+import com.charlie.gallery.remote.model.ImageDetailDataResponse
 import retrofit2.await
 
 class ListModel {

@@ -15,7 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
-import com.charlie.gallery.db.GalleryDatabase
+import com.charlie.gallery.local.GalleryDatabase
 import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration

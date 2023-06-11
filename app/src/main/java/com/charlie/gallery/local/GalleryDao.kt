@@ -1,4 +1,4 @@
-package com.charlie.gallery.db
+package com.charlie.gallery.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.charlie.gallery.local.ImageEntity
+import com.charlie.gallery.local.model.ImageEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

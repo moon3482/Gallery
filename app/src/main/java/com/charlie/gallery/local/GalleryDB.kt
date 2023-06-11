@@ -1,8 +1,8 @@
-package com.charlie.gallery.db
+package com.charlie.gallery.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.charlie.gallery.local.ImageEntity
+import com.charlie.gallery.local.model.ImageEntity
 
 @Database(entities = [ImageEntity::class], version = 1)
 abstract class GalleryDB : RoomDatabase() {

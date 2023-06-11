@@ -1,6 +1,6 @@
-package com.charlie.gallery.network
+package com.charlie.gallery.remote
 
-import com.charlie.gallery.remote.ImageDetailDataResponse
+import com.charlie.gallery.remote.model.ImageDetailDataResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

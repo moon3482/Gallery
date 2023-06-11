@@ -1,5 +1,6 @@
-package com.charlie.gallery.network
+package com.charlie.gallery.remote
 
+import com.charlie.gallery.network.Interceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient

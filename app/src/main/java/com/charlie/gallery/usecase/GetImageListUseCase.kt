@@ -1,7 +1,7 @@
 package com.charlie.gallery.usecase
 
-import com.charlie.gallery.db.GalleryDao
-import com.charlie.gallery.local.ImageEntity
+import com.charlie.gallery.local.GalleryDao
+import com.charlie.gallery.local.model.ImageEntity
 import kotlinx.coroutines.flow.Flow
 
 class GetImageListUseCase(

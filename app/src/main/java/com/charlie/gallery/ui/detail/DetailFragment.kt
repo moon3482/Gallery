@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
-import com.charlie.gallery.db.GalleryDatabase
-import com.charlie.gallery.network.RetrofitClient
+import com.charlie.gallery.local.GalleryDatabase
+import com.charlie.gallery.remote.RetrofitClient
 import com.charlie.gallery.usecase.GetDetailImageUseCase
 import kotlinx.coroutines.launch
 

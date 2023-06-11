@@ -1,8 +1,8 @@
 package com.charlie.gallery.usecase
 
-import com.charlie.gallery.db.GalleryDao
+import com.charlie.gallery.local.GalleryDao
 import com.charlie.gallery.model.ImageDetailModel
-import com.charlie.gallery.network.GalleryApi
+import com.charlie.gallery.remote.GalleryApi
 import retrofit2.await
 
 class GetDetailImageUseCase(

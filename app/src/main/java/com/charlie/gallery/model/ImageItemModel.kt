@@ -1,6 +1,6 @@
 package com.charlie.gallery.model
 
-import com.charlie.gallery.local.ImageEntity
+import com.charlie.gallery.local.model.ImageEntity
 
 
 data class ImageItemModel(

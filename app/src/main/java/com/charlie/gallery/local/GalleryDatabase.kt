@@ -1,4 +1,4 @@
-package com.charlie.gallery.db
+package com.charlie.gallery.local
 
 import android.content.Context
 import androidx.room.Room

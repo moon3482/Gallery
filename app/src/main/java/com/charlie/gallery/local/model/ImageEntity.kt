@@ -1,10 +1,10 @@
-package com.charlie.gallery.local
+package com.charlie.gallery.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.charlie.gallery.remote.ImageDetailDataResponse
+import com.charlie.gallery.remote.model.ImageDetailDataResponse
 
 @Entity(tableName = "tb_image", indices = [Index(value = ["id"], unique = true)])
 data class ImageEntity(
