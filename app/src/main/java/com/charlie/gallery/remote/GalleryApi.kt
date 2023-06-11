@@ -13,7 +13,7 @@ interface GalleryApi {
         @Query("page")
         page: Int = 0,
         @Query("limit")
-        limit: Int = 30,
+        limit: Int,
     ): Call<List<ImageDetailDataResponse>>
 
     @GET("/id/{id}/info")
