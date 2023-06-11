@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.charlie.gallery.local.model.ImageEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GalleryDao {
@@ -19,10 +18,10 @@ interface GalleryDao {
     suspend fun insert(entityList: List<ImageEntity>)
 
     @Query("SELECT * FROM tb_image WHERE id = :id")
-    suspend fun getImage(id: Int): ImageEntity?
+    suspend fun get(id: Int): ImageEntity?
 
     @Query("SELECT * FROM tb_image ORDER BY id ASC LIMIT :limit OFFSET :offset")
-    fun getImages(limit: Int, offset: Int): Flow<List<ImageEntity>>
+    suspend fun getList(limit: Int, offset: Int): List<ImageEntity>
 
     @Update
     suspend fun update(entity: ImageEntity)

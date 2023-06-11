@@ -10,7 +10,7 @@ object GalleryDatabase {
     private var database: GalleryDB? = null
 
     @OptIn(InternalCoroutinesApi::class)
-    fun getDatabase(context: Context): GalleryDB {
+    fun init(context: Context) {
         if (database == null) {
             synchronized(this) {
                 Room.databaseBuilder(
@@ -22,6 +22,10 @@ object GalleryDatabase {
                 }
             }
         }
-        return database!!
     }
+
+    val galleryDao: GalleryDao
+        get() = database?.galleryDao()
+            ?: throw IllegalStateException("GalleryDatabase must be initialized")
+
 }
