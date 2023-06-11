@@ -9,7 +9,7 @@ data class ImageItemModel(
 ) {
     companion object {
         operator fun invoke(imageEntity: ImageEntity) = ImageItemModel(
-            id = imageEntity.imageId,
+            id = imageEntity.id,
             downloadUrl = imageEntity.downloadUrl,
         )
     }
