@@ -2,24 +2,19 @@ package com.charlie.gallery.ui.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import com.charlie.gallery.model.ImageDetailModel
-import com.charlie.gallery.usecase.GetDetailImageUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DetailViewModel(
-    private val getDetailImageUseCase: GetDetailImageUseCase,
     private var currentId: Int,
-) {
+) : ViewModel() {
 
     private val _detailUiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState>
@@ -107,18 +102,6 @@ class DetailViewModel(
         onSuccess: (ImageDetailModel?) -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            runCatching { getDetailImageUseCase(id = id) }
-                .onSuccess {
-                    withContext(Dispatchers.Main) {
-                        onSuccess(it)
-                    }
-                }.onFailure {
-                    withContext(Dispatchers.Main) {
-                        onFailure(it)
-                    }
-                }
-        }
     }
 
     private fun sendState(uiState: DetailUiState) {

@@ -14,9 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
-import com.charlie.gallery.local.GalleryDatabase
-import com.charlie.gallery.remote.RetrofitClient
-import com.charlie.gallery.usecase.GetDetailImageUseCase
 import kotlinx.coroutines.launch
 
 class DetailFragment : Fragment(), DetailUIEvent {
@@ -32,12 +29,6 @@ class DetailFragment : Fragment(), DetailUIEvent {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         detailViewModel = DetailViewModel(
-            getDetailImageUseCase = GetDetailImageUseCase(
-                galleryApi = RetrofitClient.galleryApi,
-                galleryDao = GalleryDatabase
-                    .getDatabase(context.applicationContext)
-                    .galleryDao()
-            ),
             currentId = getCurrentId(arguments),
         )
     }

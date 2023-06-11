@@ -1,6 +1,5 @@
 package com.charlie.gallery.ui.list
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,18 +8,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentListBinding
-import com.charlie.gallery.local.GalleryDatabase
 import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
-import com.charlie.gallery.usecase.GetImageListUseCase
-import com.charlie.gallery.usecase.UpdateImageListUseCase
 import com.charlie.gallery.util.doOnScrolled
 import kotlinx.coroutines.launch
 
@@ -31,22 +28,9 @@ class ListFragment : Fragment(), ListUIEvent {
         get() = checkNotNull(_binding) {
             "_binding iS Null"
         }
-    private lateinit var listViewModel: ListViewModel
+    private val listViewModel: ListViewModel by viewModels()
 
     // region Lifecycle
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val galleryDao = GalleryDatabase.getDatabase(requireContext()).galleryDao()
-        listViewModel = ListViewModel(
-            UpdateImageListUseCase(
-                getImageList = ListModel(),
-                galleryDao = galleryDao,
-            ),
-            GetImageListUseCase(
-                galleryDao = galleryDao,
-            ),
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,9 +55,9 @@ class ListFragment : Fragment(), ListUIEvent {
             adapter = ListAdapter()
             addItemDecoration(ListDecoration(10, 8))
             doOnScrolled { _, _, _ ->
-                val layoutManager = binding.gridListRecyclerview.layoutManager as? LinearLayoutManager
+                val layoutManager = binding.gridListRecyclerview.layoutManager as? GridLayoutManager
                 layoutManager?.let {
-                    if (it.findLastVisibleItemPosition() == it.itemCount - 1) {
+                    if (it.findLastCompletelyVisibleItemPosition() == it.itemCount - 1) {
                         listViewModel.onNextPage()
                     }
                 }

@@ -2,6 +2,7 @@ package com.charlie.gallery.ui.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.charlie.gallery.model.ImageItemModel
 import com.charlie.gallery.usecase.GetImageListUseCase
@@ -17,10 +18,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ListViewModel(
-    private val updateImageList: UpdateImageListUseCase,
-    private val getImageListUseCase: GetImageListUseCase,
-) {
-    private val limit = 30
+    private val model: ListModel = ListModel(),
+) : ViewModel() {
     private var page = 1
 
     private val _imageList: MutableLiveData<List<ImageItemModel>> = MutableLiveData()
