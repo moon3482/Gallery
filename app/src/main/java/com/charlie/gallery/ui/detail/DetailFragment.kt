@@ -1,7 +1,6 @@
 package com.charlie.gallery.ui.detail
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -23,15 +23,9 @@ class DetailFragment : Fragment(), DetailUIEvent {
             "_binding is Null"
         }
 
-    private lateinit var detailViewModel: DetailViewModel
+    private val detailViewModel: DetailViewModel by viewModels()
 
     //region Lifecycle
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        detailViewModel = DetailViewModel(
-            currentId = getCurrentId(arguments),
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
