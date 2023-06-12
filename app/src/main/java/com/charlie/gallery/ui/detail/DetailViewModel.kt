@@ -2,19 +2,26 @@ package com.charlie.gallery.ui.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.charlie.gallery.model.ImageDetailModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 
 class DetailViewModel(
-    private var currentId: Int,
+    private val state: SavedStateHandle,
 ) : ViewModel() {
+
+    private var currentId: Int = 0
+    private val model: DetailModel = DetailModel()
 
     private val _detailUiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState>
@@ -24,10 +31,9 @@ class DetailViewModel(
     val imageDetailDataResponse: LiveData<ImageDetailModel>
         get() = _imageDetailDataResponse
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val isLoading: LiveData<Boolean>
         get() = _detailUiState
-            .mapLatest { it == DetailUiState.Loading }
+            .map { it == DetailUiState.Loading }
             .asLiveData()
 
     val isEnablePreviousButton: LiveData<Boolean>
@@ -49,7 +55,7 @@ class DetailViewModel(
 
     init {
         if (currentId < 0) {
-            sendState(DetailUiState.Fail)
+            sendUiState(DetailUiState.Fail)
         } else {
             setScreen()
         }
@@ -66,45 +72,44 @@ class DetailViewModel(
     }
 
     private fun setScreen() {
-        _detailUiState.tryEmit(DetailUiState.Loading)
+        sendUiState(DetailUiState.Loading)
         load(
             id = currentId,
-            onSuccess = {
-                sendState(DetailUiState.Success)
-                _imageDetailDataResponse.value = it
+            onEach = {
+                if (it == null) {
+                    sendUiState(DetailUiState.Fail)
+                } else {
+                    _imageDetailDataResponse.value = it
+                }
             },
-            onFailure = {
-                sendState(DetailUiState.Fail)
-            },
+            onComplete = { sendUiState(DetailUiState.Success) }
         )
         load(
             id = currentId - 1,
-            onSuccess = {
+            onEach = {
                 _previousImageUrl.value = it?.downloadUrl
-            },
-            onFailure = {
-                _previousImageUrl.value = null
             },
         )
         load(
             id = currentId + 1,
-            onSuccess = {
+            onEach = {
                 _nextImageUrl.value = it?.downloadUrl
-            },
-            onFailure = {
-                _nextImageUrl.value = null
             },
         )
     }
 
     private fun load(
         id: Int,
-        onSuccess: (ImageDetailModel?) -> Unit,
-        onFailure: (Throwable) -> Unit,
+        onEach: (ImageDetailModel?) -> Unit,
+        onComplete: () -> Unit = {},
     ) {
+        model.get(id = id)
+            .onEach { onEach(it) }
+            .onCompletion { onComplete() }
+            .launchIn(viewModelScope)
     }
 
-    private fun sendState(uiState: DetailUiState) {
+    private fun sendUiState(uiState: DetailUiState) {
         when (uiState) {
             DetailUiState.Fail -> {
                 _detailUiState.tryEmit(uiState)

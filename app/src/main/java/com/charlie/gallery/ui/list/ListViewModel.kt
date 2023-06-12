@@ -2,6 +2,7 @@ package com.charlie.gallery.ui.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,10 +17,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
 class ListViewModel(
-    private val model: ListModel = ListModel(),
+    private val state: SavedStateHandle,
 ) : ViewModel() {
     private var page = 1
-
+    private val model: ListModel = ListModel()
+    
     private val _imageList: MutableLiveData<List<ImageItemModel>> = MutableLiveData()
     val imageList: LiveData<List<ImageItemModel>>
         get() = _imageList
@@ -40,10 +42,13 @@ class ListViewModel(
 
     fun onNextPage() {
         page++
-        load()
+        if (_uiState.value == ListUIState.Success) {
+            load()
+        }
     }
 
     fun onReload() {
+        _imageList.value = emptyList()
         page = 1
         load()
     }
@@ -54,7 +59,7 @@ class ListViewModel(
                 sendUiState(ListUIState.Loading)
             }
             .onEach {
-                _imageList.value = it
+                _imageList.value = _imageList.value?.plus(it) ?: it
             }
             .onCompletion {
                 if (it != null) {
