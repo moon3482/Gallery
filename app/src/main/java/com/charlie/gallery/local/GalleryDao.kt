@@ -26,9 +26,6 @@ interface GalleryDao {
     @Update
     suspend fun update(entity: ImageEntity)
 
-    @Query("UPDATE tb_image SET width = :width, height = :height ,download_url = :downloadUrl, url = :url WHERE id = :id")
-    suspend fun update(id: Int, width: Int, height: Int, downloadUrl: String, url: String)
-
     @Delete
     suspend fun delete(entity: ImageEntity)
 
