@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.charlie.gallery.model.ImageItemModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,13 +16,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
 
-class ListViewModel(
-    private val state: SavedStateHandle,
+@HiltViewModel
+class ListViewModel @Inject constructor(
+    state: SavedStateHandle,
+    private val model: ListModel,
 ) : ViewModel() {
     private var page = 1
-    private val model: ListModel = ListModel()
-    
+
     private val _imageList: MutableLiveData<List<ImageItemModel>> = MutableLiveData()
     val imageList: LiveData<List<ImageItemModel>>
         get() = _imageList

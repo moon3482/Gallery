@@ -14,8 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.gallery.R
 import com.charlie.gallery.databinding.FragmentDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DetailFragment : Fragment(), DetailUIEvent {
     private var _binding: FragmentDetailBinding? = null
     private val binding: FragmentDetailBinding

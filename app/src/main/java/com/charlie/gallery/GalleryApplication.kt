@@ -1,12 +1,7 @@
 package com.charlie.gallery
 
 import android.app.Application
-import com.charlie.gallery.local.GalleryDatabase
+import dagger.hilt.android.HiltAndroidApp
 
-open class GalleryApplication : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-        GalleryDatabase.init(this)
-    }
-}
+@HiltAndroidApp
+open class GalleryApplication : Application()

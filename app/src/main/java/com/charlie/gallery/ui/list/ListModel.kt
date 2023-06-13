@@ -1,20 +1,23 @@
 package com.charlie.gallery.ui.list
 
-import com.charlie.gallery.local.GalleryDatabase
-import com.charlie.gallery.model.ImageDetailModel
+import com.charlie.gallery.local.GalleryDao
 import com.charlie.gallery.model.ImageItemModel
 import com.charlie.gallery.remote.GalleryService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class ListModel {
-    private val local = GalleryDatabase.galleryDao
-    private val remote = GalleryService
+class ListModel @Inject constructor(
+    private val local: GalleryDao,
+    private val remote: GalleryService,
+    private val limit: Int,
+) {
+
     fun getList(page: Int): Flow<List<ImageItemModel>> {
         return flow {
-            val offset = (page - 1) * GalleryService.LIMIT
+            val offset = (page - 1) * limit
             local
-                .getList(offset = offset, limit = GalleryService.LIMIT)
+                .getList(offset = offset, limit = limit)
                 .map { entity -> ImageItemModel(entity) }
                 .let {
                     emit(it)
@@ -22,7 +25,7 @@ class ListModel {
 
             remote.requestImageList(page = page)
                 .map {
-                    it.map { entity -> ImageDetailModel(entity) }
+                    it.map { entity -> com.charlie.gallery.model.ImageDetailModel(entity) }
                 }
                 .onSuccess {
                     local.insert(it.map { model -> model.toEntity() })

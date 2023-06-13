@@ -8,6 +8,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charlie.gallery.model.ImageDetailModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,13 +16,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class DetailViewModel(
-    private val state: SavedStateHandle,
+@HiltViewModel
+class DetailViewModel @Inject constructor(
+    state: SavedStateHandle,
+    private val model: DetailModel,
 ) : ViewModel() {
 
-    private var currentId: Int = 0
-    private val model: DetailModel = DetailModel()
+    private var currentId: Int = getCurrentId(state)
 
     private val _detailUiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState>
@@ -121,4 +124,15 @@ class DetailViewModel(
             DetailUiState.Success -> _detailUiState.tryEmit(uiState)
         }
     }
+
+    companion object {
+        private const val CURRENT_IMAGE_ID = "currentId"
+
+        fun getCurrentId(
+            stateHandle: SavedStateHandle?,
+        ): Int {
+            return stateHandle?.get<Int>(CURRENT_IMAGE_ID) ?: -1
+        }
+    }
+
 }

@@ -19,8 +19,10 @@ import com.charlie.gallery.ui.detail.DetailFragment
 import com.charlie.gallery.ui.list.adapter.ListAdapter
 import com.charlie.gallery.ui.list.adapter.ListDecoration
 import com.charlie.gallery.util.doOnScrolled
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ListFragment : Fragment(), ListUIEvent {
 
     private var _binding: FragmentListBinding? = null
