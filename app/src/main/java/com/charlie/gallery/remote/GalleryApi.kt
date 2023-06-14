@@ -1,6 +1,6 @@
-package com.charlie.gallery.network
+package com.charlie.gallery.remote
 
-import com.charlie.gallery.remote.ImageDetailDataResponse
+import com.charlie.gallery.remote.model.ImageDetailDataResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -13,7 +13,7 @@ interface GalleryApi {
         @Query("page")
         page: Int = 0,
         @Query("limit")
-        limit: Int = 30,
+        limit: Int,
     ): Call<List<ImageDetailDataResponse>>
 
     @GET("/id/{id}/info")

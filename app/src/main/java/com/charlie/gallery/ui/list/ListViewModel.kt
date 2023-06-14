@@ -2,25 +2,27 @@ package com.charlie.gallery.ui.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.charlie.gallery.model.ImageItemModel
-import com.charlie.gallery.usecase.GetImageListUseCase
-import com.charlie.gallery.usecase.UpdateImageListUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
 
-class ListViewModel(
-    private val updateImageList: UpdateImageListUseCase,
-    private val getImageListUseCase: GetImageListUseCase,
-) {
-    private val limit = 30
+@HiltViewModel
+class ListViewModel @Inject constructor(
+    state: SavedStateHandle,
+    private val model: ListModel,
+) : ViewModel() {
     private var page = 1
 
     private val _imageList: MutableLiveData<List<ImageItemModel>> = MutableLiveData()
@@ -35,56 +37,41 @@ class ListViewModel(
         get() = _uiState.map { it == ListUIState.Loading }.asLiveData()
 
     val isFailure: LiveData<Boolean>
-        get() = _uiState.map { it == ListUIState.Fail(page) }.asLiveData()
+        get() = _uiState.map { it == ListUIState.Fail(1) }.asLiveData()
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            getImageListUseCase(page, (page - 10) * limit).collectLatest { entityList ->
-                withContext(Dispatchers.Main) {
-                    _imageList.value = entityList.map { ImageItemModel(it) }
-                }
-            }
-        }
-
-        load(onSuccess = {
-            sendUiState(ListUIState.Success)
-        }, onFailure = {
-            _uiState.value = ListUIState.Fail(page)
-        })
+        load()
     }
 
     fun onNextPage() {
         page++
-        sendUiState(ListUIState.Loading)
-        load(onSuccess = {
-            sendUiState(ListUIState.Success)
-        }, onFailure = {
-            sendUiState(ListUIState.Fail(page))
-        })
+        if (_uiState.value == ListUIState.Success) {
+            load()
+        }
     }
 
     fun onReload() {
+        _imageList.value = emptyList()
         page = 1
-        sendUiState(ListUIState.Loading)
-        load(onSuccess = {
-            sendUiState(ListUIState.Success)
-        }, onFailure = {
-            _uiState.value = ListUIState.Fail(page)
-        })
+        load()
     }
 
-    private fun load(
-        onSuccess: () -> Unit,
-        onFailure: (Throwable) -> Unit,
-    ) {
-        sendUiState(ListUIState.Loading)
-        CoroutineScope(Dispatchers.IO).launch {
-            updateImageList(
-                page,
-                onSuccess = onSuccess,
-                onFailure = onFailure,
-            )
-        }
+    private fun load() {
+        model.getList(page = page)
+            .onStart {
+                sendUiState(ListUIState.Loading)
+            }
+            .onEach {
+                _imageList.value = _imageList.value?.plus(it) ?: it
+            }
+            .onCompletion {
+                if (it != null) {
+                    sendUiState(ListUIState.Fail(page))
+                } else {
+                    sendUiState(ListUIState.Success)
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun sendUiState(uiState: ListUIState) {

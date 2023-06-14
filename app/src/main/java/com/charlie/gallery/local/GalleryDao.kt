@@ -1,4 +1,4 @@
-package com.charlie.gallery.db
+package com.charlie.gallery.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,8 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.charlie.gallery.local.ImageEntity
-import kotlinx.coroutines.flow.Flow
+import com.charlie.gallery.local.model.ImageEntity
 
 @Dao
 interface GalleryDao {
@@ -19,16 +18,13 @@ interface GalleryDao {
     suspend fun insert(entityList: List<ImageEntity>)
 
     @Query("SELECT * FROM tb_image WHERE id = :id")
-    suspend fun getImage(id: Int): ImageEntity?
+    suspend fun get(id: Int): ImageEntity?
 
     @Query("SELECT * FROM tb_image ORDER BY id ASC LIMIT :limit OFFSET :offset")
-    fun getImages(limit: Int, offset: Int): Flow<List<ImageEntity>>
+    suspend fun getList(limit: Int, offset: Int): List<ImageEntity>
 
     @Update
     suspend fun update(entity: ImageEntity)
-
-    @Query("UPDATE tb_image SET width = :width, height = :height ,download_url = :downloadUrl, url = :url WHERE id = :id")
-    suspend fun update(id: Int, width: Int, height: Int, downloadUrl: String, url: String)
 
     @Delete
     suspend fun delete(entity: ImageEntity)

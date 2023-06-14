@@ -1,18 +1,15 @@
-package com.charlie.gallery.local
+package com.charlie.gallery.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.charlie.gallery.remote.ImageDetailDataResponse
+import com.charlie.gallery.remote.model.ImageDetailDataResponse
 
-@Entity(tableName = "tb_image", indices = [Index(value = ["id"], unique = true)])
+@Entity(tableName = "tb_image")
 data class ImageEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo("row_id")
+    @ColumnInfo("id")
     val id: Int = 0,
-    @ColumnInfo(name = "id")
-    val imageId: Int,
     @ColumnInfo(name = "author")
     val author: String,
     @ColumnInfo(name = "width")
@@ -26,7 +23,7 @@ data class ImageEntity(
 ) {
     companion object {
         operator fun invoke(imageDetailDataResponse: ImageDetailDataResponse) = ImageEntity(
-            imageId = imageDetailDataResponse.id,
+            id = imageDetailDataResponse.id,
             author = imageDetailDataResponse.author,
             width = imageDetailDataResponse.width.toInt(),
             height = imageDetailDataResponse.height.toInt(),
