@@ -1,4 +1,4 @@
-package com.charlie.di
+package com.charlie.data.di
 
 import com.charlie.data.repository.GalleryRepository
 import com.charlie.data.repository.GalleryRepositoryImpl

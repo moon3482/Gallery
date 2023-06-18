@@ -1,15 +1,15 @@
 package com.charlie.data.repository
 
 import com.charlie.data.model.ImageDataModel
-import com.charlie.local.GalleryDao
-import com.charlie.remote.GalleryService
+import com.charlie.local.source.GalleryLocalDataSource
+import com.charlie.remote.source.GalleryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GalleryRepositoryImpl @Inject constructor(
-    private val local: GalleryDao,
-    private val remote: GalleryService,
+    private val local: GalleryLocalDataSource,
+    private val remote: GalleryRemoteDataSource,
     private val limit: Int,
 ) : GalleryRepository {
     override fun getImage(id: Int): Flow<ImageDataModel?> {
@@ -37,7 +37,7 @@ class GalleryRepositoryImpl @Inject constructor(
                     emit(it)
                 }
 
-            remote.requestImageList(page = page)
+            remote.requestImageList(page = page, limit = limit)
                 .map {
                     it.map { entity -> ImageDataModel(entity) }
                 }
@@ -52,6 +52,4 @@ class GalleryRepositoryImpl @Inject constructor(
                 }
         }
     }
-
-
 }

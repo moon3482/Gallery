@@ -1,7 +1,7 @@
 package com.charlie.data.model
 
 import com.charlie.local.model.ImageEntity
-import com.charlie.remote.model.ResponseData
+import com.charlie.remote.model.ImageResponse
 
 data class ImageDataModel(
     val id: Int = 0,
@@ -30,13 +30,13 @@ data class ImageDataModel(
             url = imageEntity.url,
         )
 
-        operator fun invoke(responseData: ResponseData) = ImageDataModel(
-            id = responseData.id,
-            author = responseData.author,
-            width = responseData.width.toInt(),
-            height = responseData.height.toInt(),
-            downloadUrl = responseData.downloadUrl,
-            url = responseData.url,
+        operator fun invoke(imageResponse: ImageResponse) = ImageDataModel(
+            id = imageResponse.id,
+            author = imageResponse.author,
+            width = imageResponse.width.toInt(),
+            height = imageResponse.height.toInt(),
+            downloadUrl = imageResponse.downloadUrl,
+            url = imageResponse.url,
         )
     }
 }
