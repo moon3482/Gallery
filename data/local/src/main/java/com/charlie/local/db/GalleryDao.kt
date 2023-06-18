@@ -1,4 +1,4 @@
-package com.charlie.local
+package com.charlie.local.db
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -34,5 +34,4 @@ interface GalleryDao {
 
     @Query("DELETE FROM tb_image")
     suspend fun deleteAll()
-
 }

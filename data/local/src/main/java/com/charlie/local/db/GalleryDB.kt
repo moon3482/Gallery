@@ -1,4 +1,4 @@
-package com.charlie.local
+package com.charlie.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
