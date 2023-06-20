@@ -25,7 +25,7 @@ class DetailViewModel @Inject constructor(
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
 
-    private var currentId: Int = state[CURRENT_IMAGE_ID] ?: run {
+    private var currentImageId: Int = state[CURRENT_IMAGE_ID] ?: run {
         sendUiState(DetailUiState.Fail)
         -1
     }
@@ -62,7 +62,7 @@ class DetailViewModel @Inject constructor(
         get() = _nextImageUrl
 
     init {
-        if (currentId < 0) {
+        if (currentImageId < 0) {
             sendUiState(DetailUiState.Fail)
         } else {
             setScreen()
@@ -70,19 +70,19 @@ class DetailViewModel @Inject constructor(
     }
 
     fun onClickPrevious() {
-        currentId--
+        currentImageId--
         setScreen()
     }
 
     fun onClickNext() {
-        currentId++
+        currentImageId++
         setScreen()
     }
 
     private fun setScreen() {
         sendUiState(DetailUiState.Loading)
-        load(
-            id = currentId,
+        getImage(
+            id = currentImageId,
             onEach = {
                 if (it == null) {
                     sendUiState(DetailUiState.Fail)
@@ -92,21 +92,21 @@ class DetailViewModel @Inject constructor(
             },
             onComplete = { sendUiState(DetailUiState.Success) },
         )
-        load(
-            id = currentId - 1,
+        getImage(
+            id = currentImageId - 1,
             onEach = {
                 _previousImageUrl.value = it?.downloadUrl
             },
         )
-        load(
-            id = currentId + 1,
+        getImage(
+            id = currentImageId + 1,
             onEach = {
                 _nextImageUrl.value = it?.downloadUrl
             },
         )
     }
 
-    private fun load(
+    private fun getImage(
         id: Int,
         onEach: (DetailUIModel?) -> Unit,
         onComplete: () -> Unit = {},

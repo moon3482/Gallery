@@ -40,7 +40,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        observe()
+        onObserveData()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = detailViewModel
         binding.event = this
@@ -55,7 +55,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
         }
     }
 
-    private fun observe() {
+    private fun onObserveData() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 detailViewModel.detailUiState.collect {
@@ -86,7 +86,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
     }
     //endregion
 
-    override fun moveWebView(url: String?) {
+    override fun onClickUrl(url: String?) {
         url?.let {
             startActivity(
                 Intent(

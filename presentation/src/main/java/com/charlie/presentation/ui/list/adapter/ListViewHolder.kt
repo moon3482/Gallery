@@ -10,14 +10,14 @@ class ListViewHolder(
     private val binding: ItemGridImageBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
-        imageItemModel: ListItemUiModel,
+        listItemUiModel: ListItemUiModel,
         onClickViewHolder: ((Int) -> Unit)?,
     ) {
         with(binding) {
-            url = imageItemModel.downloadUrl
+            url = listItemUiModel.downloadUrl
 
             imageviewItem.setOnClickListener {
-                onClickViewHolder?.invoke(imageItemModel.id)
+                onClickViewHolder?.invoke(listItemUiModel.id)
             }
         }
     }

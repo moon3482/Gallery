@@ -39,23 +39,23 @@ class ListViewModel @Inject constructor(
         get() = _uiState.map { it == ListUIState.Fail(1) }.asLiveData()
 
     init {
-        load()
+        getImageList()
     }
 
     fun onNextPage() {
         page++
         if (_uiState.value == ListUIState.Success) {
-            load()
+            getImageList()
         }
     }
 
     fun onReload() {
         _imageList.value = emptyList()
         page = 1
-        load()
+        getImageList()
     }
 
-    private fun load() {
+    private fun getImageList() {
         getImageListUseCase(page = page)
             .onStart {
                 sendUiState(ListUIState.Loading)

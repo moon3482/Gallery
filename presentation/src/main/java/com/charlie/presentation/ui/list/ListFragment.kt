@@ -46,7 +46,7 @@ class ListFragment : Fragment(), ListUIEvent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        observe()
+        onObserveData()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = listViewModel
         binding.event = this
@@ -70,7 +70,7 @@ class ListFragment : Fragment(), ListUIEvent {
         }
     }
 
-    private fun observe() {
+    private fun onObserveData() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 listViewModel.uiState.collect {

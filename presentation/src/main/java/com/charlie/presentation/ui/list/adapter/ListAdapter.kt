@@ -5,23 +5,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.charlie.presentation.model.ListItemUiModel
 
 class ListAdapter(
-    private val imageItemModelList: MutableList<ListItemUiModel> = mutableListOf(),
+    private val imageItemList: MutableList<ListItemUiModel> = mutableListOf(),
 ) : RecyclerView.Adapter<ListViewHolder>() {
 
     private var onClickItem: ((Int) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
         ListViewHolder(parent)
 
-    override fun getItemCount(): Int = imageItemModelList.size
+    override fun getItemCount(): Int = imageItemList.size
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val data = imageItemModelList[position]
+        val data = imageItemList[position]
         holder.bind(data, onClickItem)
     }
 
     fun updateList(imageItemModelList: List<ListItemUiModel>) {
-        this.imageItemModelList.clear()
-        this.imageItemModelList.addAll(imageItemModelList)
+        this.imageItemList.clear()
+        this.imageItemList.addAll(imageItemModelList)
         notifyDataSetChanged()
     }
 
