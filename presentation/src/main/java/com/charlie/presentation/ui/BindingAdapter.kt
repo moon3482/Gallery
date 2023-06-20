@@ -11,6 +11,7 @@ import com.charlie.presentation.model.ListItemUiModel
 import com.charlie.presentation.ui.detail.DetailUIEvent
 import com.charlie.presentation.ui.list.ListUIEvent
 import com.charlie.presentation.ui.list.adapter.ListAdapter
+import com.charlie.presentation.widget.LabelWidget
 
 @BindingAdapter("bind:list")
 fun RecyclerView.setList(imageItemModelList: List<ListItemUiModel>?) {
@@ -38,9 +39,9 @@ fun ImageView.setDetailImage(imageUrl: String?) {
         .into(this)
 }
 
-@BindingAdapter("bind:moveWebView", "bind:url")
-fun View.moveWebView(event: DetailUIEvent?, url: String?) {
+@BindingAdapter("bind:onClickUrl")
+fun LabelWidget.onClickUrl(event: DetailUIEvent?) {
     this.setOnClickListener {
-        event?.moveWebView(url)
+        event?.onClickUrl(this.urlLink)
     }
 }

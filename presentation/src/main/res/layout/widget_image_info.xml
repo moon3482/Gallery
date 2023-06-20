@@ -50,8 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             bind:label='@{@string/url_link}'
-            bind:moveWebView="@{event}"
-            bind:url="@{imageData.url}"
+            bind:onClickUrl="@{event}"
             bind:urlLink="@{imageData.url}" />
 
     </LinearLayout>
