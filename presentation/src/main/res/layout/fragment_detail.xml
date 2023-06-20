@@ -96,7 +96,7 @@
             app:layout_constraintStart_toStartOf="@id/begin_guide_line"
             app:layout_constraintTop_toBottomOf="@id/bookmark_imageView"
             bind:imageInfo="@{vm.imageDetailDataResponse}"
-            bind:moveWebView="@{event}" />
+            bind:onClickUrl="@{event}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/previous_floating_button"
