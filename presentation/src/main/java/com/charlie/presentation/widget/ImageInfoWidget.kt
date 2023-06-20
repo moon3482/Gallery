@@ -43,7 +43,7 @@ class ImageInfoWidget @JvmOverloads constructor(
             field = value
         }
 
-    var moveWebView: DetailUIEvent? = null
+    var onClickUrl: DetailUIEvent? = null
         get() = binding.event
         set(value) {
             binding.event = value
