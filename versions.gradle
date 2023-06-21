@@ -1,12 +1,12 @@
 def androidx = [:]
-androidx.coreVersion = '1.10.0'
+androidx.coreVersion = '1.10.1'
 androidx.appcompatVersion = '1.6.1'
 androidx.constraintlayoutVersion = '2.1.4'
-androidx.activityVersion = '1.7.1'
-androidx.fragmentVersion = '1.5.7'
+androidx.activityVersion = '1.7.2'
+androidx.fragmentVersion = '1.6.0'
 
 def google = [:]
-google.materialVersion = '1.8.0'
+google.materialVersion = '1.9.0'
 
 def testing = [:]
 testing.junitVersion = '4.13.2'

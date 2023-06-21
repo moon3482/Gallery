@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="imageData"
+            type="com.charlie.presentation.model.DetailUIModel" />
+
+        <variable
+            name="event"
+            type="com.charlie.presentation.ui.detail.DetailUIEvent" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/image_information_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/image_information"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <com.charlie.presentation.widget.LabelWidget
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:content='@{imageData.author}'
+            bind:label='@{@string/image_author}' />
+
+        <com.charlie.presentation.widget.LabelWidget
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:content='@{String.valueOf(imageData.width)}'
+            bind:label='@{@string/width_size}' />
+
+        <com.charlie.presentation.widget.LabelWidget
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:content='@{String.valueOf(imageData.height)}'
+            bind:label='@{@string/height_size}' />
+
+        <com.charlie.presentation.widget.LabelWidget
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:label='@{@string/url_link}'
+            bind:onClickUrl="@{event}"
+            bind:urlLink="@{imageData.url}" />
+
+    </LinearLayout>
+</layout>
