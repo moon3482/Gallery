@@ -4,19 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageUseCase
 import com.charlie.presentation.model.DetailUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,10 +37,10 @@ class DetailViewModel @Inject constructor(
     val imageDetailDataResponse: LiveData<DetailUIModel>
         get() = _imageDetailDataResponse
 
-    val isLoading: LiveData<Boolean>
+    val isLoading: StateFlow<Boolean>
         get() = _detailUiState
             .map { it == DetailUiState.Loading }
-            .asLiveData()
+            .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val isEnablePreviousButton: LiveData<Boolean>
         get() = _previousImageUrl.map { it != null }
