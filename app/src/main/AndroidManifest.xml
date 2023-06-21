@@ -18,10 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.charlie.presentation.ui.SubActivityA" />
-        <activity android:name="com.charlie.presentation.ui.SubActivityB" />
-        <activity android:name="com.charlie.presentation.ui.SubActivityC" />
     </application>
 
 </manifest>
