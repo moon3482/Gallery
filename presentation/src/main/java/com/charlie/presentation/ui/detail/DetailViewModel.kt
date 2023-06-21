@@ -64,15 +64,15 @@ class DetailViewModel @Inject constructor(
 
     fun onClickPrevious() {
         currentImageId--
-        setScreen()
+        setImage()
     }
 
     fun onClickNext() {
         currentImageId++
-        setScreen()
+        setImage()
     }
 
-    private fun setScreen() {
+    private fun setImage() {
         sendUiState(DetailUiState.Loading)
         getImage(
             id = currentImageId,
