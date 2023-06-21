@@ -59,11 +59,7 @@ class DetailViewModel @Inject constructor(
         get() = _nextImageUrl
 
     init {
-        if (currentImageId < 0) {
-            sendUiState(DetailUiState.Fail)
-        } else {
-            setScreen()
-        }
+        setImage()
     }
 
     fun onClickPrevious() {
