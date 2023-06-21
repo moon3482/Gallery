@@ -117,7 +117,7 @@ class DetailViewModel @Inject constructor(
         when (uiState) {
             DetailUiState.Fail -> {
                 _detailUiState.tryEmit(uiState)
-                _detailUiState.tryEmit(uiState)
+                _detailUiState.tryEmit(DetailUiState.None)
             }
 
             DetailUiState.None,
