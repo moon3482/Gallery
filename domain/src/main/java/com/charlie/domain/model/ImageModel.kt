@@ -10,14 +10,6 @@ data class ImageModel(
     val downloadUrl: String,
     val url: String,
 ) {
-    fun toDataModel() = ImageDataModel(
-        id = id,
-        author = author,
-        width = width,
-        height = height,
-        downloadUrl = downloadUrl,
-        url = url,
-    )
 
     companion object {
         operator fun invoke(imageDataModel: ImageDataModel) = ImageModel(
