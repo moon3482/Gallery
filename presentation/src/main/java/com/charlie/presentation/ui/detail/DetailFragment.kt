@@ -99,21 +99,11 @@ class DetailFragment : Fragment(), DetailUIEvent {
 
     companion object {
 
-        private const val CURRENT_IMAGE_ID = "currentId"
-
-        fun newInstance(
-            currentId: Int,
-        ): DetailFragment {
-            return DetailFragment().apply {
-                arguments = arguments(currentId)
-            }
-        }
-
         fun arguments(
             currentId: Int,
         ): Bundle {
             return Bundle().apply {
-                putInt(CURRENT_IMAGE_ID, currentId)
+                putInt(DetailViewModel.CURRENT_IMAGE_ID, currentId)
             }
         }
     }
