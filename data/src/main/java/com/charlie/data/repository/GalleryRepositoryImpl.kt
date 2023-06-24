@@ -14,9 +14,12 @@ class GalleryRepositoryImpl @Inject constructor(
 ) : GalleryRepository {
     override fun getImage(id: Int): Flow<ImageDataModel?> {
         return flow {
-            local.get(id = id)?.let {
-                emit(ImageDataModel(it))
-            }
+            local.get(id = id)
+                ?.let {
+                    emit(ImageDataModel(it))
+                }
+                ?: run { emit(null) }
+
             remote.requestImageData(id = id)
                 .map { ImageDataModel(it) }
                 .onSuccess { imageDataModel -> local.insert(imageDataModel.toEntity()) }
