@@ -46,10 +46,10 @@ class ListFragment : Fragment(), ListUIEvent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        onObserveData()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = listViewModel
         binding.event = this
+        onObserveData()
     }
 
     private fun initView() {
