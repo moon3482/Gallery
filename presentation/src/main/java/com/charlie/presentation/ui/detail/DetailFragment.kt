@@ -31,19 +31,22 @@ class DetailFragment : Fragment(), DetailUIEvent {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDetailBinding.inflate(layoutInflater)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        onObserveData()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = detailViewModel
         binding.event = this
+        onObserveData()
     }
 
     private fun initView() {
