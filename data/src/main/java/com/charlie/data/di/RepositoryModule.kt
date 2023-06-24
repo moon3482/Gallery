@@ -1,7 +1,7 @@
 package com.charlie.data.di
 
-import com.charlie.data.repository.GalleryRepository
-import com.charlie.data.repository.GalleryRepositoryImpl
+import com.charlie.data.repository.ImageRepository
+import com.charlie.data.repository.ImageRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,8 +12,8 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindGalleryRepository(
-        galleryRepositoryImpl: GalleryRepositoryImpl,
-    ): GalleryRepository
+    abstract fun bindImageRepository(
+        galleryRepositoryImpl: ImageRepositoryImpl,
+    ): ImageRepository
 
 }

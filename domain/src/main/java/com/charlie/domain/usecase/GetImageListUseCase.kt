@@ -1,6 +1,6 @@
 package com.charlie.domain.usecase
 
-import com.charlie.data.repository.GalleryRepository
+import com.charlie.data.repository.ImageRepository
 import com.charlie.domain.model.ImageModel
 import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 @Reusable
 class GetImageListUseCase @Inject constructor(
-    private val galleryRepository: GalleryRepository,
+    private val imageRepository: ImageRepository,
 ) {
     operator fun invoke(page: Int): Flow<List<ImageModel>> {
-        return galleryRepository
+        return imageRepository
             .getImageList(page = page)
             .map { imageDataModelList ->
                 imageDataModelList.map { imageDataModel -> ImageModel(imageDataModel) }

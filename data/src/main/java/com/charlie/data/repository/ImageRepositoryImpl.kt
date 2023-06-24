@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GalleryRepositoryImpl @Inject constructor(
+class ImageRepositoryImpl @Inject constructor(
     private val local: ImageDao,
     private val remote: ImageService,
     private val limit: Int,
-) : GalleryRepository {
+) : ImageRepository {
     override fun getImage(id: Int): Flow<ImageDataModel?> {
         return flow {
             local.get(id = id)
