@@ -26,7 +26,7 @@ class DetailViewModel @Inject constructor(
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
 
-    private var currentImageId: Int = state[CURRENT_IMAGE_ID] ?: run { sendUiState(DetailUiState.Fail) }.let { -1 }
+    private var currentImageId: Int = getImageId(state)
 
     private val _detailUiState: MutableStateFlow<DetailUiState> =
         MutableStateFlow(DetailUiState.Loading)
@@ -127,7 +127,11 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    private fun getImageId(state: SavedStateHandle): Int {
+        return state[CURRENT_IMAGE_ID] ?: -1
+    }
+
     companion object {
-        private const val CURRENT_IMAGE_ID = "currentId"
+        const val CURRENT_IMAGE_ID = "currentId"
     }
 }
