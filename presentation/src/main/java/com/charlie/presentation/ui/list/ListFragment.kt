@@ -109,17 +109,4 @@ class ListFragment : Fragment(), ListUIEvent {
             addToBackStack(null)
         }
     }
-
-    companion object {
-
-        fun newInstance(): ListFragment {
-            val fragment = ListFragment()
-            fragment.arguments = arguments()
-            return fragment
-        }
-
-        private fun arguments(): Bundle {
-            return Bundle()
-        }
-    }
 }
