@@ -72,7 +72,7 @@ class ListFragment : Fragment(), ListUIEvent {
 
     private fun onObserveData() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 listViewModel.uiState.collect {
                     when (it) {
                         is ListUIState.Fail -> {
