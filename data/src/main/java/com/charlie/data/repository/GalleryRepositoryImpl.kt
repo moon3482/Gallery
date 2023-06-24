@@ -1,14 +1,14 @@
 package com.charlie.data.repository
 
 import com.charlie.data.model.ImageDataModel
-import com.charlie.local.source.GalleryLocalDataSource
+import com.charlie.local.db.ImageDao
 import com.charlie.remote.source.GalleryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GalleryRepositoryImpl @Inject constructor(
-    private val local: GalleryLocalDataSource,
+    private val local: ImageDao,
     private val remote: GalleryRemoteDataSource,
     private val limit: Int,
 ) : GalleryRepository {
