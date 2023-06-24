@@ -29,9 +29,9 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideGalleryDao(
+    fun provideImageDao(
         galleryDB: GalleryDB
     ): ImageDao {
-        return galleryDB.galleryDao()
+        return galleryDB.imageDao()
     }
 }
