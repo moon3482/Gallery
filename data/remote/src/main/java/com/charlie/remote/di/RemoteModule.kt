@@ -1,6 +1,6 @@
 package com.charlie.remote.di
 
-import com.charlie.remote.api.GalleryApi
+import com.charlie.remote.api.ImageApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -69,7 +69,7 @@ object RemoteModule {
 
     @Provides
     @Singleton
-    fun provideGalleryApi(
+    fun provideImageApi(
         retrofit: Retrofit
-    ): GalleryApi = retrofit.create(GalleryApi::class.java)
+    ): ImageApi = retrofit.create(ImageApi::class.java)
 }

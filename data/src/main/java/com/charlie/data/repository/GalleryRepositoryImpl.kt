@@ -2,14 +2,14 @@ package com.charlie.data.repository
 
 import com.charlie.data.model.ImageDataModel
 import com.charlie.local.db.ImageDao
-import com.charlie.remote.source.GalleryRemoteDataSource
+import com.charlie.remote.source.ImageService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GalleryRepositoryImpl @Inject constructor(
     private val local: ImageDao,
-    private val remote: GalleryRemoteDataSource,
+    private val remote: ImageService,
     private val limit: Int,
 ) : GalleryRepository {
     override fun getImage(id: Int): Flow<ImageDataModel?> {

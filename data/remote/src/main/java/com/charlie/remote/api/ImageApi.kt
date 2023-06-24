@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface GalleryApi {
+interface ImageApi {
 
     @GET("/v2/list")
     fun requestImageList(
