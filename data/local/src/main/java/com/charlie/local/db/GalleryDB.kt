@@ -6,5 +6,5 @@ import com.charlie.local.model.ImageEntity
 
 @Database(entities = [ImageEntity::class], version = 1)
 abstract class GalleryDB : RoomDatabase() {
-    abstract fun galleryDao(): GalleryDao
+    abstract fun galleryDao(): ImageDao
 }

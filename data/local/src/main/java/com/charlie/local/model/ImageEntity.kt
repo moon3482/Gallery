@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "tb_image")
+@Entity(tableName = "image")
 data class ImageEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id")
