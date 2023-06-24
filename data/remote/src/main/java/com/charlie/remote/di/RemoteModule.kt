@@ -32,7 +32,7 @@ object RemoteModule {
     @Provides
     @Singleton
     fun provideMoshi(
-        kotlinJsonAdapterFactory: KotlinJsonAdapterFactory
+        kotlinJsonAdapterFactory: KotlinJsonAdapterFactory,
     ): Moshi = Moshi
         .Builder()
         .add(kotlinJsonAdapterFactory)
@@ -41,14 +41,14 @@ object RemoteModule {
     @Provides
     @Singleton
     fun provideMoshiConverterFactory(
-        moshi: Moshi
+        moshi: Moshi,
     ): MoshiConverterFactory = MoshiConverterFactory.create(moshi)
 
 
     @Provides
     @Singleton
     fun provideOkhttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor
+        httpLoggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient
         .Builder()
         .addInterceptor(httpLoggingInterceptor)
@@ -59,7 +59,7 @@ object RemoteModule {
     fun provideRetrofit(
         baseUrl: String,
         okHttpClient: OkHttpClient,
-        moshiConverterFactory: MoshiConverterFactory
+        moshiConverterFactory: MoshiConverterFactory,
     ): Retrofit = Retrofit
         .Builder()
         .baseUrl(baseUrl)
@@ -70,6 +70,6 @@ object RemoteModule {
     @Provides
     @Singleton
     fun provideImageApi(
-        retrofit: Retrofit
+        retrofit: Retrofit,
     ): ImageApi = retrofit.create(ImageApi::class.java)
 }
