@@ -19,8 +19,8 @@ import com.charlie.presentation.ui.detail.DetailUIEvent
         ),
         BindingMethod(
             type = ImageInfoWidget::class,
-            attribute = "bind:moveWebView",
-            method = "setMoveWebView",
+            attribute = "bind:onClickUrl",
+            method = "setOnClickUrl",
         ),
     ]
 )
