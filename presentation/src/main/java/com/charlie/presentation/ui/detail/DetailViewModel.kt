@@ -4,15 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageUseCase
-import com.charlie.presentation.model.DetailUIModel
+import com.charlie.presentation.model.DetailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
@@ -33,31 +34,23 @@ class DetailViewModel @Inject constructor(
     val detailUiState: StateFlow<DetailUiState>
         get() = _detailUiState.asStateFlow()
 
-    private val _imageDetailDataResponse: MutableLiveData<DetailUIModel> = MutableLiveData()
-    val imageDetailDataResponse: LiveData<DetailUIModel>
-        get() = _imageDetailDataResponse
+    private val _currentDetailUiModel: MutableLiveData<DetailUiModel> = MutableLiveData()
+    val currentDetailUiModel: LiveData<DetailUiModel>
+        get() = _currentDetailUiModel
+
+    private val _previousDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val previousDetailUiModel: LiveData<DetailUiModel?>
+        get() = _previousDetailUiModel
+
+    private val _nextDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val nextDetailUiModel: LiveData<DetailUiModel?>
+        get() = _nextDetailUiModel
 
     val isLoading: StateFlow<Boolean>
         get() = _detailUiState
             .map { it == DetailUiState.Loading }
             .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
-    val isEnablePreviousButton: LiveData<Boolean>
-        get() = _previousImageUrl.map { it != null }
-
-    val isEnableNextButton: LiveData<Boolean>
-        get() = _nextImageUrl.map { it != null }
-
-    val currentImageUrl: LiveData<String>
-        get() = _imageDetailDataResponse.map { it.downloadUrl }
-
-    private val _previousImageUrl: MutableLiveData<String?> = MutableLiveData()
-    val previousImageUrl: LiveData<String?>
-        get() = _previousImageUrl
-
-    private val _nextImageUrl: MutableLiveData<String?> = MutableLiveData()
-    val nextImageUrl: LiveData<String?>
-        get() = _nextImageUrl
 
     init {
         setImage()
@@ -81,7 +74,7 @@ class DetailViewModel @Inject constructor(
                 if (it == null) {
                     sendUiState(DetailUiState.Fail)
                 } else {
-                    _imageDetailDataResponse.value = it
+                    _currentDetailUiModel.value = it
                 }
             },
             onComplete = { sendUiState(DetailUiState.Success) },
@@ -89,28 +82,30 @@ class DetailViewModel @Inject constructor(
         getImage(
             id = currentImageId - 1,
             onEach = {
-                _previousImageUrl.value = it?.downloadUrl
+                _previousDetailUiModel.value = it
             },
         )
         getImage(
             id = currentImageId + 1,
             onEach = {
-                _nextImageUrl.value = it?.downloadUrl
+                _nextDetailUiModel.value = it
             },
         )
     }
 
     private fun getImage(
         id: Int,
-        onEach: (DetailUIModel?) -> Unit,
+        onEach: (DetailUiModel?) -> Unit,
         onComplete: () -> Unit = {},
     ) {
         getImageUseCase(id = id)
             .map { imageModel ->
-                imageModel?.let { DetailUIModel(it) }
+                imageModel?.let { DetailUiModel(it) }
             }
+            .flowOn(Dispatchers.IO)
             .onEach { onEach(it) }
             .onCompletion { onComplete() }
+            .flowOn(Dispatchers.Main)
             .launchIn(viewModelScope)
     }
 
