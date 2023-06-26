@@ -3,12 +3,12 @@ package com.charlie.presentation.ui.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageListUseCase
 import com.charlie.presentation.model.ListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,11 +33,23 @@ class ListViewModel @Inject constructor(
     val uiState: StateFlow<ListUIState>
         get() = _uiState.asStateFlow()
 
-    val isLoading: LiveData<Boolean>
-        get() = _uiState.map { it == ListUIState.Loading }.asLiveData()
+    val isLoading: StateFlow<Boolean>
+        get() = _uiState
+            .map { it is ListUIState.Loading }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = false,
+            )
 
-    val isFailure: LiveData<Boolean>
-        get() = _uiState.map { it == ListUIState.Fail(1) }.asLiveData()
+    val isFailure: StateFlow<Boolean>
+        get() = _uiState
+            .map { it is ListUIState.Fail }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = false,
+            )
 
     init {
         getImageList()
