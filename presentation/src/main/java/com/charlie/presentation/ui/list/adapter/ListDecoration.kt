@@ -6,6 +6,7 @@ import androidx.annotation.Px
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class ListDecoration(
     @Px private val width: Int,
@@ -20,10 +21,12 @@ class ListDecoration(
     ) {
         val spanCount = when (parent.layoutManager) {
             is GridLayoutManager -> (parent.layoutManager as GridLayoutManager).spanCount
+            is StaggeredGridLayoutManager -> (parent.layoutManager as StaggeredGridLayoutManager).spanCount
             else -> 1
         }
         val spanIndex = when (parent.layoutManager) {
             is GridLayoutManager -> (view.layoutParams as GridLayoutManager.LayoutParams).spanIndex
+            is StaggeredGridLayoutManager -> (view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex
             else -> 1
         }
         val itemCount = state.itemCount
