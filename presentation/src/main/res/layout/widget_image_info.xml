@@ -6,7 +6,7 @@
 
         <variable
             name="imageData"
-            type="com.charlie.presentation.model.DetailUIModel" />
+            type="com.charlie.presentation.model.DetailUiModel" />
 
         <variable
             name="event"

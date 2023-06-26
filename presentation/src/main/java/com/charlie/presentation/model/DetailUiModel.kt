@@ -2,7 +2,7 @@ package com.charlie.presentation.model
 
 import com.charlie.domain.model.ImageModel
 
-data class DetailUIModel(
+data class DetailUiModel(
     val id: Int,
     val author: String,
     val width: Int,
@@ -11,7 +11,7 @@ data class DetailUIModel(
     val url: String,
 ) {
     companion object {
-        operator fun invoke(imageModel: ImageModel) = DetailUIModel(
+        operator fun invoke(imageModel: ImageModel) = DetailUiModel(
             id = imageModel.id,
             author = imageModel.author,
             width = imageModel.width,

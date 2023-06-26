@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
 import com.charlie.presentation.databinding.WidgetImageInfoBinding
-import com.charlie.presentation.model.DetailUIModel
+import com.charlie.presentation.model.DetailUiModel
 import com.charlie.presentation.ui.detail.DetailUIEvent
 
 @BindingMethods(
@@ -36,7 +36,7 @@ class ImageInfoWidget @JvmOverloads constructor(
         true
     )
 
-    var imageInfo: DetailUIModel? = null
+    var imageInfo: DetailUiModel? = null
         get() = binding.imageData
         set(value) {
             binding.imageData = value
