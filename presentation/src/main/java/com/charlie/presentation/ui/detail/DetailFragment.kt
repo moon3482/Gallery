@@ -30,7 +30,8 @@ class DetailFragment : Fragment(), DetailUIEvent {
     //region Lifecycle
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDetailBinding.inflate(layoutInflater)
