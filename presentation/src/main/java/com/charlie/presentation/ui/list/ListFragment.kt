@@ -104,10 +104,10 @@ class ListFragment : Fragment(), ListUIEvent {
 
     // endregion
 
-    override fun onClickItem(position: Int) {
+    override fun onClickItem(id: Int) {
         parentFragmentManager.commit {
             add<DetailFragment>(
-                R.id.fragment_container, args = DetailFragment.arguments(position)
+                R.id.fragment_container, args = DetailFragment.arguments(id)
             )
             addToBackStack(null)
         }
