@@ -12,7 +12,7 @@ import com.charlie.local.model.ImageEntity
 interface ImageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: ImageEntity): Long
+    suspend fun insert(entity: ImageEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entityList: List<ImageEntity>)
