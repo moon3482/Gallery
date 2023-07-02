@@ -2,7 +2,6 @@ package com.charlie.presentation.model
 
 import com.charlie.domain.model.ImageModel
 
-
 data class ListItemUiModel(
     val id: Int,
     val downloadUrl: String,

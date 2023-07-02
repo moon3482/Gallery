@@ -20,11 +20,12 @@ object LocalModule {
     fun provideGalleryDB(
         @ApplicationContext context: Context
     ): GalleryDB {
-        return Room.databaseBuilder(
-            context,
-            GalleryDB::class.java,
-            "gallery.db"
-        ).build()
+        return Room
+            .databaseBuilder(
+                context,
+                GalleryDB::class.java,
+                "gallery.db"
+            ).build()
     }
 
     @Provides

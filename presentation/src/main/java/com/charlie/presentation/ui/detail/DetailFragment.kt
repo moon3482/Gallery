@@ -19,12 +19,12 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment(), DetailUIEvent {
+
     private var _binding: FragmentDetailBinding? = null
     private val binding: FragmentDetailBinding
         get() = checkNotNull(_binding) {
             "_binding is Null"
         }
-
     private val detailViewModel: DetailViewModel by viewModels()
 
     //region Lifecycle
