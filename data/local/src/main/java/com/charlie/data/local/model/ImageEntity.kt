@@ -1,4 +1,4 @@
-package com.charlie.local.model
+package com.charlie.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

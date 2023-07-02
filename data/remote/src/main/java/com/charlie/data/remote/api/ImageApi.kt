@@ -1,6 +1,6 @@
-package com.charlie.remote.api
+package com.charlie.data.remote.api
 
-import com.charlie.remote.model.ImageResponse
+import com.charlie.data.remote.model.ImageResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

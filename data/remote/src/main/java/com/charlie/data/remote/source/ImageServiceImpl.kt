@@ -1,7 +1,7 @@
-package com.charlie.remote.source
+package com.charlie.data.remote.source
 
-import com.charlie.remote.api.ImageApi
-import com.charlie.remote.model.ImageResponse
+import com.charlie.data.remote.api.ImageApi
+import com.charlie.data.remote.model.ImageResponse
 import retrofit2.await
 import javax.inject.Inject
 

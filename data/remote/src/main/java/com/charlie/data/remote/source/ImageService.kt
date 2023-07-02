@@ -1,6 +1,6 @@
-package com.charlie.remote.source
+package com.charlie.data.remote.source
 
-import com.charlie.remote.model.ImageResponse
+import com.charlie.data.remote.model.ImageResponse
 
 interface ImageService {
     suspend fun requestImageList(

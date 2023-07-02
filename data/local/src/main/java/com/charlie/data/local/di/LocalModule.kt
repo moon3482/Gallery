@@ -1,9 +1,9 @@
-package com.charlie.local.di
+package com.charlie.data.local.di
 
 import android.content.Context
 import androidx.room.Room
-import com.charlie.local.db.GalleryDB
-import com.charlie.local.db.ImageDao
+import com.charlie.data.local.db.GalleryDB
+import com.charlie.data.local.db.ImageDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

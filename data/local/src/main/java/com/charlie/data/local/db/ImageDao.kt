@@ -1,4 +1,4 @@
-package com.charlie.local.db
+package com.charlie.data.local.db
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.charlie.local.model.ImageEntity
+import com.charlie.data.local.model.ImageEntity
 
 @Dao
 interface ImageDao {

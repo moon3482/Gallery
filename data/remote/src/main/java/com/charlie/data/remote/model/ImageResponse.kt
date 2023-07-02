@@ -1,4 +1,4 @@
-package com.charlie.remote.model
+package com.charlie.data.remote.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

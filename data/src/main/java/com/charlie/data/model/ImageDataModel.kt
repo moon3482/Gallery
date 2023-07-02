@@ -1,7 +1,7 @@
 package com.charlie.data.model
 
-import com.charlie.local.model.ImageEntity
-import com.charlie.remote.model.ImageResponse
+import com.charlie.data.local.model.ImageEntity
+import com.charlie.data.remote.model.ImageResponse
 
 data class ImageDataModel(
     val id: Int = 0,

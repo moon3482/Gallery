@@ -1,7 +1,7 @@
-package com.charlie.remote.di
+package com.charlie.data.remote.di
 
-import com.charlie.remote.source.ImageService
-import com.charlie.remote.source.ImageServiceImpl
+import com.charlie.data.remote.source.ImageService
+import com.charlie.data.remote.source.ImageServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

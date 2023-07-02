@@ -1,6 +1,6 @@
-package com.charlie.remote.di
+package com.charlie.data.remote.di
 
-import com.charlie.remote.api.ImageApi
+import com.charlie.data.remote.api.ImageApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
