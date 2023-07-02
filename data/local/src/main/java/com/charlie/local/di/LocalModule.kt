@@ -21,7 +21,7 @@ object LocalModule {
         @ApplicationContext context: Context
     ): GalleryDB {
         return Room.databaseBuilder(
-            context.applicationContext,
+            context,
             GalleryDB::class.java,
             "gallery.db"
         ).build()
