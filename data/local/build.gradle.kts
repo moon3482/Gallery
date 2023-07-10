@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
+    id(ANDROID_LIBRARY)
+    id(KOTLIN)
+    kotlin(KAPT)
+    id(HILT)
 }
 
 android {
     namespace = "com.charlie.local"
-    compileSdk = compilerSdkVersion
+    compileSdk = COMPIL_SDK_VERSION
 
     defaultConfig {
-        minSdk = minSdkVersion
+        minSdk = MIN_SDK_VERSION
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -34,10 +34,14 @@ android {
 }
 
 dependencies {
-    implementation(Dependency.roomRuntime)
-    annotationProcessor(Dependency.roomCompiler)
-    implementation(Dependency.roomKtx)
-    kapt(Dependency.roomCompiler)
-    implementation(Dependency.hilt)
-    kapt(Dependency.hiltCompiler)
+    implementation(Dependency.ROOM_RUNTIME)
+    annotationProcessor(Dependency.ROOM_COMPILER)
+    implementation(Dependency.ROOM_KTX)
+    kapt(Dependency.ROOM_COMPILER)
+    implementation(Dependency.HILT)
+    kapt(Dependency.HILT_COMPILER)
+}
+
+kapt {
+    correctErrorTypes = true
 }

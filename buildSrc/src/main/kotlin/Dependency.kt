@@ -1,75 +1,75 @@
 object Dependency {
 
     //region AndroidX
-    private const val coreVersion = "1.10.1"
-    private const val appcompatVersion = "1.6.1"
-    private const val constraintlayoutVersion = "2.1.4"
-    private const val activityVersion = "1.7.2"
-    private const val fragmentVersion = "1.6.0"
-    private const val saveStateVersion = "2.2.0"
-    const val core = "androidx.core:core-ktx:$coreVersion"
-    const val appcompat = "androidx.appcompat:appcompat:$appcompatVersion"
-    const val constraintlayout =
-        "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
-    const val activity = "androidx.activity:activity-ktx:$activityVersion"
-    const val fragment = "androidx.fragment:fragment-ktx:$fragmentVersion"
-    const val saveState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$saveStateVersion"
+    private const val CORE_VERSION = "1.10.1"
+    private const val APPCOMPAT_VERSION = "1.6.1"
+    private const val CONSTRAINTLAYOUT_VERSION = "2.1.4"
+    private const val ACTIVITY_VERSION = "1.7.2"
+    private const val FRAGMENT_VERSION = "1.6.0"
+    private const val SAVEDSTATE_VERSION = "2.2.0"
+    const val CORE = "androidx.core:core-ktx:$CORE_VERSION"
+    const val APPCOMPAT = "androidx.appcompat:appcompat:$APPCOMPAT_VERSION"
+    const val CONSTRAINTLAYOUT =
+        "androidx.constraintlayout:constraintlayout:$CONSTRAINTLAYOUT_VERSION"
+    const val ACTIVITY = "androidx.activity:activity-ktx:$ACTIVITY_VERSION"
+    const val FRAGMENT = "androidx.fragment:fragment-ktx:$FRAGMENT_VERSION"
+    const val SAVEDSTATE = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$SAVEDSTATE_VERSION"
     //endregion
 
     //region Google
-    private const val googleMaterialVersion = "1.9.0"
-    const val googleMaterial = "com.google.android.material:material:$googleMaterialVersion"
+    private const val GOOGLE_MATERIAL_VERSION = "1.9.0"
+    const val GOOGLE_MATERIAL = "com.google.android.material:material:$GOOGLE_MATERIAL_VERSION"
     //endregion
 
     //region Hilt
-    const val hilt = "com.google.dagger:hilt-android:$hiltVersion"
-    const val hiltCompiler = "com.google.dagger:hilt-compiler:$hiltVersion"
+    const val HILT = "com.google.dagger:hilt-android:$HILT_VERSION"
+    const val HILT_COMPILER = "com.google.dagger:hilt-compiler:$HILT_VERSION"
     //endregion
 
     //region Room
-    private const val roomVersion = "2.5.1"
-    const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
-    const val roomCompiler = "androidx.room:room-compiler:$roomVersion"
-    const val roomKtx = "androidx.room:room-ktx:$roomVersion"
+    private const val ROOM_VERSION = "2.5.1"
+    const val ROOM_RUNTIME = "androidx.room:room-runtime:$ROOM_VERSION"
+    const val ROOM_COMPILER = "androidx.room:room-compiler:$ROOM_VERSION"
+    const val ROOM_KTX = "androidx.room:room-ktx:$ROOM_VERSION"
     //endregion
 
     //region Retrofit
-    private const val retrofitVersion = "2.9.0"
-    const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    const val moshiConverter = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+    private const val RETROFIT_VERSION = "2.9.0"
+    const val RETROFIT = "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    const val MOSHI_CONVERTER = "com.squareup.retrofit2:converter-moshi:$RETROFIT_VERSION"
     //endregion
 
     //region OkHttp
-    private const val okHttpVersion = "4.11.0"
-    private const val okHttpLogingInterceptorVersion = "4.10.0"
-    const val okHttp = "com.squareup.okhttp3:okhttp:$okHttpVersion"
-    const val okHttpLogingInterceptor =
-        "com.squareup.okhttp3:logging-interceptor:$okHttpLogingInterceptorVersion"
+    private const val OKHTTP_VERSION = "4.11.0"
+    private const val OKHTTP_LOGING_INTERCEPTOR_VERSION = "4.10.0"
+    const val OKHTTP = "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
+    const val OKHTTP_LOGING_INTERCEPTOR =
+        "com.squareup.okhttp3:logging-interceptor:$OKHTTP_LOGING_INTERCEPTOR_VERSION"
     //endregion
 
     //region Moshi
-    private const val moshiVersion = "1.14.0"
-    const val moshi = "com.squareup.moshi:moshi-kotlin:$moshiVersion"
-    const val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
+    private const val MOSHI_VERSION = "1.14.0"
+    const val MOSHI = "com.squareup.moshi:moshi-kotlin:$MOSHI_VERSION"
+    const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:$MOSHI_VERSION"
     //endregion
 
     //region Glide
-    private const val glideVersion = "4.15.1"
-    const val glide = "com.github.bumptech.glide:glide:$glideVersion"
+    private const val GLIDE_VERSION = "4.15.1"
+    const val GLIDE = "com.github.bumptech.glide:glide:$GLIDE_VERSION"
     //endregion
 
     //region Timber
-    private const val timberVersion = "5.0.1"
-    const val timber = "com.jakewharton.timber:timber:$timberVersion"
+    private const val TIMBER_VERSION = "5.0.1"
+    const val TIMBER = "com.jakewharton.timber:timber:$TIMBER_VERSION"
     //endregion
 
     //region Testing
-    private const val junitVersion = "4.13.2"
-    private const val androidjunitVersion = "1.1.5"
-    private const val espressoCoreVersion = "3.5.1"
-    const val junit = "junit:junit:$junitVersion"
-    const val androidjunit = "androidx.test.ext:junit:$androidjunitVersion"
-    const val espresso = "androidx.test.espresso:espresso-core:$espressoCoreVersion"
+    private const val JUNIT_VERSION = "4.13.2"
+    private const val ANDROID_JUNIT_VERSION = "1.1.5"
+    private const val ESPRESS_CORE_VERSION = "3.5.1"
+    const val JUNIT = "junit:junit:$JUNIT_VERSION"
+    const val ANDROID_JUNIT = "androidx.test.ext:junit:$ANDROID_JUNIT_VERSION"
+    const val ESPRESSO = "androidx.test.espresso:espresso-core:$ESPRESS_CORE_VERSION"
     //endregion
 
 

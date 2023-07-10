@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
+    id(ANDROID_LIBRARY)
+    id(KOTLIN)
+    kotlin(KAPT)
+    id(HILT)
 }
 
 android {
     namespace = "com.charlie.presentation"
-    compileSdk = compilerSdkVersion
+    compileSdk = COMPIL_SDK_VERSION
 
     defaultConfig {
-        minSdk = minSdkVersion
+        minSdk = MIN_SDK_VERSION
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -39,17 +39,21 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(Dependency.core)
-    implementation(Dependency.appcompat)
-    implementation(Dependency.googleMaterial)
-    implementation(Dependency.constraintlayout)
-    implementation(Dependency.activity)
-    implementation(Dependency.fragment)
-    implementation(Dependency.glide)
-    implementation(Dependency.saveState)
-    implementation(Dependency.hilt)
-    kapt(Dependency.hiltCompiler)
-    testImplementation(Dependency.junit)
-    androidTestImplementation(Dependency.androidjunit)
-    androidTestImplementation(Dependency.espresso)
+    implementation(Dependency.CORE)
+    implementation(Dependency.APPCOMPAT)
+    implementation(Dependency.GOOGLE_MATERIAL)
+    implementation(Dependency.CONSTRAINTLAYOUT)
+    implementation(Dependency.ACTIVITY)
+    implementation(Dependency.FRAGMENT)
+    implementation(Dependency.GLIDE)
+    implementation(Dependency.SAVEDSTATE)
+    implementation(Dependency.HILT)
+    kapt(Dependency.HILT_COMPILER)
+    testImplementation(Dependency.JUNIT)
+    androidTestImplementation(Dependency.ANDROID_JUNIT)
+    androidTestImplementation(Dependency.ESPRESSO)
+}
+
+kapt {
+    correctErrorTypes = true
 }

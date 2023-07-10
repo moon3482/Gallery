@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
+    id(ANDROID_LIBRARY)
+    id(KOTLIN)
+    kotlin(KAPT)
+    id(HILT)
 }
 
 android {
     namespace = "com.charlie.domain"
-    compileSdk = compilerSdkVersion
+    compileSdk = COMPIL_SDK_VERSION
 
     defaultConfig {
-        minSdk = minSdkVersion
+        minSdk = MIN_SDK_VERSION
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -35,6 +35,10 @@ android {
 
 dependencies {
     implementation(project(":data"))
-    implementation(Dependency.hilt)
-    kapt(Dependency.hiltCompiler)
+    implementation(Dependency.HILT)
+    kapt(Dependency.HILT_COMPILER)
+}
+
+kapt {
+    correctErrorTypes = true
 }
