@@ -1,7 +1,7 @@
 package com.charlie.data.repository
 
-import com.charlie.data.model.ImageDataModel
 import com.charlie.data.local.db.ImageDao
+import com.charlie.data.model.ImageDataModel
 import com.charlie.data.remote.source.ImageService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,11 +14,12 @@ class ImageRepositoryImpl @Inject constructor(
 ) : ImageRepository {
     override fun getImage(id: Int): Flow<ImageDataModel?> {
         return flow {
-            local.get(id = id)
-                ?.let {
-                    emit(ImageDataModel(it))
-                }
-                ?: run { emit(null) }
+            emit(
+                local
+                    .get(id = id)
+                    ?.let { ImageDataModel(it) }
+                    ?: ImageDataModel()
+            )
 
             remote.requestImageData(id = id)
                 .map { ImageDataModel(it) }
