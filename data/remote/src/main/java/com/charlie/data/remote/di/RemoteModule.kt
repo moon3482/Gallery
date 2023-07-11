@@ -35,7 +35,7 @@ object RemoteModule {
         kotlinJsonAdapterFactory: KotlinJsonAdapterFactory,
     ): Moshi = Moshi
         .Builder()
-        .add(kotlinJsonAdapterFactory)
+        .addLast(kotlinJsonAdapterFactory)
         .build()
 
     @Provides
