@@ -57,7 +57,7 @@ class ListViewModel @Inject constructor(
 
     fun onNextPage() {
         page++
-        if (_uiState.value == ListUIState.Success) {
+        if (_uiState.value is ListUIState.Success) {
             getImageList()
         }
     }
