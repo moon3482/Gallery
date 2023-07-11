@@ -17,7 +17,7 @@
     <string name="failed_loading">로딩에 실패하였습니다.</string>
     <string name="reload">다시 시도</string>
     <string name="notification">알림</string>
-    <string name="can_not_show_you_image">이미지를 표시 할 수 없습니다.</string>
+    <string name="network_error">네트워크 연결이 끊어졌습니다.</string>
     <string name="failed_load_image_list">"이미지 목록을 불러오는데\n실패 하였습니다."</string>
     <string name="return_to_page">돌아가기</string>
     <string name="bookmark_button">bookmark button</string>

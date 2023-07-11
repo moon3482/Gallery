@@ -67,7 +67,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
                         DetailUiState.Fail -> {
                             AlertDialog.Builder(requireContext())
                                 .setTitle(resources.getString(R.string.notification))
-                                .setMessage(resources.getString(R.string.can_not_show_you_image))
+                                .setMessage(resources.getString(R.string.network_error))
                                 .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
                                     requireActivity().onBackPressedDispatcher.onBackPressed()
                                 }
