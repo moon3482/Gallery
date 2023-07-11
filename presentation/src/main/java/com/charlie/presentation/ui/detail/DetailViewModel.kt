@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -47,64 +46,70 @@ class DetailViewModel @Inject constructor(
 
     val isLoading: StateFlow<Boolean>
         get() = _detailUiState
-            .map { it == DetailUiState.Loading }
-            .stateIn(viewModelScope, SharingStarted.Lazily, false)
-
+            .map { it is DetailUiState.Loading }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                false,
+            )
 
     init {
+        sendUiState(DetailUiState.Loading)
         setImage()
     }
 
     fun onClickPrevious() {
+        sendUiState(DetailUiState.Loading)
         currentImageId--
         setImage()
     }
 
     fun onClickNext() {
+        sendUiState(DetailUiState.Loading)
         currentImageId++
         setImage()
     }
 
     private fun setImage() {
-        sendUiState(DetailUiState.Loading)
-        getImage(
-            id = currentImageId,
-            onEach = {
-                if (it == null) {
-                    sendUiState(DetailUiState.Fail)
-                } else {
-                    _currentDetailUiModel.value = it
-                }
-            },
-            onComplete = { sendUiState(DetailUiState.Success) },
-        )
-        getImage(
-            id = currentImageId - 1,
-            onEach = {
-                _previousDetailUiModel.value = it
-            },
-        )
-        getImage(
-            id = currentImageId + 1,
-            onEach = {
-                _nextDetailUiModel.value = it
-            },
-        )
+        setCurrentDetailImage()
+        setPreviousDetailImage()
+        setNextDetailImage()
     }
 
-    private fun getImage(
-        id: Int,
-        onEach: (DetailUiModel?) -> Unit,
-        onComplete: () -> Unit = {},
-    ) {
-        getImageUseCase(id = id)
+    private fun setCurrentDetailImage() {
+        getImageUseCase(id = currentImageId)
             .map { imageModel ->
                 imageModel?.let { DetailUiModel(it) }
             }
             .flowOn(Dispatchers.IO)
-            .onEach { onEach(it) }
-            .onCompletion { onComplete() }
-            .flowOn(Dispatchers.Main)
+            .onEach {
+                if (it != null) {
+                    _currentDetailUiModel.value = it
+                    sendUiState(DetailUiState.Success)
+                } else {
+                    sendUiState(DetailUiState.Fail)
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun setPreviousDetailImage() {
+        getImageUseCase(id = currentImageId - 1)
+            .map { imageModel ->
+                imageModel?.let { DetailUiModel(it) }
+            }
+            .flowOn(Dispatchers.IO)
+            .onEach { _previousDetailUiModel.value = it }
+            .launchIn(viewModelScope)
+    }
+
+    private fun setNextDetailImage() {
+        getImageUseCase(id = currentImageId + 1)
+            .map { imageModel ->
+                imageModel?.let { DetailUiModel(it) }
+            }
+            .flowOn(Dispatchers.IO)
+            .onEach { _nextDetailUiModel.value = it }
             .launchIn(viewModelScope)
     }
 
@@ -117,7 +122,8 @@ class DetailViewModel @Inject constructor(
 
             DetailUiState.None,
             DetailUiState.Loading,
-            DetailUiState.Success -> _detailUiState.tryEmit(uiState)
+            DetailUiState.Success,
+            -> _detailUiState.tryEmit(uiState)
         }
     }
 
