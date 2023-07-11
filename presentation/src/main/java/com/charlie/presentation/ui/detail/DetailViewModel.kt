@@ -26,7 +26,6 @@ class DetailViewModel @Inject constructor(
     state: SavedStateHandle,
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
-
     private var currentImageId: Int = getImageId(state)
 
     private val _detailUiState: MutableStateFlow<DetailUiState> =

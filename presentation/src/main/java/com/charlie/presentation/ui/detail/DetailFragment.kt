@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment(), DetailUIEvent {
-
     private var _binding: FragmentDetailBinding? = null
     private val binding: FragmentDetailBinding
         get() = checkNotNull(_binding) {
@@ -28,7 +27,6 @@ class DetailFragment : Fragment(), DetailUIEvent {
     private val detailViewModel: DetailViewModel by viewModels()
 
     //region Lifecycle
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,7 +75,8 @@ class DetailFragment : Fragment(), DetailUIEvent {
 
                         DetailUiState.None,
                         DetailUiState.Loading,
-                        DetailUiState.Success -> Unit
+                        DetailUiState.Success,
+                        -> Unit
                     }
                 }
             }

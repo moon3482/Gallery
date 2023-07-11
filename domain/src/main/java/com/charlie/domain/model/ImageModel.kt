@@ -10,7 +10,6 @@ data class ImageModel(
     val downloadUrl: String,
     val url: String,
 ) {
-
     companion object {
         operator fun invoke(imageDataModel: ImageDataModel) = ImageModel(
             id = imageDataModel.id,

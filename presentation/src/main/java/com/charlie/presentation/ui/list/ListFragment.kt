@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ListFragment : Fragment(), ListUIEvent {
-
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
         get() = checkNotNull(_binding) {
@@ -33,7 +32,6 @@ class ListFragment : Fragment(), ListUIEvent {
     private val listViewModel: ListViewModel by viewModels()
 
     // region Lifecycle
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -90,7 +88,8 @@ class ListFragment : Fragment(), ListUIEvent {
 
                         ListUIState.None,
                         ListUIState.Success,
-                        ListUIState.Loading -> Unit
+                        ListUIState.Loading,
+                        -> Unit
                     }
                 }
             }
@@ -101,7 +100,6 @@ class ListFragment : Fragment(), ListUIEvent {
         _binding = null
         super.onDestroyView()
     }
-
     // endregion
 
     override fun onClickItem(id: Int) {
