@@ -4,12 +4,12 @@ import com.charlie.data.local.model.ImageEntity
 import com.charlie.data.remote.model.ImageResponse
 
 data class ImageDataModel(
-    val id: Int = 0,
-    val author: String,
-    val width: Int,
-    val height: Int,
-    val downloadUrl: String,
-    val url: String,
+    val id: Int = -1,
+    val author: String = "",
+    val width: Int = 0,
+    val height: Int = 0,
+    val downloadUrl: String = "",
+    val url: String = "",
 ) {
     fun toEntity() = ImageEntity(
         id = id,
