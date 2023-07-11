@@ -7,7 +7,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ImageApi {
-
     @GET("/v2/list")
     fun requestImageList(
         @Query("page")

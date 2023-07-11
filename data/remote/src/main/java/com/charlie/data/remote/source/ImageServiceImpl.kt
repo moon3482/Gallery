@@ -8,7 +8,6 @@ import javax.inject.Inject
 class ImageServiceImpl @Inject constructor(
     private val imageApi: ImageApi,
 ) : ImageService {
-
     override suspend fun requestImageList(
         page: Int,
         limit: Int,

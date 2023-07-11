@@ -16,7 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RemoteModule {
-
     @Provides
     @Singleton
     fun provideBaseUrl(): String = "https://picsum.photos"

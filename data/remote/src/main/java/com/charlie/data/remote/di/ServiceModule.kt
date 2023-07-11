@@ -10,7 +10,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ServiceModule {
-
     @Binds
     abstract fun bindImageService(
         service: ImageServiceImpl,
