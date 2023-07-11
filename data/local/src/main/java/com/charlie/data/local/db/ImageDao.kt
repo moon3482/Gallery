@@ -10,7 +10,6 @@ import com.charlie.data.local.model.ImageEntity
 
 @Dao
 interface ImageDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: ImageEntity)
 

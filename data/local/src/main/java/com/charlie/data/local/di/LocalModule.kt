@@ -14,11 +14,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object LocalModule {
-
     @Provides
     @Singleton
     fun provideGalleryDB(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): GalleryDB {
         return Room
             .databaseBuilder(
@@ -31,7 +30,7 @@ object LocalModule {
     @Provides
     @Singleton
     fun provideImageDao(
-        galleryDB: GalleryDB
+        galleryDB: GalleryDB,
     ): ImageDao {
         return galleryDB.imageDao()
     }
