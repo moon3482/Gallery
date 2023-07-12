@@ -4,20 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageUseCase
 import com.charlie.presentation.model.DetailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,69 +44,56 @@ class DetailViewModel @Inject constructor(
     val isLoading: LiveData<Boolean>
         get() = _uiState
             .map { it is DetailUiState.Loading }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(),
-                false,
-            )
 
     init {
-        sendUiState(DetailUiState.Loading)
         setImage()
     }
 
     fun onClickPrevious() {
-        sendUiState(DetailUiState.Loading)
         currentImageId--
         setImage()
     }
 
     fun onClickNext() {
-        sendUiState(DetailUiState.Loading)
         currentImageId++
         setImage()
     }
 
     private fun setImage() {
-        setCurrentDetailImage()
-        setPreviousDetailImage()
-        setNextDetailImage()
+        sendUiState(DetailUiState.Loading)
+        getImage(
+            currentImageId,
+            callback = { _currentImage.value = it },
+            onError = { sendUiState(DetailUiState.Fail) },
+            onCompletion = { sendUiState(DetailUiState.Success) }
+        )
+        getImage(
+            currentImageId + 1,
+            callback = { _nextImage.value = it },
+            onError = { _nextImage.value = null },
+        )
+        getImage(
+            currentImageId - 1,
+            callback = { _previousImage.value = it },
+            onError = { _previousImage.value = null },
+        )
     }
 
-    private fun setCurrentDetailImage() {
-        getImageUseCase(id = currentImageId)
-            .map { imageModel ->
-                imageModel?.let { DetailUiModel(it) }
-            }
+    private fun getImage(
+        id: Int,
+        callback: (DetailUiModel) -> Unit,
+        onError: (() -> Unit)? = null,
+        onCompletion: (() -> Unit)? = null,
+    ) {
+        getImageUseCase(id = id)
+            .map { imageModel -> DetailUiModel(imageModel) }
             .flowOn(Dispatchers.IO)
-            .onEach {
-                if (it != null) {
-                    _currentDetailUiModel.value = it
-                    sendUiState(DetailUiState.Success)
-                } else {
-                    sendUiState(DetailUiState.Fail)
-                }
+            .onEach { callback(it) }
+            .onCompletion {
+                if (it == null)
+                    onCompletion?.invoke()
             }
-            .launchIn(viewModelScope)
-    }
-
-    private fun setPreviousDetailImage() {
-        getImageUseCase(id = currentImageId - 1)
-            .map { imageModel ->
-                imageModel?.let { DetailUiModel(it) }
-            }
-            .flowOn(Dispatchers.IO)
-            .onEach { _previousDetailUiModel.value = it }
-            .launchIn(viewModelScope)
-    }
-
-    private fun setNextDetailImage() {
-        getImageUseCase(id = currentImageId + 1)
-            .map { imageModel ->
-                imageModel?.let { DetailUiModel(it) }
-            }
-            .flowOn(Dispatchers.IO)
-            .onEach { _nextDetailUiModel.value = it }
+            .catch { onError?.invoke() }
             .launchIn(viewModelScope)
     }
 
