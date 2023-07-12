@@ -43,8 +43,8 @@ class DetailViewModel @Inject constructor(
     val nextImage: LiveData<DetailUiModel?>
         get() = _nextImage
 
-    val isLoading: StateFlow<Boolean>
-        get() = _detailUiState
+    val isLoading: LiveData<Boolean>
+        get() = _uiState
             .map { it is DetailUiState.Loading }
             .stateIn(
                 viewModelScope,
