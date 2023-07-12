@@ -33,8 +33,8 @@ data class ImageDataModel(
         operator fun invoke(imageResponse: ImageResponse) = ImageDataModel(
             id = imageResponse.id,
             author = imageResponse.author,
-            width = imageResponse.width.toInt(),
-            height = imageResponse.height.toInt(),
+            width = imageResponse.width,
+            height = imageResponse.height,
             downloadUrl = imageResponse.downloadUrl,
             url = imageResponse.url,
         )

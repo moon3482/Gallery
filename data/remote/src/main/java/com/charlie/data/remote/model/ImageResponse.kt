@@ -7,8 +7,8 @@ import com.squareup.moshi.JsonClass
 data class ImageResponse(
     val id: Int,
     val author: String,
-    val width: Long,
-    val height: Long,
+    val width: Int,
+    val height: Int,
     val url: String,
     @Json(name = "download_url")
     val downloadUrl: String,
