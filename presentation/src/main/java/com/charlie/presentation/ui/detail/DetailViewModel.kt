@@ -31,17 +31,17 @@ class DetailViewModel @Inject constructor(
     val uiState: LiveData<DetailUiState>
         get() = _uiState
 
-    private val _currentDetailUiModel: MutableLiveData<DetailUiModel> = MutableLiveData()
-    val currentDetailUiModel: LiveData<DetailUiModel>
-        get() = _currentDetailUiModel
+    private val _currentImage: MutableLiveData<DetailUiModel> = MutableLiveData()
+    val currentImage: LiveData<DetailUiModel>
+        get() = _currentImage
 
-    private val _previousDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val previousDetailUiModel: LiveData<DetailUiModel?>
-        get() = _previousDetailUiModel
+    private val _previousImage: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val previousImage: LiveData<DetailUiModel?>
+        get() = _previousImage
 
-    private val _nextDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val nextDetailUiModel: LiveData<DetailUiModel?>
-        get() = _nextDetailUiModel
+    private val _nextImage: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val nextImage: LiveData<DetailUiModel?>
+        get() = _nextImage
 
     val isLoading: StateFlow<Boolean>
         get() = _detailUiState
