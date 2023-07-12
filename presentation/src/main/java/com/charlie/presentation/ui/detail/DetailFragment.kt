@@ -9,13 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.presentation.R
 import com.charlie.presentation.databinding.FragmentDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment(), DetailUIEvent {
@@ -58,29 +54,27 @@ class DetailFragment : Fragment(), DetailUIEvent {
     }
 
     private fun onObserveData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailViewModel.detailUiState.collect {
-                    when (it) {
-                        DetailUiState.Fail -> {
-                            AlertDialog.Builder(requireContext())
-                                .setTitle(resources.getString(R.string.notification))
-                                .setMessage(resources.getString(R.string.network_error))
-                                .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
-                                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                                }
-                                .setCancelable(false)
-                                .show()
-                        }
-
-                        DetailUiState.None,
-                        DetailUiState.Loading,
-                        DetailUiState.Success,
-                        -> Unit
+        detailViewModel
+            .uiState
+            .observe(viewLifecycleOwner) {
+                when (it) {
+                    DetailUiState.Fail -> {
+                        AlertDialog.Builder(requireContext())
+                            .setTitle(resources.getString(R.string.notification))
+                            .setMessage(resources.getString(R.string.network_error))
+                            .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
+                                requireActivity().onBackPressedDispatcher.onBackPressed()
+                            }
+                            .setCancelable(false)
+                            .show()
                     }
+
+                    DetailUiState.None,
+                    DetailUiState.Loading,
+                    DetailUiState.Success,
+                    -> Unit
                 }
             }
-        }
     }
 
     override fun onDestroyView() {

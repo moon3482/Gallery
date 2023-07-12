@@ -27,10 +27,9 @@ class DetailViewModel @Inject constructor(
 ) : ViewModel() {
     private var currentImageId: Int = getImageId(state)
 
-    private val _detailUiState: MutableStateFlow<DetailUiState> =
-        MutableStateFlow(DetailUiState.Loading)
-    val detailUiState: StateFlow<DetailUiState>
-        get() = _detailUiState.asStateFlow()
+    private val _uiState: MutableLiveData<DetailUiState> = MutableLiveData(DetailUiState.Loading)
+    val uiState: LiveData<DetailUiState>
+        get() = _uiState
 
     private val _currentDetailUiModel: MutableLiveData<DetailUiModel> = MutableLiveData()
     val currentDetailUiModel: LiveData<DetailUiModel>
@@ -116,14 +115,14 @@ class DetailViewModel @Inject constructor(
     private fun sendUiState(uiState: DetailUiState) {
         when (uiState) {
             DetailUiState.Fail -> {
-                _detailUiState.tryEmit(uiState)
-                _detailUiState.tryEmit(DetailUiState.None)
+                _uiState.value = uiState
+                _uiState.value = DetailUiState.None
             }
 
             DetailUiState.None,
             DetailUiState.Loading,
             DetailUiState.Success,
-            -> _detailUiState.tryEmit(uiState)
+            -> _uiState.value = uiState
         }
     }
 
