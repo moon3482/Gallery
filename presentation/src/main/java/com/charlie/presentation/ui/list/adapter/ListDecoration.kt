@@ -12,7 +12,6 @@ class ListDecoration(
     @Px private val width: Int,
     @Px private val height: Int,
 ) : ItemDecoration() {
-
     override fun getItemOffsets(
         outRect: Rect,
         view: View,

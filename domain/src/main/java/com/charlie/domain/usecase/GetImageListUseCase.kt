@@ -15,7 +15,7 @@ class GetImageListUseCase @Inject constructor(
         page: Int,
     ): Flow<List<ImageModel>> {
         return imageRepository
-            .getImageList(page = page)
+            .getImageList(page)
             .map { imageDataModelList ->
                 imageDataModelList.map { imageDataModel -> ImageModel(imageDataModel) }
             }

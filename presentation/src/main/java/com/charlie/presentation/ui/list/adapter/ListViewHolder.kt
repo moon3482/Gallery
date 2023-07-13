@@ -15,7 +15,6 @@ class ListViewHolder(
     ) {
         with(binding) {
             url = listItemUiModel.downloadUrl
-
             imageviewItem.setOnClickListener {
                 onClickViewHolder?.invoke(listItemUiModel.id)
             }

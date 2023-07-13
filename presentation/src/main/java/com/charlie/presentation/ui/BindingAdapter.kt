@@ -14,24 +14,32 @@ import com.charlie.presentation.ui.list.adapter.ListAdapter
 import com.charlie.presentation.widget.LabelWidget
 
 @BindingAdapter("bind:list")
-fun RecyclerView.setList(imageItemModelList: List<ListItemUiModel>?) {
+fun RecyclerView.setList(
+    imageItemModelList: List<ListItemUiModel>?,
+) {
     (this.adapter as? ListAdapter)?.updateList(
         imageItemModelList = imageItemModelList ?: emptyList()
     )
 }
 
 @BindingAdapter("bind:isVisible")
-fun View.isVisible(isVisible: Boolean) {
+fun View.isVisible(
+    isVisible: Boolean,
+) {
     this.isVisible = isVisible
 }
 
 @BindingAdapter("bind:itemClickListener")
-fun RecyclerView.setItemClickListener(listUiEvent: ListUIEvent) {
+fun RecyclerView.setItemClickListener(
+    listUiEvent: ListUIEvent,
+) {
     (adapter as? ListAdapter)?.setOnClickItem(listUiEvent::onClickItem)
 }
 
 @BindingAdapter("bind:detailImage")
-fun ImageView.setDetailImage(imageUrl: String?) {
+fun ImageView.setDetailImage(
+    imageUrl: String?,
+) {
     Glide.with(this)
         .load(imageUrl)
         .placeholder(R.drawable.loading)
@@ -40,7 +48,9 @@ fun ImageView.setDetailImage(imageUrl: String?) {
 }
 
 @BindingAdapter("bind:onClickUrl")
-fun LabelWidget.onClickUrl(event: DetailUIEvent?) {
+fun LabelWidget.onClickUrl(
+    event: DetailUIEvent?,
+) {
     this.setOnClickListener {
         event?.onClickUrl(this.urlLink)
     }
