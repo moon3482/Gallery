@@ -3,20 +3,16 @@ package com.charlie.presentation.ui.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageListUseCase
 import com.charlie.presentation.model.ListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,27 +25,16 @@ class ListViewModel @Inject constructor(
     val imageList: LiveData<List<ListItemUiModel>>
         get() = _imageList
 
-    private val _uiState: MutableStateFlow<ListUIState> = MutableStateFlow(ListUIState.Loading)
-    val uiState: StateFlow<ListUIState>
-        get() = _uiState.asStateFlow()
-
-    val isLoading: StateFlow<Boolean>
+    private val _uiState: MutableLiveData<ListUIState> = MutableLiveData(ListUIState.Loading)
+    val uiState: LiveData<ListUIState>
         get() = _uiState
-            .map { it is ListUIState.Loading }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = false,
-            )
 
-    val isFailure: StateFlow<Boolean>
-        get() = _uiState
-            .map { it is ListUIState.Fail }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = false,
-            )
+    val isLoading: LiveData<Boolean>
+        get() = _uiState.map { it is ListUIState.Loading }
+
+    val isFailure: LiveData<Boolean>
+        get() = _uiState.map { it is ListUIState.Fail }
+
 
     init {
         getImageList()
@@ -69,7 +54,7 @@ class ListViewModel @Inject constructor(
     }
 
     private fun getImageList() {
-        getImageListUseCase(page = page)
+        getImageListUseCase(page)
             .onStart {
                 sendUiState(ListUIState.Loading)
             }
@@ -92,13 +77,15 @@ class ListViewModel @Inject constructor(
     private fun sendUiState(uiState: ListUIState) {
         when (uiState) {
             is ListUIState.Fail -> {
-                _uiState.tryEmit(uiState)
-                _uiState.tryEmit(ListUIState.None)
+                _uiState.value = uiState
+                _uiState.value = ListUIState.None
             }
 
-            ListUIState.Loading, ListUIState.None, ListUIState.Success -> {
-                _uiState.tryEmit(uiState)
-            }
+            ListUIState.Loading,
+            ListUIState.None,
+            ListUIState.Success,
+            -> _uiState.value = uiState
+
         }
 
     }
