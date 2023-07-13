@@ -47,27 +47,29 @@ class ListFragment : Fragment(), ListUIEvent {
     ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = listViewModel
-        binding.event = this
         onObserveData()
     }
 
     private fun initView() {
-        binding.gridListRecyclerview.apply {
-            adapter = ListAdapter()
-            addItemDecoration(ListDecoration(10, 8))
-            doOnScrolled { _, _, _ ->
-                val layoutManager = binding.gridListRecyclerview.layoutManager as? GridLayoutManager
-                layoutManager?.let {
-                    if (it.findLastCompletelyVisibleItemPosition() == it.itemCount - 1) {
-                        listViewModel.onNextPage()
+        with(binding) {
+            lifecycleOwner = viewLifecycleOwner
+            vm = listViewModel
+            event = this@ListFragment
+            gridListRecyclerview.apply {
+                adapter = ListAdapter()
+                addItemDecoration(ListDecoration(10, 8))
+                doOnScrolled { _, _, _ ->
+                    val layoutManager = gridListRecyclerview.layoutManager as? GridLayoutManager
+                    layoutManager?.let {
+                        if (it.findLastCompletelyVisibleItemPosition() == it.itemCount - 1) {
+                            listViewModel.onNextPage()
+                        }
                     }
                 }
             }
-        }
-        binding.reloadButton.setOnClickListener {
-            listViewModel.onReload()
+            reloadButton.setOnClickListener {
+                listViewModel.onReload()
+            }
         }
     }
 

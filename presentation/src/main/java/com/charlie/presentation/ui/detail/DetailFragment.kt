@@ -38,18 +38,20 @@ class DetailFragment : Fragment(), DetailUIEvent {
     ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = detailViewModel
-        binding.event = this
         onObserveData()
     }
 
     private fun initView() {
-        binding.previousFloatingButton.setOnClickListener {
-            detailViewModel.onClickPrevious()
-        }
-        binding.nextFloatingButton.setOnClickListener {
-            detailViewModel.onClickNext()
+        with(binding) {
+            lifecycleOwner = viewLifecycleOwner
+            vm = detailViewModel
+            event = this@DetailFragment
+            previousFloatingButton.setOnClickListener {
+                detailViewModel.onClickPrevious()
+            }
+            nextFloatingButton.setOnClickListener {
+                detailViewModel.onClickNext()
+            }
         }
     }
 
