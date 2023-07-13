@@ -63,7 +63,9 @@ class DetailFragment : Fragment(), DetailUIEvent {
                             .setTitle(resources.getString(R.string.notification))
                             .setMessage(resources.getString(R.string.network_error))
                             .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
-                                requireActivity().onBackPressedDispatcher.onBackPressed()
+                                requireActivity()
+                                    .onBackPressedDispatcher
+                                    .onBackPressed()
                             }
                             .setCancelable(false)
                             .show()
@@ -95,7 +97,6 @@ class DetailFragment : Fragment(), DetailUIEvent {
     }
 
     companion object {
-
         fun arguments(
             currentId: Int,
         ): Bundle {

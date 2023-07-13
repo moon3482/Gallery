@@ -11,7 +11,9 @@ data class DetailUiModel(
     val url: String,
 ) {
     companion object {
-        operator fun invoke(imageModel: ImageModel) = DetailUiModel(
+        operator fun invoke(
+            imageModel: ImageModel,
+        ) = DetailUiModel(
             id = imageModel.id,
             author = imageModel.author,
             width = imageModel.width,

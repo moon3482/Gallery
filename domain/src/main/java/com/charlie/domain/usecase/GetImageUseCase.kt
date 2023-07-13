@@ -11,7 +11,9 @@ import javax.inject.Inject
 class GetImageUseCase @Inject constructor(
     private val imageRepository: ImageRepository,
 ) {
-    operator fun invoke(id: Int): Flow<ImageModel> {
+    operator fun invoke(
+        id: Int,
+    ): Flow<ImageModel> {
         return imageRepository
             .getImage(id = id)
             .map { imageDataModel ->

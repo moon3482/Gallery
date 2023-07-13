@@ -21,7 +21,9 @@ data class ImageDataModel(
     )
 
     companion object {
-        operator fun invoke(imageEntity: ImageEntity) = ImageDataModel(
+        operator fun invoke(
+            imageEntity: ImageEntity,
+        ) = ImageDataModel(
             id = imageEntity.id,
             author = imageEntity.author,
             width = imageEntity.width,
@@ -30,7 +32,9 @@ data class ImageDataModel(
             url = imageEntity.url,
         )
 
-        operator fun invoke(imageResponse: ImageResponse) = ImageDataModel(
+        operator fun invoke(
+            imageResponse: ImageResponse,
+        ) = ImageDataModel(
             id = imageResponse.id,
             author = imageResponse.author,
             width = imageResponse.width,

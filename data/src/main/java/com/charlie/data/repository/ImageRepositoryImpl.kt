@@ -12,7 +12,9 @@ class ImageRepositoryImpl @Inject constructor(
     private val remote: ImageService,
     private val limit: Int,
 ) : ImageRepository {
-    override fun getImage(id: Int): Flow<ImageDataModel> {
+    override fun getImage(
+        id: Int,
+    ): Flow<ImageDataModel> {
         return flow {
             local
                 .get(id = id)
@@ -30,7 +32,9 @@ class ImageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getImageList(page: Int): Flow<List<ImageDataModel>> {
+    override fun getImageList(
+        page: Int,
+    ): Flow<List<ImageDataModel>> {
         return flow {
             val offset = (page - 1) * limit
             local

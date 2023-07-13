@@ -7,7 +7,9 @@ data class ListItemUiModel(
     val downloadUrl: String,
 ) {
     companion object {
-        operator fun invoke(imageModel: ImageModel) = ListItemUiModel(
+        operator fun invoke(
+            imageModel: ImageModel,
+        ) = ListItemUiModel(
             id = imageModel.id,
             downloadUrl = imageModel.downloadUrl,
         )

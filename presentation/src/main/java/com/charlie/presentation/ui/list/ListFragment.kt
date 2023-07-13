@@ -27,7 +27,7 @@ class ListFragment : Fragment(), ListUIEvent {
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
         get() = checkNotNull(_binding) {
-            "_binding iS Null"
+            "_binding is Null"
         }
     private val listViewModel: ListViewModel by viewModels()
 
