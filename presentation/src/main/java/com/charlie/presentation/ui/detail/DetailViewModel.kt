@@ -46,20 +46,20 @@ class DetailViewModel @Inject constructor(
             .map { it is DetailUiState.Loading }
 
     init {
-        setImage()
+        loadImages()
     }
 
     fun onClickPrevious() {
         currentImageId--
-        setImage()
+        loadImages()
     }
 
     fun onClickNext() {
         currentImageId++
-        setImage()
+        loadImages()
     }
 
-    private fun setImage() {
+    private fun loadImages() {
         sendUiState(DetailUiState.Loading)
         getImage(
             currentImageId,
