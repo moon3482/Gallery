@@ -43,7 +43,7 @@ fun ImageView.setDetailImage(
     Glide.with(this)
         .load(imageUrl)
         .placeholder(R.drawable.loading)
-        .error(if (imageUrl != null) R.drawable.close else null)
+        .error(R.drawable.close)
         .into(this)
 }
 
