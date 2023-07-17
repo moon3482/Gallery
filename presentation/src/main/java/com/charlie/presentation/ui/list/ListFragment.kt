@@ -9,9 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.charlie.presentation.R
 import com.charlie.presentation.databinding.FragmentListBinding
@@ -20,7 +17,6 @@ import com.charlie.presentation.ui.list.adapter.ListAdapter
 import com.charlie.presentation.ui.list.adapter.ListDecoration
 import com.charlie.presentation.util.doOnScrolled
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ListFragment : Fragment(), ListUIEvent {
@@ -74,26 +70,22 @@ class ListFragment : Fragment(), ListUIEvent {
     }
 
     private fun onObserveData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                listViewModel.uiState.collect {
-                    when (it) {
-                        is ListUIState.Fail -> {
-                            Toast
-                                .makeText(
-                                    requireContext(),
-                                    resources.getString(R.string.failed_load_image_list),
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show()
-                        }
-
-                        ListUIState.None,
-                        ListUIState.Success,
-                        ListUIState.Loading,
-                        -> Unit
-                    }
+        listViewModel.uiState.observe(viewLifecycleOwner) {
+            when (it) {
+                is ListUIState.Fail -> {
+                    Toast
+                        .makeText(
+                            requireContext(),
+                            resources.getString(R.string.failed_load_image_list),
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
                 }
+
+                is ListUIState.None,
+                is ListUIState.Success,
+                is ListUIState.Loading,
+                -> Unit
             }
         }
     }
