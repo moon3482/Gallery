@@ -60,7 +60,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
             .uiState
             .observe(viewLifecycleOwner) {
                 when (it) {
-                    DetailUiState.Fail -> {
+                    is DetailUiState.Fail -> {
                         AlertDialog.Builder(requireContext())
                             .setTitle(resources.getString(R.string.notification))
                             .setMessage(resources.getString(R.string.network_error))
@@ -73,9 +73,9 @@ class DetailFragment : Fragment(), DetailUIEvent {
                             .show()
                     }
 
-                    DetailUiState.None,
-                    DetailUiState.Loading,
-                    DetailUiState.Success,
+                    is DetailUiState.None,
+                    is DetailUiState.Loading,
+                    is DetailUiState.Success,
                     -> Unit
                 }
             }

@@ -81,9 +81,9 @@ class ListViewModel @Inject constructor(
                 _uiState.value = ListUIState.None
             }
 
-            ListUIState.Loading,
-            ListUIState.None,
-            ListUIState.Success,
+            is ListUIState.Loading,
+            is ListUIState.None,
+            is ListUIState.Success,
             -> _uiState.value = uiState
 
         }

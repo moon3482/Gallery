@@ -99,14 +99,14 @@ class DetailViewModel @Inject constructor(
 
     private fun sendUiState(uiState: DetailUiState) {
         when (uiState) {
-            DetailUiState.Fail -> {
+            is DetailUiState.Fail -> {
                 _uiState.value = uiState
                 _uiState.value = DetailUiState.None
             }
 
-            DetailUiState.None,
-            DetailUiState.Loading,
-            DetailUiState.Success,
+            is DetailUiState.None,
+            is DetailUiState.Loading,
+            is DetailUiState.Success,
             -> _uiState.value = uiState
         }
     }
