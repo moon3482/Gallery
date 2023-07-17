@@ -24,20 +24,20 @@ fun String?.toHyperLinkSpannable(): Spanned {
 }
 
 inline fun RecyclerView.doOnScrollStateChanged(
-    crossinline onScrollStateChanged: (RecyclerView, Int) -> Unit = { _, _ -> }
+    crossinline onScrollStateChanged: (RecyclerView, Int) -> Unit = { _, _ -> },
 ) {
     addScrollChangeListener(onScrollStateChanged = onScrollStateChanged)
 }
 
 inline fun RecyclerView.doOnScrolled(
-    crossinline onScrolled: (RecyclerView, Int, Int) -> Unit = { _, _, _ -> }
+    crossinline onScrolled: (RecyclerView, Int, Int) -> Unit = { _, _, _ -> },
 ) {
     addScrollChangeListener(onScrolled = onScrolled)
 }
 
 inline fun RecyclerView.addScrollChangeListener(
     crossinline onScrollStateChanged: (RecyclerView, Int) -> Unit = { _, _ -> },
-    crossinline onScrolled: (RecyclerView, Int, Int) -> Unit = { _, _, _ -> }
+    crossinline onScrolled: (RecyclerView, Int, Int) -> Unit = { _, _, _ -> },
 ): RecyclerView.OnScrollListener {
     val scrollChangedListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
