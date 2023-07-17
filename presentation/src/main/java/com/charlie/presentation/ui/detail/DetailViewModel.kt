@@ -61,25 +61,25 @@ class DetailViewModel @Inject constructor(
 
     private fun loadImages() {
         sendUiState(DetailUiState.Loading)
-        getImage(
+        loadImage(
             currentImageId,
             callback = { _currentImage.value = it },
             onError = { sendUiState(DetailUiState.Fail) },
             onCompletion = { sendUiState(DetailUiState.Success) }
         )
-        getImage(
+        loadImage(
             currentImageId + 1,
             callback = { _nextImage.value = it },
             onError = { _nextImage.value = null },
         )
-        getImage(
+        loadImage(
             currentImageId - 1,
             callback = { _previousImage.value = it },
             onError = { _previousImage.value = null },
         )
     }
 
-    private fun getImage(
+    private fun loadImage(
         id: Int,
         callback: (DetailUiModel) -> Unit,
         onError: (() -> Unit)? = null,
