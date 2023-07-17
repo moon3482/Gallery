@@ -22,7 +22,9 @@ class ListViewHolder(
     }
 
     companion object {
-        operator fun invoke(parent: ViewGroup) = ListViewHolder(
+        operator fun invoke(
+            parent: ViewGroup,
+        ) = ListViewHolder(
             ItemGridImageBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,

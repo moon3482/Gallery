@@ -44,21 +44,33 @@ class PreviewWidget @JvmOverloads constructor(
 
     var previous: String? = null
         set(value) {
-            setImage(value, binding.previousImageView)
+            setImage(
+                imageUrl = value,
+                imageView = binding.previousImageView,
+            )
             field = value
         }
     var current: String? = null
         set(value) {
-            setImage(value, binding.currentImageView)
+            setImage(
+                imageUrl = value,
+                imageView = binding.currentImageView,
+            )
             field = value
         }
     var next: String? = null
         set(value) {
-            setImage(value, binding.nextImageView)
+            setImage(
+                imageUrl = value,
+                imageView = binding.nextImageView,
+            )
             field = value
         }
 
-    private fun setImage(imageUrl: String?, imageView: ImageView) {
+    private fun setImage(
+        imageUrl: String?,
+        imageView: ImageView,
+    ) {
         Glide.with(imageView)
             .load(imageUrl)
             .into(imageView)
