@@ -82,8 +82,8 @@ class DetailFragment : Fragment(), DetailUIEvent {
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
+        _binding = null
     }
     //endregion
 

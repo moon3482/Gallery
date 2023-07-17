@@ -91,8 +91,8 @@ class ListFragment : Fragment(), ListUIEvent {
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
+        _binding = null
     }
     // endregion
 
