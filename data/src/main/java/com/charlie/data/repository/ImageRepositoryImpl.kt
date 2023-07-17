@@ -12,26 +12,6 @@ class ImageRepositoryImpl @Inject constructor(
     private val remote: ImageService,
     private val limit: Int,
 ) : ImageRepository {
-    override fun getImage(
-        id: Int,
-    ): Flow<ImageDataModel> {
-        return flow {
-            local
-                .get(id = id)
-                ?.let { ImageDataModel(it) }
-                ?.run { emit(this) }
-
-            remote.requestImageData(id = id)
-                .map { ImageDataModel(it) }
-                .fold(
-                    onSuccess = {
-                        it.also { local.insert(it.toEntity()) }
-                    },
-                    onFailure = { throw it },
-                )
-        }
-    }
-
     override fun getImageList(
         page: Int,
     ): Flow<List<ImageDataModel>> {
@@ -57,6 +37,26 @@ class ImageRepositoryImpl @Inject constructor(
                 ).let {
                     emit(it)
                 }
+        }
+    }
+
+    override fun getImage(
+        id: Int,
+    ): Flow<ImageDataModel> {
+        return flow {
+            local
+                .get(id = id)
+                ?.let { ImageDataModel(it) }
+                ?.run { emit(this) }
+
+            remote.requestImageData(id = id)
+                .map { ImageDataModel(it) }
+                .fold(
+                    onSuccess = {
+                        it.also { local.insert(it.toEntity()) }
+                    },
+                    onFailure = { throw it },
+                )
         }
     }
 }
