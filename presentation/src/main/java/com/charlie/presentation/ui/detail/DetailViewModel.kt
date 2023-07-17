@@ -23,7 +23,7 @@ class DetailViewModel @Inject constructor(
     state: SavedStateHandle,
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
-    private var currentImageId: Int = getImageId(state)
+    private var imageId: Int = getImageId(state)
 
     private val _currentImage: MutableLiveData<DetailUiModel> = MutableLiveData()
     val currentImage: LiveData<DetailUiModel>
@@ -50,30 +50,30 @@ class DetailViewModel @Inject constructor(
     }
 
     fun onClickPrevious() {
-        currentImageId--
+        imageId--
         loadImages()
     }
 
     fun onClickNext() {
-        currentImageId++
+        imageId++
         loadImages()
     }
 
     private fun loadImages() {
         sendUiState(DetailUiState.Loading)
         loadImage(
-            currentImageId,
+            imageId,
             callback = { _currentImage.value = it },
             onError = { sendUiState(DetailUiState.Fail) },
             onCompletion = { sendUiState(DetailUiState.Success) }
         )
         loadImage(
-            currentImageId + 1,
+            imageId + 1,
             callback = { _nextImage.value = it },
             onError = { _nextImage.value = null },
         )
         loadImage(
-            currentImageId - 1,
+            imageId - 1,
             callback = { _previousImage.value = it },
             onError = { _previousImage.value = null },
         )
