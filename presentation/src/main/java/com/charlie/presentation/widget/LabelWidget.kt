@@ -36,7 +36,9 @@ class LabelWidget @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding = WidgetLabelBinding.inflate(
-        LayoutInflater.from(context), this, true
+        LayoutInflater.from(context),
+        this,
+        true,
     )
 
     var label: String? = null

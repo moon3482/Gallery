@@ -25,10 +25,6 @@ class DetailViewModel @Inject constructor(
 ) : ViewModel() {
     private var currentImageId: Int = getImageId(state)
 
-    private val _uiState: MutableLiveData<DetailUiState> = MutableLiveData(DetailUiState.Loading)
-    val uiState: LiveData<DetailUiState>
-        get() = _uiState
-
     private val _currentImage: MutableLiveData<DetailUiModel> = MutableLiveData()
     val currentImage: LiveData<DetailUiModel>
         get() = _currentImage
@@ -40,6 +36,10 @@ class DetailViewModel @Inject constructor(
     private val _nextImage: MutableLiveData<DetailUiModel?> = MutableLiveData()
     val nextImage: LiveData<DetailUiModel?>
         get() = _nextImage
+
+    private val _uiState: MutableLiveData<DetailUiState> = MutableLiveData(DetailUiState.Loading)
+    val uiState: LiveData<DetailUiState>
+        get() = _uiState
 
     val isLoading: LiveData<Boolean>
         get() = _uiState
