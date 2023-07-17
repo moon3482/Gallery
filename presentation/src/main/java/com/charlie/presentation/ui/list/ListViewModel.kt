@@ -32,8 +32,9 @@ class ListViewModel @Inject constructor(
     val isLoading: LiveData<Boolean>
         get() = _uiState.map { it is ListUIState.Loading }
 
+    private val _isFailure: MutableLiveData<Boolean> = MutableLiveData()
     val isFailure: LiveData<Boolean>
-        get() = _uiState.map { it is ListUIState.Fail }
+        get() = _imageList.map { it.isEmpty() }
 
 
     init {
@@ -48,6 +49,7 @@ class ListViewModel @Inject constructor(
     }
 
     fun onReload() {
+        _isFailure.value = false
         _imageList.value = emptyList()
         page = 1
         loadImageList()
