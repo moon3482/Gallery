@@ -1,6 +1,6 @@
 package com.charlie.presentation.ui.detail
 
-interface DetailUIEvent {
+interface DetailUiEvent {
     fun onClickUrl(
         url: String?,
     )

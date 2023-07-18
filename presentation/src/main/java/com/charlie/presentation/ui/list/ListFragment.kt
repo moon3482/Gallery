@@ -19,7 +19,7 @@ import com.charlie.presentation.util.doOnScrolled
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ListFragment : Fragment(), ListUIEvent {
+class ListFragment : Fragment(), ListUiEvent {
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
         get() = checkNotNull(_binding) {
@@ -72,7 +72,7 @@ class ListFragment : Fragment(), ListUIEvent {
     private fun onObserveData() {
         listViewModel.uiState.observe(viewLifecycleOwner) {
             when (it) {
-                is ListUIState.Fail -> {
+                is ListUiState.Fail -> {
                     Toast
                         .makeText(
                             requireContext(),
@@ -82,9 +82,9 @@ class ListFragment : Fragment(), ListUIEvent {
                         .show()
                 }
 
-                is ListUIState.None,
-                is ListUIState.Success,
-                is ListUIState.Loading,
+                is ListUiState.None,
+                is ListUiState.Success,
+                is ListUiState.Loading,
                 -> Unit
             }
         }

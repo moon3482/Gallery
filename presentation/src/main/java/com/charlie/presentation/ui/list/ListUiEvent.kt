@@ -1,5 +1,5 @@
 package com.charlie.presentation.ui.list
 
-interface ListUIEvent {
+interface ListUiEvent {
     fun onClickItem(id: Int)
 }

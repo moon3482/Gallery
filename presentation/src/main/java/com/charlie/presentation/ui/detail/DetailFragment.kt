@@ -14,7 +14,7 @@ import com.charlie.presentation.databinding.FragmentDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DetailFragment : Fragment(), DetailUIEvent {
+class DetailFragment : Fragment(), DetailUiEvent {
     private var _binding: FragmentDetailBinding? = null
     private val binding: FragmentDetailBinding
         get() = checkNotNull(_binding) {
@@ -60,7 +60,7 @@ class DetailFragment : Fragment(), DetailUIEvent {
             .uiState
             .observe(viewLifecycleOwner) {
                 when (it) {
-                    is DetailUIState.Fail -> {
+                    is DetailUiState.Fail -> {
                         AlertDialog.Builder(requireContext())
                             .setTitle(resources.getString(R.string.notification))
                             .setMessage(resources.getString(R.string.network_error))
@@ -73,9 +73,9 @@ class DetailFragment : Fragment(), DetailUIEvent {
                             .show()
                     }
 
-                    is DetailUIState.None,
-                    is DetailUIState.Loading,
-                    is DetailUIState.Success,
+                    is DetailUiState.None,
+                    is DetailUiState.Loading,
+                    is DetailUiState.Success,
                     -> Unit
                 }
             }

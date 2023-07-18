@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.charlie.presentation.R
 import com.charlie.presentation.model.ListItemUiModel
-import com.charlie.presentation.ui.detail.DetailUIEvent
-import com.charlie.presentation.ui.list.ListUIEvent
+import com.charlie.presentation.ui.detail.DetailUiEvent
+import com.charlie.presentation.ui.list.ListUiEvent
 import com.charlie.presentation.ui.list.adapter.ListAdapter
 import com.charlie.presentation.widget.LabelWidget
 
@@ -31,7 +31,7 @@ fun View.isVisible(
 
 @BindingAdapter("bind:itemClickListener")
 fun RecyclerView.setItemClickListener(
-    listUiEvent: ListUIEvent,
+    listUiEvent: ListUiEvent,
 ) {
     (adapter as? ListAdapter)?.setOnClickItem(listUiEvent::onClickItem)
 }
@@ -49,7 +49,7 @@ fun ImageView.setDetailImage(
 
 @BindingAdapter("bind:onClickUrl")
 fun LabelWidget.onClickUrl(
-    event: DetailUIEvent?,
+    event: DetailUiEvent?,
 ) {
     this.setOnClickListener {
         event?.onClickUrl(this.urlLink)

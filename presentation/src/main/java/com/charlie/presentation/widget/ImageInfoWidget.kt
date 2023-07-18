@@ -8,7 +8,7 @@ import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
 import com.charlie.presentation.databinding.WidgetImageInfoBinding
 import com.charlie.presentation.model.DetailUiModel
-import com.charlie.presentation.ui.detail.DetailUIEvent
+import com.charlie.presentation.ui.detail.DetailUiEvent
 
 @BindingMethods(
     value = [
@@ -43,7 +43,7 @@ class ImageInfoWidget @JvmOverloads constructor(
             field = value
         }
 
-    var onClickUrl: DetailUIEvent? = null
+    var onClickUrl: DetailUiEvent? = null
         get() = binding.event
         set(value) {
             binding.event = value

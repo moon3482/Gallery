@@ -25,12 +25,12 @@ class ListViewModel @Inject constructor(
     val imageList: LiveData<List<ListItemUiModel>>
         get() = _imageList
 
-    private val _uiState: MutableLiveData<ListUIState> = MutableLiveData(ListUIState.Loading)
-    val uiState: LiveData<ListUIState>
+    private val _uiState: MutableLiveData<ListUiState> = MutableLiveData(ListUiState.Loading)
+    val uiState: LiveData<ListUiState>
         get() = _uiState
 
     val isLoading: LiveData<Boolean>
-        get() = _uiState.map { it is ListUIState.Loading }
+        get() = _uiState.map { it is ListUiState.Loading }
 
     private val _isFailure: MutableLiveData<Boolean> = MutableLiveData()
     val isFailure: LiveData<Boolean>
@@ -43,7 +43,7 @@ class ListViewModel @Inject constructor(
 
     fun onNextPage() {
         page++
-        if (_uiState.value is ListUIState.Success) {
+        if (_uiState.value is ListUiState.Success) {
             loadImageList()
         }
     }
@@ -58,7 +58,7 @@ class ListViewModel @Inject constructor(
     private fun loadImageList() {
         getImageListUseCase(page)
             .onStart {
-                sendUiState(ListUIState.Loading)
+                sendUiState(ListUiState.Loading)
             }
             .map { imageModelList ->
                 imageModelList.map { ListItemUiModel(it) }
@@ -68,24 +68,24 @@ class ListViewModel @Inject constructor(
             }
             .onCompletion {
                 if (it != null) {
-                    sendUiState(ListUIState.Fail(page))
+                    sendUiState(ListUiState.Fail(page))
                 } else {
-                    sendUiState(ListUIState.Success)
+                    sendUiState(ListUiState.Success)
                 }
             }
             .launchIn(viewModelScope)
     }
 
-    private fun sendUiState(uiState: ListUIState) {
+    private fun sendUiState(uiState: ListUiState) {
         when (uiState) {
-            is ListUIState.Fail -> {
+            is ListUiState.Fail -> {
                 _uiState.value = uiState
-                _uiState.value = ListUIState.None
+                _uiState.value = ListUiState.None
             }
 
-            is ListUIState.Loading,
-            is ListUIState.None,
-            is ListUIState.Success,
+            is ListUiState.Loading,
+            is ListUiState.None,
+            is ListUiState.Success,
             -> _uiState.value = uiState
         }
     }
