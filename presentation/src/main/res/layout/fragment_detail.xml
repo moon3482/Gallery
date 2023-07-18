@@ -13,7 +13,7 @@
             name="event"
             type="com.charlie.presentation.ui.detail.DetailUIEvent" />
 
-        <import type="com.charlie.presentation.ui.detail.DetailUiState" />
+        <import type="com.charlie.presentation.ui.detail.DetailUIState" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

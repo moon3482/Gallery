@@ -37,13 +37,13 @@ class DetailViewModel @Inject constructor(
     val nextImage: LiveData<DetailUiModel?>
         get() = _nextImage
 
-    private val _uiState: MutableLiveData<DetailUiState> = MutableLiveData(DetailUiState.Loading)
-    val uiState: LiveData<DetailUiState>
+    private val _uiState: MutableLiveData<DetailUIState> = MutableLiveData(DetailUIState.Loading)
+    val uiState: LiveData<DetailUIState>
         get() = _uiState
 
     val isLoading: LiveData<Boolean>
         get() = _uiState
-            .map { it is DetailUiState.Loading }
+            .map { it is DetailUIState.Loading }
 
     init {
         loadImages()
@@ -60,12 +60,12 @@ class DetailViewModel @Inject constructor(
     }
 
     private fun loadImages() {
-        sendUiState(DetailUiState.Loading)
+        sendUiState(DetailUIState.Loading)
         loadImage(
             imageId,
             callback = { _currentImage.value = it },
-            onError = { sendUiState(DetailUiState.Fail) },
-            onCompletion = { sendUiState(DetailUiState.Success) }
+            onError = { sendUiState(DetailUIState.Fail) },
+            onCompletion = { sendUiState(DetailUIState.Success) }
         )
         loadImage(
             imageId + 1,
@@ -97,16 +97,16 @@ class DetailViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun sendUiState(uiState: DetailUiState) {
+    private fun sendUiState(uiState: DetailUIState) {
         when (uiState) {
-            is DetailUiState.Fail -> {
+            is DetailUIState.Fail -> {
                 _uiState.value = uiState
-                _uiState.value = DetailUiState.None
+                _uiState.value = DetailUIState.None
             }
 
-            is DetailUiState.None,
-            is DetailUiState.Loading,
-            is DetailUiState.Success,
+            is DetailUIState.None,
+            is DetailUIState.Loading,
+            is DetailUIState.Success,
             -> _uiState.value = uiState
         }
     }
