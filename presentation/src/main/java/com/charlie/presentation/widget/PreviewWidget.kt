@@ -44,7 +44,7 @@ class PreviewWidget @JvmOverloads constructor(
 
     var previous: String? = null
         set(value) {
-            setImage(
+            loadImage(
                 imageUrl = value,
                 imageView = binding.previousImageView,
             )
@@ -52,7 +52,7 @@ class PreviewWidget @JvmOverloads constructor(
         }
     var current: String? = null
         set(value) {
-            setImage(
+            loadImage(
                 imageUrl = value,
                 imageView = binding.currentImageView,
             )
@@ -60,14 +60,14 @@ class PreviewWidget @JvmOverloads constructor(
         }
     var next: String? = null
         set(value) {
-            setImage(
+            loadImage(
                 imageUrl = value,
                 imageView = binding.nextImageView,
             )
             field = value
         }
 
-    private fun setImage(
+    private fun loadImage(
         imageUrl: String?,
         imageView: ImageView,
     ) {
