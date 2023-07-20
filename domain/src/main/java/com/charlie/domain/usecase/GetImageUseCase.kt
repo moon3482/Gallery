@@ -13,11 +13,11 @@ class GetImageUseCase @Inject constructor(
 ) {
     operator fun invoke(
         id: Int,
-    ): Flow<ImageModel> {
+    ): Flow<ImageModel?> {
         return imageRepository
             .getImage(id = id)
             .map { imageDataModel ->
-                ImageModel(imageDataModel)
+                imageDataModel?.let { ImageModel(it) }
             }
     }
 }

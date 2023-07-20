@@ -9,9 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.charlie.presentation.R
 import com.charlie.presentation.databinding.FragmentDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment(), DetailUiEvent {
@@ -47,38 +52,40 @@ class DetailFragment : Fragment(), DetailUiEvent {
             vm = detailViewModel
             event = this@DetailFragment
             previousFloatingButton.setOnClickListener {
-                detailViewModel.onClickPrevious()
+                detailViewModel.loadPrevious()
             }
             nextFloatingButton.setOnClickListener {
-                detailViewModel.onClickNext()
+                detailViewModel.loadNext()
             }
         }
     }
 
     private fun onObserveData() {
-        detailViewModel
-            .uiState
-            .observe(viewLifecycleOwner) {
-                when (it) {
-                    is DetailUiState.Fail -> {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle(resources.getString(R.string.notification))
-                            .setMessage(resources.getString(R.string.network_error))
-                            .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
-                                requireActivity()
-                                    .onBackPressedDispatcher
-                                    .onBackPressed()
-                            }
-                            .setCancelable(false)
-                            .show()
-                    }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                detailViewModel.uiState.collectLatest {
+                    when (it) {
+                        DetailUiState.Fail -> {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(resources.getString(R.string.notification))
+                                .setMessage(resources.getString(R.string.network_error))
+                                .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
+                                    requireActivity()
+                                        .onBackPressedDispatcher
+                                        .onBackPressed()
+                                }
+                                .setCancelable(false)
+                                .show()
+                        }
 
-                    is DetailUiState.None,
-                    is DetailUiState.Loading,
-                    is DetailUiState.Success,
-                    -> Unit
+                        DetailUiState.Loading,
+                        DetailUiState.None,
+                        DetailUiState.Success,
+                        -> Unit
+                    }
                 }
             }
+        }
     }
 
     override fun onDestroyView() {

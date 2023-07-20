@@ -9,13 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageUseCase
 import com.charlie.presentation.model.DetailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,92 +25,64 @@ class DetailViewModel @Inject constructor(
     state: SavedStateHandle,
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
-    private var imageId: Int = getImageId(state)
+    private var imageId = getImageId(state)
 
-    private val _currentImage: MutableLiveData<DetailUiModel> = MutableLiveData()
-    val currentImage: LiveData<DetailUiModel>
-        get() = _currentImage
-
-    private val _previousImage: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val previousImage: LiveData<DetailUiModel?>
-        get() = _previousImage
-
-    private val _nextImage: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val nextImage: LiveData<DetailUiModel?>
-        get() = _nextImage
-
-    private val _uiState: MutableLiveData<DetailUiState> = MutableLiveData(DetailUiState.Loading)
-    val uiState: LiveData<DetailUiState>
-        get() = _uiState
-
-    val isLoading: LiveData<Boolean>
+    private val _uiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.None)
+    val uiState: StateFlow<DetailUiState> get() = _uiState
+    val isLoading: StateFlow<Boolean>
         get() = _uiState
             .map { it is DetailUiState.Loading }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                false,
+            )
+
+    private val _currentDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val currentDetailUiModel: LiveData<DetailUiModel?> get() = _currentDetailUiModel
+
+    private val _previousDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val previousUrl: LiveData<String?> get() = _previousDetailUiModel.map { it?.downloadUrl }
+    val isPreviousEnable: LiveData<Boolean> get() = _previousDetailUiModel.map { it != null }
+
+    private val _nextDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
+    val nextUrl: LiveData<String?> get() = _nextDetailUiModel.map { it?.downloadUrl }
+    val isNextEnable: LiveData<Boolean> get() = _nextDetailUiModel.map { it != null }
 
     init {
-        loadImages()
+        loadImage()
     }
 
-    fun onClickPrevious() {
+    fun loadPrevious() {
         imageId--
-        loadImages()
+        loadImage()
     }
 
-    fun onClickNext() {
+    fun loadNext() {
         imageId++
-        loadImages()
+        loadImage()
     }
 
-    private fun loadImages() {
-        sendUiState(DetailUiState.Loading)
-        loadImage(
-            imageId,
-            callback = { _currentImage.value = it },
-            onError = { sendUiState(DetailUiState.Fail) },
-            onCompletion = { sendUiState(DetailUiState.Success) }
-        )
-        loadImage(
-            imageId + 1,
-            callback = { _nextImage.value = it },
-            onError = { _nextImage.value = null },
-        )
-        loadImage(
-            imageId - 1,
-            callback = { _previousImage.value = it },
-            onError = { _previousImage.value = null },
-        )
-    }
-
-    private fun loadImage(
-        id: Int,
-        callback: (DetailUiModel) -> Unit,
-        onError: (() -> Unit)? = null,
-        onCompletion: (() -> Unit)? = null,
-    ) {
-        getImageUseCase(id = id)
-            .map { imageModel -> DetailUiModel(imageModel) }
-            .flowOn(Dispatchers.IO)
-            .onEach { callback(it) }
+    private fun loadImage() {
+        getImageUseCase(imageId)
+            .onStart { _uiState.value = DetailUiState.Loading }
+            .onEach { _currentDetailUiModel.value = it?.let { DetailUiModel(it) } }
             .onCompletion {
-                if (it == null)
-                    onCompletion?.invoke()
+                if (it != null) {
+                    _uiState.value = DetailUiState.Fail
+                    _uiState.value = DetailUiState.None
+                } else
+                    _uiState.value = DetailUiState.Success
             }
-            .catch { onError?.invoke() }
             .launchIn(viewModelScope)
-    }
 
-    private fun sendUiState(uiState: DetailUiState) {
-        when (uiState) {
-            is DetailUiState.Fail -> {
-                _uiState.value = uiState
-                _uiState.value = DetailUiState.None
-            }
+        getImageUseCase(imageId - 1)
+            .onEach { _previousDetailUiModel.value = it?.let { DetailUiModel(it) } }
+            .launchIn(viewModelScope)
 
-            is DetailUiState.None,
-            is DetailUiState.Loading,
-            is DetailUiState.Success,
-            -> _uiState.value = uiState
-        }
+        getImageUseCase(imageId + 1)
+            .onEach { _nextDetailUiModel.value = it?.let { DetailUiModel(it) } }
+            .launchIn(viewModelScope)
     }
 
     private fun getImageId(state: SavedStateHandle): Int {

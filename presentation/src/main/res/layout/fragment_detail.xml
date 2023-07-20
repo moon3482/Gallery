@@ -78,7 +78,7 @@
             app:layout_constraintTop_toBottomOf="@id/detail_toolbar"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintVertical_weight="1"
-            bind:detailImage="@{vm.currentImage.downloadUrl}"
+            bind:detailImage="@{vm.currentDetailUiModel.downloadUrl}"
             tools:src="@tools:sample/avatars" />
 
         <ImageView
@@ -104,7 +104,7 @@
             app:layout_constraintTop_toBottomOf="@id/bookmark_imageView"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintVertical_weight="2"
-            bind:imageInfo="@{vm.currentImage}"
+            bind:imageInfo="@{vm.currentDetailUiModel}"
             bind:onClickUrl="@{event}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -112,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/previous_floating_button"
-            android:enabled="@{vm.previousImage != null &amp;&amp; !vm.isLoading}"
+            android:enabled="@{vm.isPreviousEnable}"
             android:src="@drawable/round_navigate_before_24"
             app:backgroundTint="@drawable/selector_detail_nav_button"
             app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
@@ -125,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/next_floating_button"
-            android:enabled="@{vm.nextImage != null &amp;&amp; !vm.isLoading}"
+            android:enabled="@{vm.isNextEnable}"
             android:src="@drawable/round_navigate_next_24"
             app:backgroundTint="@drawable/selector_detail_nav_button"
             app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
@@ -140,9 +140,9 @@
             app:layout_constraintEnd_toStartOf="@id/next_floating_button"
             app:layout_constraintStart_toEndOf="@id/previous_floating_button"
             app:layout_constraintTop_toTopOf="@id/previous_floating_button"
-            bind:current="@{vm.currentImage.downloadUrl}"
-            bind:next="@{vm.nextImage.downloadUrl}"
-            bind:previous="@{vm.previousImage.downloadUrl}" />
+            bind:current="@{vm.currentDetailUiModel.downloadUrl}"
+            bind:next="@{vm.nextUrl}"
+            bind:previous="@{vm.previousUrl}" />
 
         <ProgressBar
             android:id="@+id/detailProgressBar"
