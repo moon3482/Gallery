@@ -10,5 +10,5 @@ interface ImageRepository {
 
     fun getImage(
         id: Int,
-    ): Flow<ImageDataModel>
+    ): Flow<ImageDataModel?>
 }

@@ -18,45 +18,49 @@ class ImageRepositoryImpl @Inject constructor(
         return flow {
             val offset = (page - 1) * limit
             local
-                .getList(offset = offset, limit = limit)
-                .map { entity -> ImageDataModel(entity) }
-                .let {
-                    emit(it)
-                }
+                .getList(limit, offset)
+                .map { ImageDataModel(it) }
+                .let { emit(it) }
 
-            remote.requestImageList(page = page, limit = limit)
-                .map {
-                    it.map { entity -> ImageDataModel(entity) }
+            remote
+                .getList(page, limit)
+                .map { responseList ->
+                    responseList.map { ImageDataModel(it) }
                 }
-                .onSuccess {
-                    local.insert(it.map { model -> model.toEntity() })
+                .onSuccess { imageDataList ->
+                    imageDataList
+                        .map { it.toEntity() }
+                        .also { local.insert(it) }
                 }
                 .fold(
-                    onSuccess = { it },
-                    onFailure = { emptyList() },
-                ).let {
-                    emit(it)
-                }
+                    onSuccess = { emit(it) },
+                    onFailure = { emit(emptyList()) },
+                )
         }
     }
 
     override fun getImage(
         id: Int,
-    ): Flow<ImageDataModel> {
+    ): Flow<ImageDataModel?> {
         return flow {
             local
-                .get(id = id)
+                .get(id)
                 ?.let { ImageDataModel(it) }
                 ?.run { emit(this) }
 
-            remote.requestImageData(id = id)
+            remote
+                .get(id)
                 .map { ImageDataModel(it) }
+                .onSuccess { imageData ->
+                    imageData
+                        .toEntity()
+                        .also { local.insert(it) }
+                }
                 .fold(
-                    onSuccess = {
-                        it.also { local.insert(it.toEntity()) }
-                    },
-                    onFailure = { throw it },
+                    onSuccess = { emit(it) },
+                    onFailure = { emit(null) },
                 )
+
         }
     }
 }
