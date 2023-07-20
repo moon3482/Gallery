@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ImageServiceImpl @Inject constructor(
     private val imageApi: ImageApi,
 ) : ImageService {
-    override suspend fun requestImageList(
+    override suspend fun getList(
         page: Int,
         limit: Int,
     ): Result<List<ImageResponse>> {
@@ -22,7 +22,7 @@ class ImageServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun requestImageData(
+    override suspend fun get(
         id: Int,
     ): Result<ImageResponse> {
         return runCatching {
