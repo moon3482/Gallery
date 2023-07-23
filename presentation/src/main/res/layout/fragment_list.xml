@@ -19,17 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            bind:isVisible="@{vm.isLoading}" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/grid_list_recyclerview"
             android:layout_width="0dp"
@@ -43,7 +32,17 @@
             bind:itemClickListener="@{event}"
             bind:list="@{vm.imageList}" />
 
-
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            bind:isVisible="@{vm.isLoading}" />
+        
         <TextView
             android:id="@+id/failed_loading_textview"
             android:layout_width="wrap_content"
@@ -71,12 +70,12 @@
             android:id="@+id/failed_loading_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:constraint_referenced_ids="failed_loading_textview, reload_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            bind:isVisible="@{vm.isFailure}"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
