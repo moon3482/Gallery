@@ -46,7 +46,7 @@ class ImageRepositoryImpl @Inject constructor(
             local
                 .get(id)
                 ?.let { ImageDataModel(it) }
-                ?.run { emit(this) }
+                .run { emit(this) }
 
             remote
                 .get(id)
@@ -60,7 +60,6 @@ class ImageRepositoryImpl @Inject constructor(
                     onSuccess = { emit(it) },
                     onFailure = { emit(null) },
                 )
-
         }
     }
 }
