@@ -1,6 +1,5 @@
 package com.charlie.presentation.ui.detail
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,14 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.charlie.presentation.R
 import com.charlie.presentation.databinding.FragmentDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment(), DetailUiEvent {
@@ -43,7 +36,6 @@ class DetailFragment : Fragment(), DetailUiEvent {
     ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        onObserveData()
     }
 
     private fun initView() {
@@ -56,34 +48,6 @@ class DetailFragment : Fragment(), DetailUiEvent {
             }
             nextFloatingButton.setOnClickListener {
                 detailViewModel.loadNext()
-            }
-        }
-    }
-
-    private fun onObserveData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailViewModel.uiState.collectLatest {
-                    when (it) {
-                        DetailUiState.Fail -> {
-                            AlertDialog.Builder(requireContext())
-                                .setTitle(resources.getString(R.string.notification))
-                                .setMessage(resources.getString(R.string.network_error))
-                                .setPositiveButton(resources.getString(R.string.return_to_page)) { _, _ ->
-                                    requireActivity()
-                                        .onBackPressedDispatcher
-                                        .onBackPressed()
-                                }
-                                .setCancelable(false)
-                                .show()
-                        }
-
-                        DetailUiState.Loading,
-                        DetailUiState.None,
-                        DetailUiState.Success,
-                        -> Unit
-                    }
-                }
             }
         }
     }
