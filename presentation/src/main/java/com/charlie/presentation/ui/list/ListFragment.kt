@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -43,7 +42,6 @@ class ListFragment : Fragment(), ListUiEvent {
     ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        onObserveData()
     }
 
     private fun initView() {
@@ -58,34 +56,13 @@ class ListFragment : Fragment(), ListUiEvent {
                     val layoutManager = gridListRecyclerview.layoutManager as? GridLayoutManager
                     layoutManager?.let {
                         if (it.findLastCompletelyVisibleItemPosition() == it.itemCount - 1) {
-                            listViewModel.onNextPage()
+                            listViewModel.loadNextPage()
                         }
                     }
                 }
             }
             reloadButton.setOnClickListener {
-                listViewModel.onReload()
-            }
-        }
-    }
-
-    private fun onObserveData() {
-        listViewModel.uiState.observe(viewLifecycleOwner) {
-            when (it) {
-                is ListUiState.Fail -> {
-                    Toast
-                        .makeText(
-                            requireContext(),
-                            resources.getString(R.string.failed_load_image_list),
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                }
-
-                is ListUiState.None,
-                is ListUiState.Success,
-                is ListUiState.Loading,
-                -> Unit
+                listViewModel.reloadList()
             }
         }
     }
