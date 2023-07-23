@@ -28,7 +28,6 @@ class DetailViewModel @Inject constructor(
     private var imageId = getImageId(state)
 
     private val _uiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.None)
-    val uiState: StateFlow<DetailUiState> get() = _uiState
     val isLoading: StateFlow<Boolean>
         get() = _uiState
             .map { it is DetailUiState.Loading }
@@ -65,14 +64,13 @@ class DetailViewModel @Inject constructor(
 
     private fun loadImage() {
         getImageUseCase(imageId)
-            .onStart { _uiState.value = DetailUiState.Loading }
+            .onStart { sendUiState(DetailUiState.Loading) }
             .onEach { _currentDetailUiModel.value = it?.let { DetailUiModel(it) } }
             .onCompletion {
-                if (it != null) {
-                    _uiState.value = DetailUiState.Fail
-                    _uiState.value = DetailUiState.None
-                } else
-                    _uiState.value = DetailUiState.Success
+                if (it != null)
+                    sendUiState(DetailUiState.Fail)
+                else
+                    sendUiState(DetailUiState.Success)
             }
             .launchIn(viewModelScope)
 
@@ -83,6 +81,20 @@ class DetailViewModel @Inject constructor(
         getImageUseCase(imageId + 1)
             .onEach { _nextDetailUiModel.value = it?.let { DetailUiModel(it) } }
             .launchIn(viewModelScope)
+    }
+
+    private fun sendUiState(uiState: DetailUiState) {
+        when (uiState) {
+            DetailUiState.Fail -> {
+                _uiState.tryEmit(uiState)
+                _uiState.tryEmit(DetailUiState.None)
+            }
+
+            DetailUiState.None,
+            DetailUiState.Loading,
+            DetailUiState.Success,
+            -> _uiState.tryEmit(uiState)
+        }
     }
 
     private fun getImageId(state: SavedStateHandle): Int {
