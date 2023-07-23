@@ -3,16 +3,19 @@ package com.charlie.presentation.ui.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageListUseCase
 import com.charlie.presentation.model.ListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,57 +24,48 @@ class ListViewModel @Inject constructor(
 ) : ViewModel() {
     private var page = 1
 
-    private val _imageList: MutableLiveData<List<ListItemUiModel>> = MutableLiveData()
-    val imageList: LiveData<List<ListItemUiModel>>
-        get() = _imageList
-
-    private val _uiState: MutableLiveData<ListUiState> = MutableLiveData(ListUiState.Loading)
-    val uiState: LiveData<ListUiState>
+    private val _uiState: MutableStateFlow<ListUiState> = MutableStateFlow(ListUiState.None)
+    val isLoading: StateFlow<Boolean>
         get() = _uiState
+            .map { it is ListUiState.Loading }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                false,
+            )
 
-    val isLoading: LiveData<Boolean>
-        get() = _uiState.map { it is ListUiState.Loading }
-
-    private val _isFailure: MutableLiveData<Boolean> = MutableLiveData()
-    val isFailure: LiveData<Boolean>
-        get() = _imageList.map { it.isEmpty() }
-
+    private val _imageList: MutableLiveData<List<ListItemUiModel>> = MutableLiveData()
+    val imageList: LiveData<List<ListItemUiModel>> get() = _imageList
 
     init {
-        loadImageList()
+        loadList()
     }
 
-    fun onNextPage() {
+    fun loadNextPage() {
         page++
         if (_uiState.value is ListUiState.Success) {
-            loadImageList()
+            loadList()
         }
     }
 
-    fun onReload() {
-        _isFailure.value = false
-        _imageList.value = emptyList()
+    fun reloadList() {
         page = 1
-        loadImageList()
+        _imageList.value = emptyList()
+        loadList()
     }
 
-    private fun loadImageList() {
+    private fun loadList() {
         getImageListUseCase(page)
-            .onStart {
-                sendUiState(ListUiState.Loading)
-            }
+            .onStart { sendUiState(ListUiState.Loading) }
             .map { imageModelList ->
                 imageModelList.map { ListItemUiModel(it) }
             }
-            .onEach {
-                _imageList.value = _imageList.value?.plus(it) ?: it
-            }
+            .onEach { _imageList.value = _imageList.value?.plus(it) ?: it }
             .onCompletion {
-                if (it != null) {
+                if (it != null)
                     sendUiState(ListUiState.Fail(page))
-                } else {
+                else
                     sendUiState(ListUiState.Success)
-                }
             }
             .launchIn(viewModelScope)
     }
@@ -79,14 +73,14 @@ class ListViewModel @Inject constructor(
     private fun sendUiState(uiState: ListUiState) {
         when (uiState) {
             is ListUiState.Fail -> {
-                _uiState.value = uiState
-                _uiState.value = ListUiState.None
+                _uiState.tryEmit(uiState)
+                _uiState.tryEmit(ListUiState.None)
             }
 
-            is ListUiState.Loading,
-            is ListUiState.None,
-            is ListUiState.Success,
-            -> _uiState.value = uiState
+            ListUiState.Loading,
+            ListUiState.None,
+            ListUiState.Success,
+            -> _uiState.tryEmit(uiState)
         }
     }
 }
