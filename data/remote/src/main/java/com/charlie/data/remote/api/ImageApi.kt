@@ -10,7 +10,7 @@ interface ImageApi {
     @GET("/v2/list")
     fun requestImageList(
         @Query("page")
-        page: Int = 0,
+        page: Int,
         @Query("limit")
         limit: Int,
     ): Call<List<ImageResponse>>
