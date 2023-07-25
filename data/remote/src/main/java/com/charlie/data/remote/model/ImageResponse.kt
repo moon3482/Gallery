@@ -9,7 +9,7 @@ data class ImageResponse(
     val author: String,
     val width: Int,
     val height: Int,
-    val url: String,
     @Json(name = "download_url")
     val downloadUrl: String,
+    val url: String,
 )
