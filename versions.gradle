@@ -1,0 +1,27 @@
+def androidx = [:]
+androidx.coreVersion = '1.10.1'
+androidx.appcompatVersion = '1.6.1'
+androidx.constraintlayoutVersion = '2.1.4'
+androidx.activityVersion = '1.7.2'
+androidx.fragmentVersion = '1.6.0'
+
+def google = [:]
+google.materialVersion = '1.9.0'
+
+def testing = [:]
+testing.junitVersion = '4.13.2'
+testing.androidjunitVersion = '1.1.5'
+testing.espressoCoreVersion = '3.5.1'
+
+ext.androidx = androidx
+ext.google = google
+ext.testing = testing
+ext.retrofitVersion = '2.9.0'
+ext.glideVersion = '4.15.1'
+ext.moshiVersion = '1.14.0'
+ext.okhttpVersion = '4.11.0'
+ext.okHttpLogingInterceptorVersion = '4.10.0'
+ext.timberVersion = '5.0.1'
+ext.roomVersion = '2.5.1'
+ext.saveStateVersion = '2.2.0'
+ext.hiltVersion = '2.46.1'
