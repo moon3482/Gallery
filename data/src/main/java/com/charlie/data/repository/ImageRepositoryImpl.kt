@@ -17,25 +17,33 @@ class ImageRepositoryImpl @Inject constructor(
     ): Flow<List<ImageDataModel>> {
         return flow {
             val offset = (page - 1) * limit
-            local
-                .getList(limit, offset)
-                .map { ImageDataModel(it) }
-                .let { emit(it) }
+            val localData = local
+                .getList(
+                    offset = offset,
+                    limit = limit,
+                )
+                .map { imageEntity -> ImageDataModel(imageEntity) }
+            emit(localData)
 
-            remote
-                .getList(page, limit)
+            val remoteData = remote
+                .getList(
+                    page = page,
+                    limit = limit,
+                )
                 .map { responseList ->
-                    responseList.map { ImageDataModel(it) }
+                    responseList.map { imageResponse ->
+                        ImageDataModel(imageResponse)
+                    }
                 }
                 .onSuccess { imageDataList ->
-                    imageDataList
-                        .map { it.toEntity() }
-                        .also { local.insert(it) }
+                    val entityList = imageDataList.map { imageDataModel -> imageDataModel.toEntity() }
+                    local.insert(entityList)
                 }
                 .fold(
-                    onSuccess = { emit(it) },
-                    onFailure = { emit(emptyList()) },
+                    onSuccess = { it },
+                    onFailure = { emptyList() },
                 )
+            emit(remoteData)
         }
     }
 
@@ -43,23 +51,23 @@ class ImageRepositoryImpl @Inject constructor(
         id: Int,
     ): Flow<ImageDataModel?> {
         return flow {
-            local
+            val localData = local
                 .get(id)
-                ?.let { ImageDataModel(it) }
-                .run { emit(this) }
+                ?.let { imageEntity -> ImageDataModel(imageEntity) }
+            emit(localData)
 
-            remote
+            val remoteData = remote
                 .get(id)
-                .map { ImageDataModel(it) }
+                .map { imageResponse -> ImageDataModel(imageResponse) }
                 .onSuccess { imageData ->
-                    imageData
-                        .toEntity()
-                        .also { local.insert(it) }
+                    val entity = imageData.toEntity()
+                    local.insert(entity)
                 }
                 .fold(
-                    onSuccess = { emit(it) },
-                    onFailure = { emit(null) },
+                    onSuccess = { it },
+                    onFailure = { null },
                 )
+            emit(remoteData)
         }
     }
 }
