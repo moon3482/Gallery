@@ -12,8 +12,6 @@
         <variable
             name="event"
             type="com.charlie.presentation.ui.detail.DetailUiEvent" />
-
-        <import type="com.charlie.presentation.ui.detail.DetailUiState" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

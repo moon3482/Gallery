@@ -9,15 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageUseCase
 import com.charlie.presentation.model.DetailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,27 +19,20 @@ class DetailViewModel @Inject constructor(
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
     private var imageId = getImageId(state)
-
-    private val _uiState: MutableStateFlow<DetailUiState> = MutableStateFlow(DetailUiState.None)
-    val isLoading: StateFlow<Boolean>
-        get() = _uiState
-            .map { it is DetailUiState.Loading }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(),
-                false,
-            )
+    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
 
     private val _currentDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
     val currentDetailUiModel: LiveData<DetailUiModel?> get() = _currentDetailUiModel
 
     private val _previousDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val previousUrl: LiveData<String?> get() = _previousDetailUiModel.map { it?.downloadUrl }
-    val isPreviousEnable: LiveData<Boolean> get() = _previousDetailUiModel.map { it != null }
+    val previousUrl: LiveData<String?> get() = _previousDetailUiModel.map { previousDetailUiModel -> previousDetailUiModel?.downloadUrl }
+    val isPreviousEnable: LiveData<Boolean> get() = _previousDetailUiModel.map { previousDetailUiModel -> previousDetailUiModel != null }
 
     private val _nextDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val nextUrl: LiveData<String?> get() = _nextDetailUiModel.map { it?.downloadUrl }
-    val isNextEnable: LiveData<Boolean> get() = _nextDetailUiModel.map { it != null }
+    val nextUrl: LiveData<String?> get() = _nextDetailUiModel.map { nextDetailUiModel -> nextDetailUiModel?.downloadUrl }
+    val isNextEnable: LiveData<Boolean> get() = _nextDetailUiModel.map { nextDetailUiModel -> nextDetailUiModel != null }
 
     init {
         loadImage()
@@ -63,38 +49,25 @@ class DetailViewModel @Inject constructor(
     }
 
     private fun loadImage() {
+        _isLoading.value = true
         getImageUseCase(imageId)
-            .onStart { sendUiState(DetailUiState.Loading) }
-            .onEach { _currentDetailUiModel.value = it?.let { DetailUiModel(it) } }
-            .onCompletion {
-                if (it != null)
-                    sendUiState(DetailUiState.Fail)
-                else
-                    sendUiState(DetailUiState.Success)
+            .onEach { currentImageModel ->
+                _currentDetailUiModel.value = currentImageModel?.let { imageModel -> DetailUiModel(imageModel) }
+                _isLoading.value = false
             }
             .launchIn(viewModelScope)
 
         getImageUseCase(imageId - 1)
-            .onEach { _previousDetailUiModel.value = it?.let { DetailUiModel(it) } }
+            .onEach { previousImageModel ->
+                _previousDetailUiModel.value = previousImageModel?.let { imageModel -> DetailUiModel(imageModel) }
+            }
             .launchIn(viewModelScope)
 
         getImageUseCase(imageId + 1)
-            .onEach { _nextDetailUiModel.value = it?.let { DetailUiModel(it) } }
-            .launchIn(viewModelScope)
-    }
-
-    private fun sendUiState(uiState: DetailUiState) {
-        when (uiState) {
-            DetailUiState.Fail -> {
-                _uiState.tryEmit(uiState)
-                _uiState.tryEmit(DetailUiState.None)
+            .onEach { nextImageModel ->
+                _nextDetailUiModel.value = nextImageModel?.let { imageModel -> DetailUiModel(imageModel) }
             }
-
-            DetailUiState.None,
-            DetailUiState.Loading,
-            DetailUiState.Success,
-            -> _uiState.tryEmit(uiState)
-        }
+            .launchIn(viewModelScope)
     }
 
     private fun getImageId(state: SavedStateHandle): Int {

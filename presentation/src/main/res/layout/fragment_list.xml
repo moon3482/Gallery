@@ -42,7 +42,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             bind:isVisible="@{vm.isLoading}" />
-        
+
         <TextView
             android:id="@+id/failed_loading_textview"
             android:layout_width="wrap_content"
