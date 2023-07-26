@@ -27,8 +27,8 @@ interface ImageDao {
 
     @Query("SELECT * FROM image ORDER BY id ASC LIMIT :limit OFFSET :offset")
     suspend fun getList(
-        limit: Int,
         offset: Int,
+        limit: Int,
     ): List<ImageEntity>
 
     @Update
