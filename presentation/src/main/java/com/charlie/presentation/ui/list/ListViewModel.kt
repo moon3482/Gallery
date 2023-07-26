@@ -7,15 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.charlie.domain.usecase.GetImageListUseCase
 import com.charlie.presentation.model.ListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,15 +20,9 @@ class ListViewModel @Inject constructor(
 ) : ViewModel() {
     private var page = 1
 
-    private val _uiState: MutableStateFlow<ListUiState> = MutableStateFlow(ListUiState.None)
-    val isLoading: StateFlow<Boolean>
-        get() = _uiState
-            .map { it is ListUiState.Loading }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(),
-                false,
-            )
+    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
 
     private val _imageList: MutableLiveData<List<ListItemUiModel>> = MutableLiveData()
     val imageList: LiveData<List<ListItemUiModel>> get() = _imageList
@@ -43,9 +33,7 @@ class ListViewModel @Inject constructor(
 
     fun loadNextPage() {
         page++
-        if (_uiState.value is ListUiState.Success) {
-            loadList()
-        }
+        loadList()
     }
 
     fun reloadList() {
@@ -56,31 +44,16 @@ class ListViewModel @Inject constructor(
 
     private fun loadList() {
         getImageListUseCase(page)
-            .onStart { sendUiState(ListUiState.Loading) }
+            .onStart { _isLoading.value = true }
             .map { imageModelList ->
-                imageModelList.map { ListItemUiModel(it) }
+                imageModelList.map { imageModel -> ListItemUiModel(imageModel) }
             }
-            .onEach { _imageList.value = _imageList.value?.plus(it) ?: it }
+            .onEach { listItemUiModel ->
+                _imageList.value = _imageList.value?.plus(listItemUiModel) ?: listItemUiModel
+            }
             .onCompletion {
-                if (it != null)
-                    sendUiState(ListUiState.Fail(page))
-                else
-                    sendUiState(ListUiState.Success)
+                _isLoading.value = false
             }
             .launchIn(viewModelScope)
-    }
-
-    private fun sendUiState(uiState: ListUiState) {
-        when (uiState) {
-            is ListUiState.Fail -> {
-                _uiState.tryEmit(uiState)
-                _uiState.tryEmit(ListUiState.None)
-            }
-
-            ListUiState.Loading,
-            ListUiState.None,
-            ListUiState.Success,
-            -> _uiState.tryEmit(uiState)
-        }
     }
 }

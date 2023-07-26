@@ -51,11 +51,16 @@ class ListFragment : Fragment(), ListUiEvent {
             event = this@ListFragment
             gridListRecyclerview.apply {
                 adapter = ListAdapter()
-                addItemDecoration(ListDecoration(10, 8))
+                addItemDecoration(
+                    ListDecoration(
+                        width = 10,
+                        height = 8,
+                    )
+                )
                 doOnScrolled { _, _, _ ->
                     val layoutManager = gridListRecyclerview.layoutManager as? GridLayoutManager
-                    layoutManager?.let {
-                        if (it.findLastCompletelyVisibleItemPosition() == it.itemCount - 1) {
+                    layoutManager?.let { layoutManager ->
+                        if (layoutManager.findLastCompletelyVisibleItemPosition() == layoutManager.itemCount - 1) {
                             listViewModel.loadNextPage()
                         }
                     }
