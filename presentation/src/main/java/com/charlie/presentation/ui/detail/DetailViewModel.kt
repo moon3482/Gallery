@@ -19,9 +19,6 @@ class DetailViewModel @Inject constructor(
     private val getImageUseCase: GetImageUseCase,
 ) : ViewModel() {
     private var imageId = getImageId(state)
-    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
-    val isLoading: LiveData<Boolean>
-        get() = _isLoading
 
     private val _currentDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
     val currentDetailUiModel: LiveData<DetailUiModel?> get() = _currentDetailUiModel
@@ -49,11 +46,9 @@ class DetailViewModel @Inject constructor(
     }
 
     private fun loadImage() {
-        _isLoading.value = true
         getImageUseCase(imageId)
             .onEach { currentImageModel ->
                 _currentDetailUiModel.value = currentImageModel?.let { imageModel -> DetailUiModel(imageModel) }
-                _isLoading.value = false
             }
             .launchIn(viewModelScope)
 
