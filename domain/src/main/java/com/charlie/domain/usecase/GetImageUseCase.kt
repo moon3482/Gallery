@@ -15,9 +15,9 @@ class GetImageUseCase @Inject constructor(
         id: Int,
     ): Flow<ImageModel?> {
         return imageRepository
-            .getImage(id = id)
+            .getImage(id)
             .map { imageDataModel ->
-                imageDataModel?.let { ImageModel(it) }
+                imageDataModel?.let { imageDataModel -> ImageModel(imageDataModel) }
             }
     }
 }
