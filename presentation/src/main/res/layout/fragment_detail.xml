@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.charlie.presentation.ui.detail.DetailViewModel" />
+
+        <variable
+            name="event"
+            type="com.charlie.presentation.ui.detail.DetailUiEvent" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        tools:context="com.charlie.presentation.ui.detail.DetailFragment">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/begin_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/end_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/top_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottom_guide_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="20dp" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/detail_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/detail_imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/detail_image"
+            app:layout_constraintBottom_toTopOf="@+id/bookmark_imageView"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:layout_constraintTop_toBottomOf="@id/detail_toolbar"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintVertical_weight="1"
+            bind:detailImage="@{vm.currentDetailUiModel.downloadUrl}"
+            tools:src="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/bookmark_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bookmark_button"
+            android:src="@drawable/baseline_bookmark_border_24"
+            app:layout_constraintBottom_toTopOf="@id/imageInfoWidget"
+            app:layout_constraintEnd_toEndOf="@id/detail_imageView"
+            app:layout_constraintTop_toBottomOf="@id/detail_imageView"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:tint="#000000" />
+
+        <com.charlie.presentation.widget.ImageInfoWidget
+            android:id="@+id/imageInfoWidget"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="top"
+            app:layout_constraintBottom_toTopOf="@id/previous_floating_button"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:layout_constraintTop_toBottomOf="@id/bookmark_imageView"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintVertical_weight="2"
+            bind:imageInfo="@{vm.currentDetailUiModel}"
+            bind:onClickUrl="@{event}" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/previous_floating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/previous_floating_button"
+            android:enabled="@{vm.isPreviousEnable}"
+            android:src="@drawable/round_navigate_before_24"
+            app:backgroundTint="@drawable/selector_detail_nav_button"
+            app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
+            app:layout_constraintStart_toStartOf="@id/begin_guide_line"
+            app:maxImageSize="40dp"
+            app:tint="@android:color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/next_floating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/next_floating_button"
+            android:enabled="@{vm.isNextEnable}"
+            android:src="@drawable/round_navigate_next_24"
+            app:backgroundTint="@drawable/selector_detail_nav_button"
+            app:layout_constraintBottom_toBottomOf="@id/bottom_guide_line"
+            app:layout_constraintEnd_toEndOf="@id/end_guide_line"
+            app:maxImageSize="40dp"
+            app:tint="@android:color/white" />
+
+        <com.charlie.presentation.widget.PreviewWidget
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/previous_floating_button"
+            app:layout_constraintEnd_toStartOf="@id/next_floating_button"
+            app:layout_constraintStart_toEndOf="@id/previous_floating_button"
+            app:layout_constraintTop_toTopOf="@id/previous_floating_button"
+            bind:current="@{vm.currentDetailUiModel.downloadUrl}"
+            bind:next="@{vm.nextUrl}"
+            bind:previous="@{vm.previousUrl}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

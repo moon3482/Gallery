@@ -1,24 +1,3 @@
 <resources>
     <string name="app_name">Gallery</string>
-    <string name="image_author">작가</string>
-    <string name="width_size">가로 사이즈</string>
-    <string name="height_size">세로 사이즈</string>
-    <string name="url_link">URL링크</string>
-    <string name="previous_button">이전 버튼</string>
-    <string name="next_button">다음 버튼</string>
-    <string name="previous_image">이전 이미지</string>
-    <string name="current_image">현재 이미지</string>
-    <string name="next_image">다음 이미지</string>
-    <string name="image_item">이미지 아이템</string>
-    <string name="image_information">Image Information</string>
-    <string name="previous_floating_button">이전버튼</string>
-    <string name="next_floating_button">다음 버튼</string>
-    <string name="detail_image">디테일 이미지</string>
-    <string name="failed_loading">로딩에 실패하였습니다.</string>
-    <string name="reload">다시 시도</string>
-    <string name="notification">알림</string>
-    <string name="can_not_show_you_image">이미지를 표시 할 수 없습니다.</string>
-    <string name="failed_load_image_list">"이미지 목록을 불러오는데\n실패 하였습니다."</string>
-    <string name="return_to_page">돌아가기</string>
-    <string name="bookmark_button">bookmark button</string>
 </resources>
