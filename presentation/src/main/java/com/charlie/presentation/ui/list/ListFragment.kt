@@ -26,7 +26,7 @@ class ListFragment : Fragment(), ListUiEvent {
         }
     private val listViewModel: ListViewModel by viewModels()
 
-    // region Lifecycle
+    //region Lifecycle
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,9 +76,11 @@ class ListFragment : Fragment(), ListUiEvent {
         super.onDestroyView()
         _binding = null
     }
-    // endregion
+    //endregion
 
-    override fun onClickItem(id: Int) {
+    override fun onClickItem(
+        id: Int,
+    ) {
         parentFragmentManager.commit {
             add<DetailFragment>(
                 containerViewId = R.id.fragment_container,

@@ -25,7 +25,8 @@ class ListViewModel @Inject constructor(
         get() = _isLoading
 
     private val _imageList: MutableLiveData<List<ListItemUiModel>> = MutableLiveData()
-    val imageList: LiveData<List<ListItemUiModel>> get() = _imageList
+    val imageList: LiveData<List<ListItemUiModel>>
+        get() = _imageList
 
     init {
         loadList()

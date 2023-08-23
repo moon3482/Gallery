@@ -58,7 +58,9 @@ class DetailFragment : Fragment(), DetailUiEvent {
     }
     //endregion
 
-    override fun onClickUrl(url: String?) {
+    override fun onClickUrl(
+        url: String?,
+    ) {
         url?.let {
             startActivity(
                 Intent(

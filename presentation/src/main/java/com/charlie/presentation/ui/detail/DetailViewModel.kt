@@ -21,15 +21,20 @@ class DetailViewModel @Inject constructor(
     private var imageId = getImageId(state)
 
     private val _currentDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val currentDetailUiModel: LiveData<DetailUiModel?> get() = _currentDetailUiModel
+    val currentDetailUiModel: LiveData<DetailUiModel?>
+        get() = _currentDetailUiModel
 
     private val _previousDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val previousUrl: LiveData<String?> get() = _previousDetailUiModel.map { previousDetailUiModel -> previousDetailUiModel?.downloadUrl }
-    val isPreviousEnable: LiveData<Boolean> get() = _previousDetailUiModel.map { previousDetailUiModel -> previousDetailUiModel != null }
+    val previousUrl: LiveData<String?>
+        get() = _previousDetailUiModel.map { previousDetailUiModel -> previousDetailUiModel?.downloadUrl }
+    val isPreviousEnable: LiveData<Boolean>
+        get() = _previousDetailUiModel.map { previousDetailUiModel -> previousDetailUiModel != null }
 
     private val _nextDetailUiModel: MutableLiveData<DetailUiModel?> = MutableLiveData()
-    val nextUrl: LiveData<String?> get() = _nextDetailUiModel.map { nextDetailUiModel -> nextDetailUiModel?.downloadUrl }
-    val isNextEnable: LiveData<Boolean> get() = _nextDetailUiModel.map { nextDetailUiModel -> nextDetailUiModel != null }
+    val nextUrl: LiveData<String?>
+        get() = _nextDetailUiModel.map { nextDetailUiModel -> nextDetailUiModel?.downloadUrl }
+    val isNextEnable: LiveData<Boolean>
+        get() = _nextDetailUiModel.map { nextDetailUiModel -> nextDetailUiModel != null }
 
     init {
         loadImage()
@@ -48,19 +53,22 @@ class DetailViewModel @Inject constructor(
     private fun loadImage() {
         getImageUseCase(imageId)
             .onEach { currentImageModel ->
-                _currentDetailUiModel.value = currentImageModel?.let { imageModel -> DetailUiModel(imageModel) }
+                _currentDetailUiModel.value =
+                    currentImageModel?.let { imageModel -> DetailUiModel(imageModel) }
             }
             .launchIn(viewModelScope)
 
         getImageUseCase(imageId - 1)
             .onEach { previousImageModel ->
-                _previousDetailUiModel.value = previousImageModel?.let { imageModel -> DetailUiModel(imageModel) }
+                _previousDetailUiModel.value =
+                    previousImageModel?.let { imageModel -> DetailUiModel(imageModel) }
             }
             .launchIn(viewModelScope)
 
         getImageUseCase(imageId + 1)
             .onEach { nextImageModel ->
-                _nextDetailUiModel.value = nextImageModel?.let { imageModel -> DetailUiModel(imageModel) }
+                _nextDetailUiModel.value =
+                    nextImageModel?.let { imageModel -> DetailUiModel(imageModel) }
             }
             .launchIn(viewModelScope)
     }
