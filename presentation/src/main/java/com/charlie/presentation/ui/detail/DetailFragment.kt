@@ -26,6 +26,7 @@ class DetailFragment : Fragment(), DetailUiEvent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         _binding = FragmentDetailBinding.inflate(layoutInflater)
         return binding.root
     }

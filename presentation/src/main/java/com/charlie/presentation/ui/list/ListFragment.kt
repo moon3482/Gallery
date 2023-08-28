@@ -32,6 +32,7 @@ class ListFragment : Fragment(), ListUiEvent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         _binding = FragmentListBinding.inflate(layoutInflater)
         return binding.root
     }
