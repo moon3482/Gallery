@@ -11,13 +11,9 @@ class ListViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         listItemUiModel: ListItemUiModel,
-        onClickViewHolder: ((Int) -> Unit)?,
     ) {
         with(binding) {
             url = listItemUiModel.downloadUrl
-            imageviewItem.setOnClickListener {
-                onClickViewHolder?.invoke(listItemUiModel.id)
-            }
         }
     }
 

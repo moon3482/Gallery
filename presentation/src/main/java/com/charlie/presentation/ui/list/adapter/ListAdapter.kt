@@ -21,10 +21,10 @@ class ListAdapter(
         position: Int,
     ) {
         val data = imageItemList[position]
-        holder.bind(
-            listItemUiModel = data,
-            onClickViewHolder = onClickItem
-        )
+        holder.bind(data)
+        holder.itemView.setOnClickListener {
+            onClickItem?.invoke(data.id)
+        }
     }
 
     fun updateList(
